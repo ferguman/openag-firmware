@@ -1,5 +1,7 @@
 #include "Arduino.h"
 #include <test.h>
+#include <types.h>
+#include <pair.h>
 
 // A vector store of pairs based upon a fixed sized vector
 // Interface functions cons(int, int), car(int), and cdr(int)
@@ -16,19 +18,37 @@ const int PS_SZ = 300;
 int carValue[PS_SZ];
 int cdrValue[PS_SZ];
 
-int cons(int pair1, int pair2) {
+int add_to_list(int lst, int val_to_add) {
+   if (is_pair(lst) && (is_pair(val_to_add) || is_type(val_to_add))) {
+      int list_tail = cons(val_to_add, nil);
+      set_cdr(lst, list_tail);
+      return list_tail;
+   } else {
+      Serial.println("Error: add_to_list -> arguments are not types.");
+      return 0;
+   }
+}
+
+boolean is_pair(int pair_index) {
+   if (pair_index <= 0 || pair_index >= 100) {
+      return false;
+   } else {
+      return true;
+   }
+}
+
+int cons(int type1_index, int type2_index) {
    //Check for buffer overflow.
    if (pp == 100) {
       return 0;   //error - no more Vector space left.
    }
 
-   //Move to next avialble pair.
+   //Move to next available pair.
    pp++;
-   carValue[pp] = pair1;
-   cdrValue[pp] = pair2;
+   carValue[pp] = type1_index;
+   cdrValue[pp] = type2_index;
    return pp;
 }
-
 
 // Returns the vector pointer to the cdr of the pair located at vector location pairIndex.
 int cdr(int pairIndex) {
@@ -59,3 +79,9 @@ void test_cons() {
 void test_pair() {
    test_cons();
 }
+      
+void set_cdr(int lst, int list_tail) {
+//TODO - add error checking to make sure lst is a pair pointer and list_tail is a pair or type pointer.
+   cdrValue[lst] = list_tail;
+}
+

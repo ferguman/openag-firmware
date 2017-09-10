@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include <pair.h>
+#include <extract_symbol.h>
 
 void assert_int_equals(String test_name, int a, int b) {
    Serial.print(test_name); Serial.print(":a="); Serial.print(a);
@@ -23,4 +24,5 @@ void assert_char_equals(String test_name, char a, char b) {
 
 void run_tests() {
    test_pair();
+   test_extract_symbol();
 }

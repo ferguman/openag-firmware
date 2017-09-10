@@ -15,6 +15,7 @@ void setup() {
   message.reserve(MESSAGE_LENGTH);
 
   beginModule(am2315_1, "AM2315 #1");
+  beginModule(ds18b20_1, "DS18B20 #1");
 
 /*
   // Begin sensors
@@ -110,8 +111,13 @@ void procMsg() {
     return;
   }
   
-  //Process message.;
-  process_message(&message);
+   //Process message.;
+   process_message(&message);
+
+   // Randome test stuff - pull out later.
+   ds18b20_1.update();
+   Serial.print("DS18b20: ");
+   Serial.println(ds18b20_1.get_temperature());
 
   // We've already used this message
   resetMessage();

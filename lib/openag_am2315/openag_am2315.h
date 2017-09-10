@@ -1,4 +1,4 @@
-/**
+/*
  *  \file openag_am2315.h
  *  \brief Air temperature and air humidity sensor.
  */
@@ -19,6 +19,7 @@
 
   Modified for OpenAg
  ****************************************************/
+
 #ifndef OPENAG_AM2315
 #define OPENAG_AM2315
 

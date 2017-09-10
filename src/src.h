@@ -18,12 +18,14 @@
 #include <openag_tone_actuator.h>
 */
 
+#include <openag_ds18b20.h>
 #include <openag_am2315.h>
 
 // Add lines to instantiate instances of the sensors and actuators that your grow environment
 // supports.  Note that you must have #include statement in the code above for each sensor or 
 // actuator that you instantiate below.
 Am2315 am2315_1;
+Ds18b20 ds18b20_1(5);
 
 
 // The following list contains the open FC V2 instantiated sensors and actuators.
