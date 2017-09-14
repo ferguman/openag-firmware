@@ -1,4 +1,5 @@
 #include "Arduino.h"
+#include <test.h>
 
 //Provde storage and accessor functions for creating and storing types: integers (I), symbols (S), strings (X), etc.
 //Note: Object pointers run from 10000 to 10100 in order to make them distinguishable from 
@@ -18,19 +19,9 @@ boolean is_type(int type_ptr) {
    }
 }
 
-int make_int(int a) {
-   if (op <= 0 || op >= 100) {
-      return 0; //Error
-   } else {
-      op++;
-      obj_type[op]  = 'I';
-      obj_store[op] = (String) a;
-      return op + 10000;
-   }
-}
-
 int make_char(char c) {
-   if (op <= 0 || op >= 100) {
+   if (op < 0 || op >= TS_SZ) {
+      Serial.println("Error in make_char. Out of memory.");
       return 0; //Error
    } else {
       op++;
@@ -40,13 +31,28 @@ int make_char(char c) {
    }
 }
 
-int make_str(String x) {
-   if (op <= 0 || op >= 100) {
+int get_char(int obj_ptr) {
+
+   int ptr = obj_ptr - 10000;
+
+   if (ptr <= 0 || ptr >=TS_SZ) {
+      return 0;   //error
+   } else {
+      if (obj_type[ptr] != 'C') {
+         return 0;   //error
+      } else {
+         return obj_store[ptr][0];
+     }
+   }
+}
+
+int make_int(int a) {
+   if (op < 0 || op >= TS_SZ) {
       return 0; //Error
    } else {
       op++;
-      obj_type[op] = 'X';
-      obj_store[op] = x;
+      obj_type[op]  = 'I';
+      obj_store[op] = (String) a;
       return op + 10000;
    }
 }
@@ -55,7 +61,7 @@ int get_int(int obj_ptr) {
 
    int ptr = obj_ptr - 10000;
 
-   if (ptr <= 0 || ptr >=100) {
+   if (ptr <= 0 || ptr >=TS_SZ) {
       return 0;   //error
    } else {
       if (obj_type[ptr] != 'I') {
@@ -66,3 +72,15 @@ int get_int(int obj_ptr) {
      }
    }
 }
+
+int make_str(String x) {
+   if (op < 0 || op >= TS_SZ) {
+      return 0; //Error
+   } else {
+      op++;
+      obj_type[op] = 'X';
+      obj_store[op] = x;
+      return op + 10000;
+   }
+}
+

@@ -15,7 +15,7 @@ int extract_sym_iter(String *str, unsigned int start_pos, unsigned int cur_pos) 
 
    //Beyond the last chacter of the string. 
    if (cur_pos >= str->length()) {
-      if (start_pos < cur_pos) {
+      if (start_pos < cur_pos && start_pos < str->length()) {
          return cur_pos - 1;
       } else {
          return 0;
@@ -34,14 +34,14 @@ int extract_sym_iter(String *str, unsigned int start_pos, unsigned int cur_pos) 
 }
 
 boolean is_sym_char(String *str, int char_pos) {
-
+   
    //Accept upper case ASCII
-   if (str->charAt(char_pos) >= 65 || str->charAt(char_pos) <= 90) {
+   if (str->charAt(char_pos) >= 65 && str->charAt(char_pos) <= 90) {
       return true;
    }
 
    //Accept lower case ASCII
-   if (str->charAt(char_pos) >= 97 || str->charAt(char_pos) <= 122) {
+   if (str->charAt(char_pos) >= 97 && str->charAt(char_pos) <= 122) {
       return true;
    }
 
@@ -55,5 +55,8 @@ boolean is_sym_char(String *str, int char_pos) {
 
 void test_extract_symbol() {
    String test = "how";
-   assert_int_equals("Symbol Extraction 1", extract_sym(&test, 1), 2);
+   String test2 = "(test";
+   assert_int_equals(F("extract_symbol.cpp"), extract_sym(&test, 1), 2);
+   assert_int_equals(F("extract_symbol.cpp"), extract_sym(&test2, 0), 0);
+   assert_int_equals(F("extract_symbol.cpp"), extract_sym_iter(&test, 3, 4), 0);
 }

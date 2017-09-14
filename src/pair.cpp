@@ -69,19 +69,23 @@ int car(int pairIndex) {
    }
 }
 
-void test_cons() {
-   pp = 0;
-   assert_int_equals("Cons1", cons(2, 3), 1);
-   assert_int_equals("Cons2", carValue[1], 2);
-   assert_int_equals("Cons3", cdrValue[1], 3); 
-}
-
-void test_pair() {
-   test_cons();
-}
-      
 void set_cdr(int lst, int list_tail) {
 //TODO - add error checking to make sure lst is a pair pointer and list_tail is a pair or type pointer.
    cdrValue[lst] = list_tail;
 }
 
+void test_cons() {
+   pp = 0;
+   assert_int_equals(F("pair.cpp"), cons(2, 3), 1);
+   assert_int_equals(F("pair.cpp"), carValue[1], 2);
+   assert_int_equals(F("pair.cpp"), cdrValue[1], 3); 
+}
+
+void test_pair() {
+
+   test_cons();
+
+   int test2 = cons(cons(make_char('C'), nil),nil);
+
+   assert_char_equals(F("pair.cpp"), 'C', get_char(car(car(test2))));
+}

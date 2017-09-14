@@ -5,26 +5,6 @@
 #include <test.h>
 #include <extract_symbol.h>
 
-int tokenize(String *str) {
-
-   if (str->length() == 0) {
-      return 0;
-   }
-
-   if (str->charAt(0) == '(') {
-       //Start a token list with a parenthesis.
-       int tok_list = cons(make_char('('), nil);
-       if (token_iter(str, 1, tok_list) != 0) {
-          return tok_list;
-       } else {
-          return 0;  //Error
-       }
-   } else {
-      Serial.println("All lines must be fully parenthesized.");
-      return 0;
-   }
-}
-
 // Break the input message up into a list of tokens. 
 // Tokens are constructed as pairs. The car of the token contains the
 // token type and the cdr contains a pointer to a data type (e.g. integer, 
@@ -36,9 +16,28 @@ int tokenize(String *str) {
 //         succesfully parsed from the input stream.
 // X -> Strings are generated when strings (deliminated by ") are encountered.
 // S -> A symbol is generated when none of the above token types apply and the input is legal.
-// [value as entered by the user] -> Everything else that is not too long and doesn't contain illegal characters.
 // Error -> Stuff that can't be tokenized.
 //
+int tokenize(String *str) {
+
+   if (str->length() == 0) {
+      return 0;
+   }
+
+   if (str->charAt(0) == '(') {
+       //Start a token list with a parenthesis.
+       int tok_list = cons(cons(make_char('('), nil),nil);
+       if (token_iter(str, 1, tok_list) != 0) {
+          return tok_list;
+       } else {
+          return 0;  //Error
+       }
+   } else {
+      Serial.println("All lines must be fully parenthesized.");
+      return 0;
+   }
+}
+
 int token_iter(String *str, unsigned int cur_pos, int token_list) {
 
    int next_pos = 0;
@@ -89,4 +88,13 @@ int parse_int(String *str, int cur_pos) {
 
    return cons(make_int(5), make_int(12345));
 
+}
+
+void test_tokenize() {
+
+   String test1 = F("(foobar)");
+   int result = tokenize(&test1);
+
+   assert_int_not_equals(F("tokenize.cpp"), result, 0);
+   assert_char_equals(F("tokenize.cpp"), get_char(car(car(result))), '(');
 }
