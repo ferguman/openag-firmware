@@ -75,7 +75,7 @@ int token_iter(String *str, unsigned int cur_pos, int token_list) {
    //Check for symbol. 
    int end_of_sym = extract_sym(str, cur_pos);
    if (end_of_sym != 0) { 
-      return token_iter(str, end_of_sym + 1, add_to_list(token_list, cons(make_char('S'), make_str((*str).substring(cur_pos, end_of_sym)))));
+      return token_iter(str, end_of_sym + 1, add_to_list(token_list, cons(make_char('S'), make_str((*str).substring(cur_pos, end_of_sym+1)))));
    } 
 
    Serial.println("Error in tokenizer. Illegal character encountered.");
@@ -96,5 +96,8 @@ void test_tokenize() {
    int result = tokenize(&test1);
 
    assert_int_not_equals(F("tokenize.cpp"), result, 0);
-   assert_char_equals(F("tokenize.cpp"), get_char(car(car(result))), '(');
+   assert_char_equals(F("tokenize.cpp"), get_char(caar(result)), '(');
+   assert_char_equals(F("tokenize.cpp"), get_char(caadr(result)), 'S');
+   assert_str_equals(F("tokenize.cpp"), get_str(cdr(cadr(result))), F("foobar"));
+   assert_char_equals(F("tokenize.cpp"), get_char(caaddr(result)), ')');
 }

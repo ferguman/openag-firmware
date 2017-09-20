@@ -5,8 +5,9 @@
 boolean is_type(int type_ptr);
 int make_int(int a);
 int make_char(char c);
-int get_char(int obj_ptr);
+char get_char(int obj_ptr);
 int make_str(String x);
+String get_str(int obj_ptr);
 int get_int(int obj_ptr);
 const int nil = 0;
 

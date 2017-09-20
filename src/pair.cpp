@@ -18,6 +18,7 @@ const int PS_SZ = 300;
 int carValue[PS_SZ];
 int cdrValue[PS_SZ];
 
+// Add an element to a list and return the tail of the list.
 int add_to_list(int lst, int val_to_add) {
    if (is_pair(lst) && (is_pair(val_to_add) || is_type(val_to_add))) {
       int list_tail = cons(val_to_add, nil);
@@ -28,6 +29,7 @@ int add_to_list(int lst, int val_to_add) {
       return 0;
    }
 }
+
 
 boolean is_pair(int pair_index) {
    if (pair_index <= 0 || pair_index >= 100) {
@@ -69,9 +71,18 @@ int car(int pairIndex) {
    }
 }
 
-void set_cdr(int lst, int list_tail) {
-//TODO - add error checking to make sure lst is a pair pointer and list_tail is a pair or type pointer.
-   cdrValue[lst] = list_tail;
+int caar(int pairIndex) { return car(car(pairIndex)); }
+int cadr(int pairIndex) { return car(cdr(pairIndex)); }
+int caddr(int pairIndex) { return car(cdr(cdr(pairIndex))); }
+int caadr(int pairIndex) { return car(car(cdr(pairIndex))); }
+int caaddr(int pairIndex) { return car(car(cdr(cdr(pairIndex)))); }
+
+void set_cdr(int lst, int item) {
+   cdrValue[lst] = item;
+}
+
+void set_car(int lst, int item) {
+   carValue[lst] = item;
 }
 
 void test_cons() {

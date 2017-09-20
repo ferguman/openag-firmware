@@ -1,7 +1,8 @@
 #include "Arduino.h"
 #include <test.h>
 
-//Provde storage and accessor functions for creating and storing types: integers (I), symbols (S), strings (X), etc.
+//Provde storage and accessor functions for creating and storing types: integers (I), symbols (S),
+// strings (X), etc.
 //Note: Object pointers run from 10000 to 10100 in order to make them distinguishable from 
 //      Pair pointers which run from 1 to 100.
 
@@ -31,7 +32,7 @@ int make_char(char c) {
    }
 }
 
-int get_char(int obj_ptr) {
+char get_char(int obj_ptr) {
 
    int ptr = obj_ptr - 10000;
 
@@ -81,6 +82,22 @@ int make_str(String x) {
       obj_type[op] = 'X';
       obj_store[op] = x;
       return op + 10000;
+   }
+}
+
+String get_str(int obj_ptr) {
+
+   int ptr = obj_ptr - 10000;
+
+   if (ptr <= 0 || ptr >=TS_SZ) {
+      return "";   //error
+      Serial.println(F("Error in types.cpp: Not a string."));
+   } else {
+      if (obj_type[ptr] != 'X') {
+         return "";   //error
+      } else {
+         return obj_store[ptr];
+     }
    }
 }
 
