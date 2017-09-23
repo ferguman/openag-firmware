@@ -6,6 +6,7 @@
 //Note: Object pointers run from 10000 to 10100 in order to make them distinguishable from 
 //      Pair pointers which run from 1 to 100.
 
+const int TS_OFFSET = 10000;
 const int TS_SZ = 100;
 
 int op = 0;
@@ -13,7 +14,7 @@ char obj_type[TS_SZ];
 String obj_store[TS_SZ];
 
 boolean is_type(int type_ptr) {
-   if (type_ptr >= 1 && type_ptr < TS_SZ) {
+   if ((type_ptr - TS_OFFSET) >= 1 && (type_ptr - TS_OFFSET) < TS_SZ) {
       return true;
    } else {
       return false;

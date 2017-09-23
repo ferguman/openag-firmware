@@ -61,7 +61,7 @@ int parse(int token_list) {
 int parse_iter(int list_stack, int cur_list, int token_list) {
 
    // No more tokens to parse.
-   if (cdr(token_list) == nil) {
+   if (token_list == nil) {
       return list_stack;
    }
 
@@ -124,6 +124,19 @@ int add_list_item(int pair, int item) {
 }
 
 void test_parse() {
+
+   // Test add_list_item()
+   int list1 = cons(nil, nil);
+   int item1 = cons(45, 46);
+   assert_int_equals(F("parse.cpp"), list1, add_list_item(list1, item1)); 
+   assert_int_equals(F("parse.cpp"), item1, car(list1)); 
+   int item2 = cons(47, 48);
+   int list2 = add_list_item(list1, item2);
+   assert_int_not_equals(F("parse.cpp"), list2, list1); 
+   assert_int_equals(F("parse.cpp"), item2, car(list2)); 
+   
+
+   // Test parse()
    assert_int_equals(F("parse.cpp"), 0, parse(0));
    int test1 = cons(make_char('X'),nil);
    assert_int_equals(F("parse.cpp"), 0, parse(test1));
