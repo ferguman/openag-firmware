@@ -3,11 +3,22 @@
 #include <types.h>
 #include <pair.h>
 #include <test.h>
+#include <parse.h>
 
-// The parser accepts a list of tokens (see tokenize.cpp). It scans the list from front to rear.
-// Every time an open paranthesis is encountered a new list is started and every time a close
-// paranthesis is encountered the curent list is closed and the resulting list is added to the 
-// list that is a level above the current list.
+// The parser accepts a list of tokens (see tokenize.cpp). It scans the list from front to rear
+// and generates a new list that is a tree that mirrors the parentheitcal structure of the input
+// token list.
+//
+// Every time an open paranthesis is encountered a new list is started and added to the end of the
+// current list.  Every time a close paranthesis is encountered the current list is changed
+// to be the list that was being used before the current list was started.  See the paragraph below
+// for special handling of the close paranthesis character when a quoted list is detected.
+//
+// Every time the quote character is encountered a new list is started with the quote character
+// at its head. Then another new list is created and added to the tail of the quote character list.
+// Everytime a close parantheesis or token is added to the current list the parser
+// checks to see if the current list's parent list is a quote. If it is then the parser 
+// sets the cur list to be the list that contains the quote character.
 //
 // Returns a list of data items.
 // 
@@ -42,19 +53,6 @@ int parse(int token_list) {
     return 0;
 }
 
-// Add an item to the last pair of a list.
-int add_list_item(pair, item) {
-
-   if (car(pair) == nil) {
-      set_car(pair, item);
-      return pair;
-   } else {
-      set_cdr(list, cons(item, nil));
-      return cdr(list);
-   }
-
-}
-
 // list_stack is used to store each level of lists. As "("'s are encountered
 // new list are started and the current list is pushed to the stack. As ")"'s 
 // are encountered the higher level list is popped off the stack and 
@@ -79,10 +77,10 @@ int parse_iter(int list_stack, int cur_list, int token_list) {
          Serial.println(F("Error in parse_iter: Unbalanced paranthesises."));
          return 0; 
       } else {
-         if (get_char(caddr(list_stack)) == '\'') {
-            return parse_iter(cddr(list_stack), caddr(list_stack), cdr(token_list));
+         if (get_char(cadr(list_stack)) == '\'') {
+            return parse_iter(cddr(list_stack), cddr(list_stack), cdr(token_list));
          } else {
-            return parse_iter(cdr(list_stack), cadr(list_stack), cdr(token_list));
+            return parse_iter(cdr(list_stack), cdr(list_stack), cdr(token_list));
          }
       }
    }
@@ -96,16 +94,32 @@ int parse_iter(int list_stack, int cur_list, int token_list) {
    // Add symbols, strings, floats and integers to the current list
    if (is_type(car(token_list))) {
       int nl = add_list_item(cur_list, car(token_list));
-      if (is_tos_a_quote_char) {
-         return parse_iter(cddr(list_stack)), caddr(list_stack), cdr(token_list));
+      // If the symbol is quoted then pop to the quotes parent list.
+      if (get_char(car(list_stack)) == '\'')  {
+         return parse_iter(cdr(list_stack), cdr(list_stack), cdr(token_list));
       } else {
-         return parse_iter(cdr(list_stack)), cadr(list_stack), cdr(token_list));
+         return parse_iter(list_stack, nl, cdr(token_list));
       }
    }
        
    // Something is wrong.
-   Serial.println(F("Error parsing. Unrecognized token.");
+   Serial.println(F("Error parsing. Unrecognized token."));
    return 0;
+
+}
+
+// Add an item to a list.  Add a new list pair if necessary.
+// Return the pair that the item was added to.
+//
+int add_list_item(int pair, int item) {
+
+   if (car(pair) == nil) {
+      set_car(pair, item);
+      return pair;
+   } else {
+      set_cdr(pair, cons(item, nil));
+      return cdr(pair);
+   }
 
 }
 

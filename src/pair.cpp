@@ -73,6 +73,8 @@ int car(int pairIndex) {
 
 int caar(int pairIndex) { return car(car(pairIndex)); }
 int cadr(int pairIndex) { return car(cdr(pairIndex)); }
+int cddr(int pairIndex) { return cdr(cdr(pairIndex)); }
+int cdddr(int pairIndex) { return cdr(cdr(cdr(pairIndex))); }
 int caddr(int pairIndex) { return car(cdr(cdr(pairIndex))); }
 int caadr(int pairIndex) { return car(car(cdr(pairIndex))); }
 int caaddr(int pairIndex) { return car(car(cdr(cdr(pairIndex)))); }
