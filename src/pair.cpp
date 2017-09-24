@@ -18,6 +18,26 @@ const int PS_SZ = 300;
 int carValue[PS_SZ];
 int cdrValue[PS_SZ];
 
+// Add an item to a list.  Add a new list pair if necessary.
+// Return the pair that the item was added to.
+//
+int add_list_item(int pair, int item) {
+
+   if (is_pair(pair) && (is_pair(item) || is_type(item))) {
+      if (car(pair) == nil) {
+         set_car(pair, item);
+         return pair;
+      } else {
+         set_cdr(pair, cons(item, nil));
+         return cdr(pair);
+      }
+   } else {
+      Serial.println("Error: add_to_list -> arguments are not types.");
+      return 0;
+   }
+}
+
+/*
 // Add an element to a list and return the tail of the list.
 int add_to_list(int lst, int val_to_add) {
    if (is_pair(lst) && (is_pair(val_to_add) || is_type(val_to_add))) {
@@ -29,7 +49,7 @@ int add_to_list(int lst, int val_to_add) {
       return 0;
    }
 }
-
+*/
 
 boolean is_pair(int pair_index) {
    if (pair_index <= 0 || pair_index >= 100) {
@@ -73,6 +93,7 @@ int car(int pairIndex) {
 
 int caar(int pairIndex) { return car(car(pairIndex)); }
 int cadr(int pairIndex) { return car(cdr(pairIndex)); }
+int cdar(int pairIndex) { return cdr(car(pairIndex)); }
 int cddr(int pairIndex) { return cdr(cdr(pairIndex)); }
 int cdddr(int pairIndex) { return cdr(cdr(cdr(pairIndex))); }
 int caddr(int pairIndex) { return car(cdr(cdr(pairIndex))); }
@@ -98,7 +119,16 @@ void test_pair() {
 
    test_cons();
 
-   int test2 = cons(cons(make_char('C'), nil),nil);
+   // Test add_list_item()
+   int list1 = cons(nil, nil);
+   int item1 = cons(45, 46);
+   assert_int_equals(F("parse.cpp"), list1, add_list_item(list1, item1)); 
+   assert_int_equals(F("parse.cpp"), item1, car(list1)); 
+   int item2 = cons(47, 48);
+   int list2 = add_list_item(list1, item2);
+   assert_int_not_equals(F("parse.cpp"), list2, list1); 
+   assert_int_equals(F("parse.cpp"), item2, car(list2));
 
+   int test2 = cons(cons(make_char('C'), nil),nil);
    assert_char_equals(F("pair.cpp"), 'C', get_char(car(car(test2))));
 }

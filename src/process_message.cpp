@@ -19,7 +19,7 @@ int process_message(String *input) {
 
    //run all the unit tests. TODO: Need to figoure out a way to turn this on and off.
    //create a command that calls this. then it can be called by the interpretter.
-   run_tests();
+   //run_tests(0);
 
    Serial.println("OK");
    return interpret_return;

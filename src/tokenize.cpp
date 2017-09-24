@@ -5,18 +5,17 @@
 #include <test.h>
 #include <extract_symbol.h>
 
-// Break the input message up into a list of tokens. 
+// Convert the input message string into a list of tokens. 
 // Tokens are constructed as pairs. The car of the token contains the
-// token type and the cdr contains a pointer to a data type (e.g. integer, 
+// token type (as a single character) and the cdr contains a pointer to a data type (e.g. integer, 
 // string, char) that is appropriate for the given token type.
-// The following tokens are generated: 
+// The following token types are generated: 
 // ' -> The ' character serves as the quote character and is passed through as is.
 // ( or ) -> parantheses are passed through as is.
 // I or F  -> Integers or Floats (e.g. 1001 or 1001.001 Numbers are generated when a number is 
 //         succesfully parsed from the input stream.
 // X -> Strings are generated when strings (deliminated by ") are encountered.
 // S -> A symbol is generated when none of the above token types apply and the input is legal.
-// Error -> Stuff that can't be tokenized.
 //
 int tokenize(String *str) {
 
@@ -42,8 +41,13 @@ int token_iter(String *str, unsigned int cur_pos, int token_list) {
 
    int next_pos = 0;
 
-   //Check for end of the list or a null token_list.
-   if (cur_pos >= str->length() || token_list == 0) {
+   //Check for end of the list or a null token_list or a new line character.
+   if (cur_pos >= str->length() || token_list == 0 ) {
+      return token_list;
+   }
+   
+   //Stop if a carriage return or line feed is encountered in the input string.
+   if ((str->charAt(cur_pos) == 13) || (str->charAt(cur_pos) == 10)) {
       return token_list;
    }
 
@@ -55,7 +59,7 @@ int token_iter(String *str, unsigned int cur_pos, int token_list) {
 
    //Check for parenthesis or ' (i.e sybmol) characters.
    if (str->charAt(cur_pos) == '(' || str->charAt(cur_pos) == ')' || str->charAt(cur_pos) == '\'') {
-       return token_iter(str, cur_pos + 1, add_to_list(token_list, cons(make_char(str->charAt(cur_pos)), nil)));
+       return token_iter(str, cur_pos + 1, add_list_item(token_list, cons(make_char(str->charAt(cur_pos)),nil)));
    }
 
    //Check for string.
@@ -75,8 +79,9 @@ int token_iter(String *str, unsigned int cur_pos, int token_list) {
    //Check for symbol. 
    int end_of_sym = extract_sym(str, cur_pos);
    if (end_of_sym != 0) { 
-      return token_iter(str, end_of_sym + 1, add_to_list(token_list, cons(make_char('S'), make_str((*str).substring(cur_pos, end_of_sym+1)))));
+      return token_iter(str, end_of_sym + 1, add_list_item(token_list, cons(make_char('S'), make_str((*str).substring(cur_pos, end_of_sym+1)))));
    } 
+// int token_iter(String *str, unsigned int cur_pos, int token_list) {
 
    Serial.println("Error in tokenizer. Illegal character encountered.");
    return 0;

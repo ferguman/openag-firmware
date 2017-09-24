@@ -1,8 +1,11 @@
 #include "Arduino.h"
 #include <test.h>
 
-//Provde storage and accessor functions for creating and storing types: integers (I), symbols (S),
-// strings (X), etc.
+//Provde storage and accessor functions for creating and storing types:
+// character (C),
+// integers (I),
+// floats (F),
+// strings (X).
 //Note: Object pointers run from 10000 to 10100 in order to make them distinguishable from 
 //      Pair pointers which run from 1 to 100.
 
