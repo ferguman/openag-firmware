@@ -23,7 +23,12 @@ int test_func_args (int i) {
 //
 typedef int (*function_ptr)(int i);
 
-const function_ptr fp_array[] PROGMEM = {
+// This does not work -> const function_ptr fp_array[] = PROGMEM {
+// If the above declaration is used then i can't use
+// return (*(fp_array[fi])) (args); to call the function. I can use
+// return (*(fp_array[2])) (args); to call functions.
+// 
+const function_ptr fp_array[] = {
    &apply_error, 
    &test_func_args,
    &run_tests};
@@ -53,26 +58,11 @@ int find_built_in_function(int function_name) {
    return function_index;
 }
 
-int call_built_in_function(int func_index, int func_args) {
-
-   if (func_index == 2) { return run_tests(func_args); };
-
-   Serial.println("Error: Unknown built-in function.");
-   return 0;
-}
-
 int apply(int op, int args, int env) { 
 
    int fi = find_built_in_function(op) + 0;
 
    if (fi) {
-       Serial.print("fi = "); Serial.println(fi);
-
-       return call_built_in_function(fi, args);
-
-       // could not get this stuff to work with fi as the array pointer. it works
-       // if the array pointer is hard coded as in the example below.
-       //return (*(fp_array[2])) (args);
        return (*(fp_array[fi])) (args);
    } 
 
