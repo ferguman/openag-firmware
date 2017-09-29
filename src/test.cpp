@@ -1,6 +1,7 @@
 #include "Arduino.h"
 #include <pair.h>
 #include <extract_symbol.h>
+#include <extract_num.h>
 #include <tokenize.h>
 #include <parse.h>
 #include <apply.h>
@@ -17,6 +18,12 @@ void print_pass_fail(boolean pass) {
       Serial.print("Fail ->");
    }
 }
+
+void assert_true(String test_name, boolean a) {
+   print_pass_fail(a);
+   print_test_data(test_name, true, a);
+}
+
 void assert_int_equals(String test_name, int a, int b) {
    print_pass_fail(a==b);
    print_test_data(test_name, a, b);
@@ -50,6 +57,7 @@ void assert_str_equals(String test_name, String a, String b) {
 int run_tests(int arg_list) {
    test_pair();
    test_extract_symbol();
+   test_extract_num();
    test_tokenize();
    test_parse();
    return 0;

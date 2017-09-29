@@ -5,6 +5,10 @@
 //New stuff
 #include <src.h>
 
+// Globals
+Am2315 am2315_1;
+Ds18b20 ds18b20_1(5);
+
 // These functions are defined in the Arduino.h and are the framework.
 void setup() {
   Serial.begin(9600);
@@ -114,10 +118,6 @@ void procMsg() {
    //Process message.;
    process_message(&message);
 
-   // Randome test stuff - pull out later.
-   ds18b20_1.update();
-   Serial.print("DS18b20: ");
-   Serial.println(ds18b20_1.get_temperature());
 
   // We've already used this message
   resetMessage();

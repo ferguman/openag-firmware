@@ -1,4 +1,6 @@
 #include "Arduino.h"
+#include <openag_module.h>
+#include <openag_ds18b20.h>
 #include <test.h>
 #include <types.h>
 #include <pair.h>
@@ -11,6 +13,18 @@ int apply_error(int i) {
 
 int test_func_args (int i) {
    return i;
+}
+   
+//  Take an air temperature reading.
+int air_temp(int args) {
+
+   extern Ds18b20 ds18b20_1;
+   ds18b20_1.update();
+
+   Serial.print("DS18b20: ");
+   Serial.println(ds18b20_1.get_temperature());
+
+   return 0;
 }
 
 // Creae native functions for:
@@ -30,13 +44,13 @@ typedef int (*function_ptr)(int i);
 // 
 const function_ptr fp_array[] = {
    &apply_error, 
-   &test_func_args,
+   &air_temp,
    &run_tests};
 
 const String fname_array[] PROGMEM = {
    "apply_error",
-   "function2",
-   "tests"};
+   "air_temp",
+   "unit_tests"};
 
 const int NBIF = 3;  //Set to size of fname_array.
 
