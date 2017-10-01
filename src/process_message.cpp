@@ -4,6 +4,8 @@
 #include <test.h>
 #include <interpret.h>
 #include <parse.h>
+#include <pair.h>
+#include <types.h>
 
 int process_message(String *input) {
 
@@ -14,13 +16,26 @@ int process_message(String *input) {
    //Tokenize the input. Returns a list of tokens.
    int token_list  = tokenize(input);
 
-   //Parse the token list. Returns a parse tree.
-   int parse_tree = parse(token_list);
+   if (is_pair(token_list)) {
+	
+      //Parse the token list. Returns a parse tree.
+      int parse_tree = parse(token_list);
 
-   //Intepret the parse tree. The result can be a list or 
-   //one of the built-in types.
-   int interpret_return = interpret(parse_tree);
+      if (is_pair(parse_tree)) {
 
-   Serial.println("OK");
-   return interpret_return;
+         //Intepret the parse tree. The result can be a list or 
+         //one of the built-in types.
+         int interpret_return = interpret(parse_tree);
+
+         if (is_pair(interpret_return)) {
+
+            print_result(interpret_return);
+            Serial.println("OK");
+         }
+      } 
+   }
+
+   clear_pairs();
+   clear_types();
+   return 0;
 }

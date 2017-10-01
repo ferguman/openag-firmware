@@ -18,6 +18,10 @@ const int PS_SZ = 300;
 int carValue[PS_SZ];
 int cdrValue[PS_SZ];
 
+void clear_pairs() {
+   pp = 0;
+}
+
 // Add an item to a list.  Add a new list pair if necessary.
 // Return the pair that the item was added to.
 //

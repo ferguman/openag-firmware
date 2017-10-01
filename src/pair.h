@@ -3,6 +3,7 @@
 
 // Meant to be public
 boolean is_pair(int pair);
+void clear_pairs();
 int add_list_item(int pair, int item);
 // int add_to_list(int lst, int val_to_add);
 int cons(int pair1, int pair2);

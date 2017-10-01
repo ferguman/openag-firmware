@@ -73,7 +73,7 @@ int token_iter(String *str, unsigned int cur_pos, int token_list) {
    //Check for number. 
    int num = extract_num(str, cur_pos);
    if (is_pair(num)) {
-      return token_iter(str, get_int(car(num)) + 1, add_list_item(token_list, cdr(num)));
+      return token_iter(str, get_int(car(num)), add_list_item(token_list, cdr(num)));
    }
 
    //Check for string.
@@ -93,4 +93,5 @@ void test_tokenize() {
    assert_char_equals(F("tokenize.cpp"), get_char(caadr(result)), 'S');
    assert_str_equals(F("tokenize.cpp"), get_str(cdr(cadr(result))), F("foobar"));
    assert_char_equals(F("tokenize.cpp"), get_char(caaddr(result)), ')');
+
 }

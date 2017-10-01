@@ -54,9 +54,13 @@ boolean is_sym_char(String *str, int char_pos) {
 }
 
 void test_extract_symbol() {
-   String test = "how";
-   String test2 = "(test";
+
+   String test = F("how");
+   String test2 = F("(test");
+   String test3 = F("?");
+
    assert_int_equals(F("extract_symbol.cpp"), extract_sym(&test, 1), 2);
    assert_int_equals(F("extract_symbol.cpp"), extract_sym(&test2, 0), 0);
    assert_int_equals(F("extract_symbol.cpp"), extract_sym_iter(&test, 3, 4), 0);
+   assert_int_equals(F("extract_symbol.cpp"), extract_sym(&test3, 0), 0);
 }
