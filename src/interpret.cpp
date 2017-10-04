@@ -15,6 +15,8 @@ int interpret(int input) {
    //Serial.println(am2315.readTemperature());
 
    if (is_pair(input)) {
+Serial.println("in interpret function.");
+
       return apply(car(input), 0, 0);
    }
 

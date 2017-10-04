@@ -117,41 +117,7 @@ void test_parse() {
    //assert_int_equals(F("parse.cpp"), 0, parse(test1));
 
    //Pass (foobar) to parse.
-   int test2 = parse(cons(cons(make_char('('),nil), cons(cons(make_char('S'), make_str("foobar")), cons(cons(make_char(')'), nil), nil))));
+   char symbol[7] = "foobar"; 
+   int test2 = parse(cons(cons(make_char('('),nil), cons(cons(make_char('S'), make_str(symbol)), cons(cons(make_char(')'), nil), nil))));
    assert_str_equals(F("parse.cpp"), F("foobar"), get_str(car(test2)));
 }
-
-/*   Examples
-#######
-((1 2) (3 4))
-
-n1
-add_nodes[(1 2) (3 4)), n1]
-N1->n2
-add_nodes[1 2) (3 4)), n2]
-N1-n2-1
-add_nodes[2) (3 4)), n2]
-N1-n2-1,2
-add_nodes[) (3 4)), n2]
-N1-n2-1,2
-add_nodes[(3 4)), n1]
-N1-n2-1,2
-  -n3
-add_nodes[3 4)), n3]
-N1-n2-1,2
-  -n3-3
-add_nodes[4)), n3]
-N1-n2-1,2
-  -n3-3,4
-add_nodes[)), n3]
-Add_nodes[), n1] -> returns n1
-
-
-
-####################
-(Bar)
-N1
-add_nodes[bar), n1]
-N1->bar
-add_nodes[), n1] -> returns n1
-*/

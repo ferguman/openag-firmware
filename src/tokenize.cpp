@@ -66,8 +66,21 @@ int token_iter(String *str, unsigned int cur_pos, int token_list) {
    //Check for symbol. 
    int end_of_sym = extract_sym(str, cur_pos);
    if (end_of_sym != 0) { 
-      return token_iter(str, end_of_sym + 1, add_list_item(token_list, cons(make_char('S'), 
-                        make_str((*str).substring(cur_pos, end_of_sym+1)))));
+
+      if(end_of_sym - cur_pos + 1 <= 30) {
+
+         char symbol[31]; 
+
+         for(int i=cur_pos; i<=end_of_sym; i++) {
+            symbol[i-cur_pos] = str->charAt(i);
+         }
+         symbol[end_of_sym - cur_pos + 2] = 0;
+      
+         return token_iter(str, end_of_sym + 1, add_list_item(token_list, cons(make_char('S'), 
+                        make_str(symbol))));
+      } else {
+         Serial.println("Error in tokenizer. Symbols may not be longer than 30 characters.");
+      }
    } 
    
    //Check for number. 
@@ -88,10 +101,11 @@ void test_tokenize() {
    String test1 = F("(foobar)");
    int result = tokenize(&test1);
 
-   assert_int_not_equals(F("tokenize.cpp"), result, 0);
-   assert_char_equals(F("tokenize.cpp"), get_char(caar(result)), '(');
+   assert_int_not_equals(F("tokenize.cpp"), 0, result);
+   assert_char_equals(F("tokenize.cpp"), '(', get_char(caar(result)));
    assert_char_equals(F("tokenize.cpp"), get_char(caadr(result)), 'S');
-   assert_str_equals(F("tokenize.cpp"), get_str(cdr(cadr(result))), F("foobar"));
-   assert_char_equals(F("tokenize.cpp"), get_char(caaddr(result)), ')');
+   char test2[] = "foobar";
+   assert_c_str_equals(F("tokenize.cpp"), test2, get_str(cdr(cadr(result))));
+   assert_char_equals(F("tokenize.cpp"), ')', get_char(caaddr(result)));
 
 }

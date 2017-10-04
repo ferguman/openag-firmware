@@ -1,6 +1,9 @@
 #include "Arduino.h"
 #include <test.h>
 
+//TODO - Need to refactor each make_ function and make sure you check for buffer overflow
+//       while building the types.
+
 //Provde storage and accessor functions for creating and storing types:
 // character (C),
 // integers (I),
@@ -15,8 +18,6 @@ const int TS_OFFSET = 10000;
 const int TS_SZ = 1000;
 
 int op = 0;
-//char obj_type[TS_SZ];
-//String obj_store[TS_SZ];
 char obj_store[TS_SZ];
 
 void clear_types() {
@@ -37,17 +38,16 @@ int make_char(char c) {
       return 0; //Error
    } else {
       op++;
-      //obj_type[op] = 'C';
       obj_store[op] = 'C';
       op++;
       obj_store[op] = c;
-      return op + 10000;
+      return op + TS_OFFSET - 1;
    }
 }
 
 char get_char(int obj_ptr) {
 
-   int ptr = obj_ptr - 10000;
+   int ptr = obj_ptr - TS_OFFSET;
 
    if (ptr <= 0 || ptr >=TS_SZ) {
       return 0;   //error
@@ -75,54 +75,75 @@ int make_int(int a) {
 
    op++;
    obj_store[op] = 'I';
-   char int_a[7];
-   itoa(a, int_a, 10);
-   for (int i=0; i<7; i++) {
-      op++;
-      obj_store[op] = int_a[i];
-   }
-   // It's redundant but null terminate the string.
-   obj_store[6] = 0;
-   return op + 10000;
+   int int_ptr = op;
+   itoa(a, &obj_store[op+1], 10);
+   op = op + 7;
+   return int_ptr + TS_OFFSET;
 }
 
 int get_int(int obj_ptr) {
 
-   int ptr = obj_ptr - 10000;
+   int ptr = obj_ptr - TS_OFFSET;
 
    if (ptr <= 0 || ptr >=TS_SZ) {
-      return 0;   //error
+      return 0;
    } else {
       if (obj_store[ptr] != 'I') {
-         return 0;   //error
+         return 0;
       } else {
-         return atoi(obj_store + ptr + 1) ;
+         return atoi(&obj_store[ptr + 1]) ;
      }
    }
 }
 
-int make_str(char * str) {
+int make_str(char *str) {
+
    if (op < 0 || op >= TS_SZ) {
-      return 0; //Error
+      Serial.println(F("types.cpp. Type buffer overflow in make_str()"));
+      return 0; 
    } else {
+
       op++;
       obj_store[op] = 'X';
-      strcpy(str, obj_store + 1);
-      op = op + strlen(str) + 1;
-      return op + 10000;
+      int str_ptr = op;
+      int input_str_ptr = 0;
+
+      while ((op < TS_SZ) && (str[input_str_ptr])) {
+         op++;
+         if (op < TS_SZ) {
+            obj_store[op] = str[input_str_ptr];
+            input_str_ptr++;
+         } else {
+            Serial.println(F("types.cpp. Type buffer overflow in make_str()"));
+            op = str_ptr - 1;
+            return 0;
+         }
+      }      
+
+     // Add null pointer to end of the string.
+     if (op < TS_SZ) {
+        op++;
+        obj_store[op] = 0;
+     } else {
+        Serial.println(F("types.cpp. Type buffer overflow in make_str()"));
+        op = str_ptr - 1;
+        return 0;
+     }
+
+      return str_ptr + TS_OFFSET;
    }
 }
 
-String get_str(int obj_ptr) {
+char *get_str(int obj_ptr) {
 
-   int ptr = obj_ptr - 10000;
+   int ptr = obj_ptr - TS_OFFSET;
 
    if (ptr <= 0 || ptr >=TS_SZ) {
-      return "";   //error
+      return 0;   //error
       Serial.println(F("Error in types.cpp: Not a string."));
    } else {
       if (obj_store[ptr] != 'X') {
-         return "";   //error
+         return 0;   //error
       } else {
          return obj_store + ptr + 1;  
      }
@@ -133,9 +154,14 @@ void print_result(int ptr) {
    Serial.println(F("print_result is not implemented."));
 }
 
-int test_types() {
+void test_types() {
 
-   return 0;
+   assert_int_equals(F("types.cpp"), -3069, get_int(make_int(-3069)));
+   assert_int_equals(F("types.cpp"), 3456, get_int(make_int(3456)));
+
+   assert_char_equals(F("types.cpp"), 'U', get_char(make_char('U')));
+
+   char test[] = "foobar";
+   assert_c_str_equals(F("types.cpp"), test, get_str(make_str(test)));
 
 }
-

@@ -17,7 +17,7 @@ int extract_num_iter(String *str, int cur_int, unsigned int start_pos, unsigned 
 //
 int extract_num(String *str, unsigned int cur_pos) {
 
-   // Look for a plus or  minus sign at the start of the number.
+   // Look for a negative sign at the start of the number.
    // Is the character a negative sign = ASCII 45
    if (str->charAt(cur_pos) == 45) {
       if ((cur_pos+1 < str->length()) && is_digit(str->charAt(cur_pos+1))) {
@@ -25,14 +25,19 @@ int extract_num(String *str, unsigned int cur_pos) {
       } else {
          return 0;
       }
-   } else {
-      // Is the character a plus sign = ASCII 43
-      if (str->charAt(cur_pos) == 43) {
-         return extract_num_iter(str, 0, cur_pos, cur_pos+1);
-      } else {
-         return extract_num_iter(str, 0, cur_pos, cur_pos);
-      }
+   } 
+
+   // Is the character a plus sign = ASCII 43
+   if (str->charAt(cur_pos) == 43) {
+      return extract_num_iter(str, 0, cur_pos, cur_pos+1);
    }
+
+   // Is the first character a digit
+   if (is_digit(str->charAt(cur_pos))) {
+      return extract_num_iter(str, 0, cur_pos, cur_pos);
+   }
+
+   return 0;
 }
 
 // TODO: Add a base parameter so that the system can process binary, octal, and hex numbers in
