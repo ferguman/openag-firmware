@@ -16,6 +16,7 @@
 //     crash the system.
 const int TS_OFFSET = 10000;
 const int TS_SZ = 1000;
+const int TS_MAX_INDEX = TS_SZ - 1;
 
 int op = 0;
 char obj_store[TS_SZ];
@@ -98,7 +99,7 @@ int get_int(int obj_ptr) {
 
 int make_str(char *str) {
 
-   if (op < 0 || op >= TS_SZ) {
+   if (op < 0 || op >= TS_MAX_INDEX) {
       Serial.println(F("types.cpp. Type buffer overflow in make_str()"));
       return 0; 
    } else {
@@ -108,9 +109,10 @@ int make_str(char *str) {
       int str_ptr = op;
       int input_str_ptr = 0;
 
-      while ((op < TS_SZ) && (str[input_str_ptr])) {
-         op++;
-         if (op < TS_SZ) {
+      while (str[input_str_ptr]) {
+         if (op < TS_MAX_INDEX) {
+            op++;
+//Serial.print("Putting ASCII "); Serial.print((int) str[input_str_ptr]); Serial.println(" into string.");
             obj_store[op] = str[input_str_ptr];
             input_str_ptr++;
          } else {
@@ -121,16 +123,15 @@ int make_str(char *str) {
       }      
 
      // Add null pointer to end of the string.
-     if (op < TS_SZ) {
+     if (op < TS_MAX_INDEX) {
         op++;
         obj_store[op] = 0;
+        return str_ptr + TS_OFFSET;
      } else {
         Serial.println(F("types.cpp. Type buffer overflow in make_str()"));
         op = str_ptr - 1;
         return 0;
      }
-
-      return str_ptr + TS_OFFSET;
    }
 }
 

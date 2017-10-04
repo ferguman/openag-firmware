@@ -14,24 +14,22 @@ int process_message(String *input) {
    // the backspaced characters.
 
    //Tokenize the input. Returns a list of tokens.
-Serial.println(*input);
+
+//int foobar = run_tests(0);
 
    int token_list  = tokenize(input);
-Serial.println(token_list);
+
    if (is_pair(token_list)) {
-Serial.println("in parse area.");
 	
       //Parse the token list. Returns a parse tree.
       int parse_tree = parse(token_list);
 
       if (is_pair(parse_tree)) {
-Serial.println("in interpret area.");
          //Intepret the parse tree. The result can be a list or 
          //one of the built-in types.
          int interpret_return = interpret(parse_tree);
 
          if (is_pair(interpret_return)) {
-Serial.println("interpret over.");
             print_result(interpret_return);
             Serial.println("OK");
          }

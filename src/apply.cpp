@@ -47,7 +47,6 @@ const function_ptr fp_array[] = {
    &air_temp,
    &run_tests};
 
-//const String fname_array[] PROGMEM = {
 const char *fname_array[3] = {
    "apply_error",
    "air_temp",
@@ -59,16 +58,14 @@ int find_built_in_function(int function_name) {
 
    int function_index = 0;
 
-   //String fn = get_str(function_name); 
    char *fn = get_str(function_name); 
+   Serial.print("function: "); Serial.println(*fn);
    if (!fn){
       return 0;
    }
    
    for (int i = 1; i < NBIF; i++) {
       //if (fn  == fname_array[i]) {
-Serial.println(fn);
-Serial.println(fname_array[i]);
       if (strcmp(fn, fname_array[i]) == 0) {
          function_index = i;
       }

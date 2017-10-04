@@ -24,9 +24,15 @@ int tokenize(String *str) {
       return 0;
    }
 
+Serial.print("Char Code: "); Serial.println((int)str->charAt(0));
+
+   // int char_ptr = cons(make_int(0), make_char(0));
+   // if (next_char_is(str, char_ptr, '('))) {
    if (str->charAt(0) == '(') {
        //Start a token list with a parenthesis.
+       //int tok_list = cons(cons(make_char(get_next_char(str, char_ptr)), nil),nil);
        int tok_list = cons(cons(make_char('('), nil),nil);
+       //if (token_iter(str, char_ptr, tok_list) != 0) {
        if (token_iter(str, 1, tok_list) != 0) {
           return tok_list;
        } else {
@@ -42,14 +48,23 @@ int token_iter(String *str, unsigned int cur_pos, int token_list) {
 
    int next_pos = 0;
 
-   //Check for end of the list or a null token_list or a new line character.
+Serial.print("Char Code: "); Serial.println((int)str->charAt(cur_pos));
+Serial.print("Next Char Code: "); Serial.println((int)str->charAt(cur_pos+1));
+
+
+   //Check for end of the list or a null token_list.
    if (cur_pos >= str->length() || token_list == 0 ) {
       return token_list;
    }
    
    //Stop if a carriage return or line feed is encountered in the input string.
-   if ((str->charAt(cur_pos) == 13) || (str->charAt(cur_pos) == 10)) {
+   if (((int)str->charAt(cur_pos) == 13) || ((int)str->charAt(cur_pos) == 10)) {
       return token_list;
+   }
+
+   //Check for backspaces and skip over the deleted characters.
+   if ((int)str->charAt(cur_pos+1) == 8) {
+       return token_iter(str, cur_pos+2, token_list);
    }
 
    //Throw away space characters.
@@ -74,7 +89,9 @@ int token_iter(String *str, unsigned int cur_pos, int token_list) {
          for(int i=cur_pos; i<=end_of_sym; i++) {
             symbol[i-cur_pos] = str->charAt(i);
          }
-         symbol[end_of_sym - cur_pos + 2] = 0;
+
+         //null terminate the string.
+         symbol[end_of_sym - cur_pos + 1] = 0;
       
          return token_iter(str, end_of_sym + 1, add_list_item(token_list, cons(make_char('S'), 
                         make_str(symbol))));
@@ -92,7 +109,8 @@ int token_iter(String *str, unsigned int cur_pos, int token_list) {
    //Check for string.
    //TODO: Write string extractor.
 
-   Serial.println("Error in tokenizer. Illegal character encountered.");
+   Serial.print("Error in tokenizer. Illegal character encountered. ASCII: ");
+   Serial.println((int) str->charAt(cur_pos));
    return 0;
 }
 
@@ -108,4 +126,9 @@ void test_tokenize() {
    assert_c_str_equals(F("tokenize.cpp"), test2, get_str(cdr(cadr(result))));
    assert_char_equals(F("tokenize.cpp"), ')', get_char(caaddr(result)));
 
+   String test3 = F("(ab\x8)");
+   //char test3[5] = "(ab)";
+   //char test3[2] = 8;         //ASCII code for back space
+   char test4[4] = "(a)";
+   assert_c_str_equals(F("tokenize.cpp"), test4, get_str(cdr(cadr(tokenize(&test3)))));
 }
