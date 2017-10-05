@@ -6,6 +6,9 @@
 #include <extract_symbol.h>
 #include <extract_num.h>
 
+// Internal routines
+boolean next_char_is(String *str, int char_ptr, char compare_char);
+
 // Convert the input message string into a list of tokens. 
 // Tokens are constructed as pairs. The car of the token contains the
 // token type (as a single character) and the cdr contains a pointer to a data type (e.g. integer, 
@@ -18,21 +21,16 @@
 // X -> Strings are generated when strings (deliminated by ") are encountered.
 // S -> A symbol is generated when none of the above token types apply and the input is legal.
 //
+
 int tokenize(String *str) {
 
    if (str->length() == 0) {
       return 0;
    }
 
-Serial.print("Char Code: "); Serial.println((int)str->charAt(0));
-
-   // int char_ptr = cons(make_int(0), make_char(0));
-   // if (next_char_is(str, char_ptr, '('))) {
    if (str->charAt(0) == '(') {
        //Start a token list with a parenthesis.
-       //int tok_list = cons(cons(make_char(get_next_char(str, char_ptr)), nil),nil);
        int tok_list = cons(cons(make_char('('), nil),nil);
-       //if (token_iter(str, char_ptr, tok_list) != 0) {
        if (token_iter(str, 1, tok_list) != 0) {
           return tok_list;
        } else {
@@ -48,10 +46,6 @@ int token_iter(String *str, unsigned int cur_pos, int token_list) {
 
    int next_pos = 0;
 
-Serial.print("Char Code: "); Serial.println((int)str->charAt(cur_pos));
-Serial.print("Next Char Code: "); Serial.println((int)str->charAt(cur_pos+1));
-
-
    //Check for end of the list or a null token_list.
    if (cur_pos >= str->length() || token_list == 0 ) {
       return token_list;
@@ -62,10 +56,6 @@ Serial.print("Next Char Code: "); Serial.println((int)str->charAt(cur_pos+1));
       return token_list;
    }
 
-   //Check for backspaces and skip over the deleted characters.
-   if ((int)str->charAt(cur_pos+1) == 8) {
-       return token_iter(str, cur_pos+2, token_list);
-   }
 
    //Throw away space characters.
    if (str->charAt(cur_pos) == ' ' || str->charAt(cur_pos) == '\t') {
@@ -126,9 +116,4 @@ void test_tokenize() {
    assert_c_str_equals(F("tokenize.cpp"), test2, get_str(cdr(cadr(result))));
    assert_char_equals(F("tokenize.cpp"), ')', get_char(caaddr(result)));
 
-   String test3 = F("(ab\x8)");
-   //char test3[5] = "(ab)";
-   //char test3[2] = 8;         //ASCII code for back space
-   char test4[4] = "(a)";
-   assert_c_str_equals(F("tokenize.cpp"), test4, get_str(cdr(cadr(tokenize(&test3)))));
 }

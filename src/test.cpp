@@ -6,6 +6,7 @@
 #include <parse.h>
 #include <apply.h>
 #include <types.h>
+#include <process_message.h>
 
 void print_test_data(String test_name, int a, int b) {
    Serial.print(test_name); Serial.print(F(":a=")); Serial.print(a);
@@ -98,6 +99,7 @@ int run_tests(int arg_list) {
    test_extract_num();
    test_tokenize();
    test_parse();
+   test_process_message(); 
 
    return 0;
 }

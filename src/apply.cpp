@@ -59,7 +59,7 @@ int find_built_in_function(int function_name) {
    int function_index = 0;
 
    char *fn = get_str(function_name); 
-   Serial.print("function: "); Serial.println(*fn);
+
    if (!fn){
       return 0;
    }
@@ -75,8 +75,6 @@ int find_built_in_function(int function_name) {
 }
 
 int apply(int op, int args, int env) { 
-
-Serial.println("in apply");
 
    int fi = find_built_in_function(op) + 0;
 
