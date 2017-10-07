@@ -38,6 +38,7 @@ int parse(int token_list) {
     // All list must start with a '('.
     if (get_char(caar(token_list)) == '(') {
        int cur_list = cons(nil, nil);
+       //TODO - I don't think the next line is needed.
        int parsed_list = cons(cur_list, nil);
        if (parsed_list  == parse_iter(cons(cur_list, parsed_list), cur_list, cdr(token_list))) {
           return cur_list;

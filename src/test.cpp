@@ -101,5 +101,7 @@ int run_tests(int arg_list) {
    test_parse();
    test_process_message(); 
 
-   return 0;
+   char result[] = "End of Tests";
+   return cons(make_str(result), nil);
+
 }

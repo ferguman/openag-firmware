@@ -7,8 +7,6 @@
 #include <pair.h>
 #include <types.h>
 
-//const int ESML = 65;  //Includes terminating null character.
-
 boolean remove_backspaces(String *input_str, unsigned int input_cur_pos, unsigned int output_cur_pos) {
 
    // Stop when you reach the end of the input string.
@@ -30,47 +28,10 @@ boolean remove_backspaces(String *input_str, unsigned int input_cur_pos, unsigne
    return remove_backspaces(input_str, input_cur_pos + 1, output_cur_pos + 1);
 }
 
-/*
-boolean remove_backspaces_v2(String *input_str, char *output_str, unsigned int input_cur_pos, unsigned int output_cur_pos) {
-
-   // Stop when you reach the end of the input string.
-   if (input_cur_pos >= input_str->length()) {
-      // set end of string marker for output string.
-      if (output_cur_pos < ESML) {
-         output_str[output_cur_pos] = 0;
-         return true;
-      } else {
-         Serial.println("remove_backspaces: output string overflow");
-         output_str[ESML-1] = 0;
-         return false;
-      }
-   }
-
-   // Implement character removal when backspace is encountered.
-   if (input_str->charAt(input_cur_pos) == 8) {
-      if (output_cur_pos > 0) {
-         return remove_backspaces(input_str, output_str, input_cur_pos + 1, output_cur_pos - 1);
-      } else {
-         remove_backspaces(input_str, output_str, input_cur_pos + 1, output_cur_pos);
-      }
-   } 
-
-   if (output_cur_pos < ESML) {
-      output_str[output_cur_pos] = input_str->charAt(input_cur_pos);
-      return remove_backspaces(input_str, output_str, input_cur_pos + 1, output_cur_pos + 1);
-   } else {
-      Serial.println("remove_backspaces: output string overflow");
-      return false;
-   }
-}
-*/
-
 int process_message(String *input) {
 //int foobar = run_tests(0);
 
    //Scan the input and removed backspaced characters
-   //char eval_str[ESML];
-   //if (remove_backspaces_v2(input, eval_str, 0, 0)) {
    
    if (remove_backspaces(input, 0, 0)) {
 
@@ -89,14 +50,18 @@ int process_message(String *input) {
 
             if (is_pair(interpret_return)) {
                print_result(interpret_return);
-               Serial.println("OK");
-            }
+            } 
          } 
       }
    }
 
+
+   print_type_stats(); print_pair_stats();
    clear_pairs();
    clear_types();
+
+   Serial.println("OK");
+
    return 0;
 }
 

@@ -5,12 +5,12 @@
 //New stuff
 #include <src.h>
 
-// Globals
 Am2315 am2315_1;
 Ds18b20 ds18b20_1(5);
 
 // These functions are defined in the Arduino.h and are the framework.
 void setup() {
+
   Serial.begin(9600);
   Serial.println("Open Ag Serial Monitor Starting.");
   while(!Serial){

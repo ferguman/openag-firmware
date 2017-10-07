@@ -155,6 +155,12 @@ void print_result(int ptr) {
    Serial.println(F("print_result is not implemented."));
 }
 
+void print_type_stats() {
+
+   Serial.print("The Type system used "); Serial.print(op); Serial.print(" types out of a maximum ");
+   Serial.print(TS_SZ); Serial.println(" possible types.");
+}
+
 void test_types() {
 
    assert_int_equals(F("types.cpp"), -3069, get_int(make_int(-3069)));

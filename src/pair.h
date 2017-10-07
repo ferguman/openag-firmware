@@ -21,6 +21,7 @@ int caddr(int pairIndex);
 int caadr(int pairIndex);
 int caaddr(int pairIndex);
 int car(int pairIndex);
+void print_pair_stats();
 
 // Meant to be private
 void set_cdr(int lst, int list_tail);

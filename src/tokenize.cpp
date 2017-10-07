@@ -44,8 +44,6 @@ int tokenize(String *str) {
 
 int token_iter(String *str, unsigned int cur_pos, int token_list) {
 
-   int next_pos = 0;
-
    //Check for end of the list or a null token_list.
    if (cur_pos >= str->length() || token_list == 0 ) {
       return token_list;
@@ -59,8 +57,7 @@ int token_iter(String *str, unsigned int cur_pos, int token_list) {
 
    //Throw away space characters.
    if (str->charAt(cur_pos) == ' ' || str->charAt(cur_pos) == '\t') {
-       next_pos = cur_pos++;
-       return token_iter(str, next_pos, token_list);
+       return token_iter(str, cur_pos + 1, token_list);
    }
 
    //Check for parenthesis or ' (i.e sybmol) characters.
@@ -83,8 +80,7 @@ int token_iter(String *str, unsigned int cur_pos, int token_list) {
          //null terminate the string.
          symbol[end_of_sym - cur_pos + 1] = 0;
       
-         return token_iter(str, end_of_sym + 1, add_list_item(token_list, cons(make_char('S'), 
-                        make_str(symbol))));
+         return token_iter(str, end_of_sym + 1, add_list_item(token_list, cons(make_char('S'), make_str(symbol))));
       } else {
          Serial.println("Error in tokenizer. Symbols may not be longer than 30 characters.");
       }

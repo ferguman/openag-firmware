@@ -13,5 +13,6 @@ int get_int(int obj_ptr);
 const int nil = 0;
 void print_result(int ptr); 
 void test_types();
+void print_type_stats();
 
 #endif

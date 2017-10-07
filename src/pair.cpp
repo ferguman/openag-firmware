@@ -120,6 +120,13 @@ void test_cons() {
    assert_int_equals(F("pair.cpp"), cdrValue[1], 3); 
 }
 
+void print_pair_stats() {
+
+   Serial.print("The Pair system used "); Serial.print(pp); Serial.print(" out of a maximum of ");
+   Serial.print(PS_SZ); Serial.println(" possible pairs.");
+
+}
+
 void test_pair() {
 
    test_cons();
