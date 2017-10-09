@@ -97,6 +97,46 @@ int get_int(int obj_ptr) {
    }
 }
 
+int make_float(int numer, int denom) {
+
+   if (op < 0 || op > TS_SZ - 17) {
+      return 0; //Error
+   }
+
+   int float_ptr = op + 1;
+   obj_store[float_ptr] = 'F';
+
+   int numer_ptr = make_int(numer);
+   int denom_ptr = make_int(denom);
+
+   if (numer_ptr + 8 != denom_ptr) {
+      Serial.println(F("types.cpp: Error creating float.  Non-consecutive type pointers issued."));
+      return 0;
+   }
+
+   return float_ptr + TS_OFFSET;
+
+}
+
+float get_float(int obj_ptr) {
+
+   int ptr = obj_ptr - TS_OFFSET;
+
+   if (ptr <= 0 || ptr > TS_SZ - 17) {
+      return 0;
+   }
+
+   if (obj_store[ptr] != 'F') {
+      return 0;
+   } else {
+
+      int numer = get_int(ptr + 1);
+      int denom = get_int(ptr + 9); 
+
+      return (float) (numer/denom);
+   }
+}
+
 int make_str(char *str) {
 
    if (op < 0 || op >= TS_MAX_INDEX) {
@@ -163,12 +203,23 @@ void print_type_stats() {
 
 void test_types() {
 
-   assert_int_equals(F("types.cpp"), -3069, get_int(make_int(-3069)));
-   assert_int_equals(F("types.cpp"), 3456, get_int(make_int(3456)));
+   String tn = F("types.cpp");
 
-   assert_char_equals(F("types.cpp"), 'U', get_char(make_char('U')));
+   assert_int_equals(tn, -3069, get_int(make_int(-3069)));
+   assert_int_equals(tn, 3456, get_int(make_int(3456)));
 
-   char test[] = "foobar";
-   assert_c_str_equals(F("types.cpp"), test, get_str(make_str(test)));
+   int test = make_float(45, 175);
+   assert_char_equals(tn, 'F', obj_store[test-TS_OFFSET]);
+   assert_char_equals(tn, 'I', obj_store[test-TS_OFFSET]+1);
+   assert_char_equals(tn, 'I', obj_store[test-TS_OFFSET]+9);
+   assert_int_equals(tn, 45, get_int(test+1));
+   assert_int_equals(tn, 175, get_int(test+9));
+
+   assert_float_equals(tn, (float) 3/4, get_float(make_float(3, 4)));
+
+   assert_char_equals(tn, 'U', get_char(make_char('U')));
+
+   char test2[] = "foobar";
+   assert_c_str_equals(tn, test2, get_str(make_str(test2)));
 
 }

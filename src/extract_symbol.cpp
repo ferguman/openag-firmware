@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include <extract_symbol.h>
+#include <extract_num.h>
 #include <types.h>
 #include <pair.h>
 #include <test.h>
@@ -21,7 +22,8 @@ int extract_sym_iter(String *str, unsigned int start_pos, unsigned int cur_pos) 
          return 0;
       }
    } else {
-      if (is_sym_char(str, cur_pos)) {
+      // Don't accept numbers as the first character of symbols.
+      if (is_sym_char(str, cur_pos) || ((cur_pos > start_pos) && is_digit(str->charAt(cur_pos)))) {
          return extract_sym_iter(str, start_pos, cur_pos + 1);
       } else {
          if (start_pos < cur_pos) {

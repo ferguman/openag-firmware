@@ -36,6 +36,11 @@ void assert_int_not_equals(String test_name, int a, int b) {
    print_test_data(test_name, a, b);
 }
 
+void assert_float_equals(String test_name, float a, float b) {
+   print_pass_fail(a==b);
+   print_test_data(test_name, a, b);
+}
+
 void print_char_test_data(String test_name, char a, char b) {
    Serial.print(test_name); Serial.print(F(":a=")); Serial.print(a);
    Serial.print(F(",b=")); Serial.println(b);

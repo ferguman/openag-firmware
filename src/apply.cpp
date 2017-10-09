@@ -7,6 +7,9 @@
 
 int apply(int op, int args, int env) { 
 
+Serial.print("args is a pair? ");Serial.println(is_pair(args));
+Serial.print("args value:"); Serial.println(get_str(car(args)));
+
    int fi = find_built_in_function(op) + 0;
 
    if (fi) {

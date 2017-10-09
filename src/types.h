@@ -5,6 +5,8 @@
 boolean is_type(int type_ptr);
 void clear_types();
 int make_int(int a);
+int make_float(int numer, int denom);
+float get_float(int ptr);
 int make_char(char c);
 char get_char(int obj_ptr);
 int make_str(char *x);

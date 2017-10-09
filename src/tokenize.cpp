@@ -102,14 +102,24 @@ int token_iter(String *str, unsigned int cur_pos, int token_list) {
 
 void test_tokenize() {
 
+   String tn = F("tokenize.cpp");
+
    String test1 = F("(foobar)");
    int result = tokenize(&test1);
 
-   assert_int_not_equals(F("tokenize.cpp"), 0, result);
-   assert_char_equals(F("tokenize.cpp"), '(', get_char(caar(result)));
-   assert_char_equals(F("tokenize.cpp"), get_char(caadr(result)), 'S');
+   assert_int_not_equals(tn, 0, result);
+   assert_char_equals(tn, '(', get_char(caar(result)));
+   assert_char_equals(tn, get_char(caadr(result)), 'S');
    char test2[] = "foobar";
-   assert_c_str_equals(F("tokenize.cpp"), test2, get_str(cdr(cadr(result))));
-   assert_char_equals(F("tokenize.cpp"), ')', get_char(caaddr(result)));
+   assert_c_str_equals(tn, test2, get_str(cdr(cadr(result))));
+   assert_char_equals(tn, ')', get_char(caaddr(result)));
+
+   String test3 = F("(foobar2 argument)");
+   result = tokenize(&test3);
+   char test4[] = "foobar2";
+   assert_c_str_equals(tn, test4, get_str(cdr(cadr(result))));
+   assert_char_equals(tn, 'S', get_char(caaddr(result)));
+   char test5[] = "argument"; 
+   assert_c_str_equals(tn, test5, get_str(cdr(caddr(result))));
 
 }

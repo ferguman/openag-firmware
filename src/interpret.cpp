@@ -34,11 +34,16 @@ int list_of_values(int exps, int env) {
 //
 int interpret(int exp) {
 
-   if (self_evaluating(exp)) {
-      return exp;
-   }
+   if (self_evaluating(exp)) { return exp; };
+
+   // lookup_varible should invoke the built in function lookup code and rture a pair
+   // pair -> cons('M' or 'B', Integer) M-> module function, B-> built in fucniotn 
+   // Integer -> index of function.
+
+   //if (is_variable) { return lookup_variable(exp); };
 
    if (is_pair(exp)) {
+      // TODO: redo apply to use the above function pair struction to invoke the proper function.
       return apply(get_operator(exp), list_of_values(get_operands(exp),0), 0);
    } else {
       Serial.println("interpret.cpp: Unkown input");

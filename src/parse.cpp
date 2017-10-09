@@ -16,7 +16,7 @@
 //
 // Every time the quote character is encountered a new list is started with the quote character
 // at its head. Then another new list is created and added to the tail of the quote character list.
-// Everytime a close parantheesis or token is added to the current list the parser
+// Every time a close parantheesis or token is added to the current list the parser
 // checks to see if the current list's parent list is a quote. If it is then the parser 
 // sets the cur list to be the list that contains the quote character.
 //
@@ -25,7 +25,7 @@
 // Parse creates an empty high level pair that is used to connect to the parsed list. This
 // allows the lower level routines to check that they don't attempt to pop a list off an empty
 // list stack. And yes a stack of lists is maintained to store higher level lists while lower
-// level list are being scanned.
+// level list are being scanned. This empty high level pair is not returned.
 //
 int parse(int token_list) {
 
@@ -37,9 +37,9 @@ int parse(int token_list) {
 
     // All list must start with a '('.
     if (get_char(caar(token_list)) == '(') {
-       int cur_list = cons(nil, nil);
-       //TODO - I don't think the next line is needed.
+       int cur_list = cons(nil, nil);  // Return this to the user after it is filled with content.
        int parsed_list = cons(cur_list, nil);
+       // Put an empty high level pair on the stack so that the parser can check for stack underflow.
        if (parsed_list  == parse_iter(cons(cur_list, parsed_list), cur_list, cdr(token_list))) {
           return cur_list;
        } else {
@@ -86,14 +86,14 @@ int parse_iter(int list_stack, int cur_list, int token_list) {
       }
    }
 
-   // Beginning of quote
-   if (get_char(caar(token_list)) == '\'') {
-      int nl = add_list_item(cur_list, cons(caar(token_list), nil));
+   // Beginning of quote or a symbol
+   if ((get_char(caar(token_list)) == '\'') || (get_char(caar(token_list)) == 'S')) {
+      int nl = add_list_item(cur_list, cons(car(token_list), nil));
       return parse_iter(cons(nl, list_stack), nl, cdr(token_list));
    }
 
-   // Add symbols, strings, floats and integers to the current list
-   if ((get_char(caar(token_list)) == 'S') || is_type(caar(token_list))) {
+   // Add strings, floats and integers to the current list
+   if (is_type(cdar(token_list))) {
       int nl = add_list_item(cur_list, cdar(token_list));
       // If the symbol is quoted then pop to the quotes parent list.
       if (get_char(car(list_stack)) == '\'')  {
