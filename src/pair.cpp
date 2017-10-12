@@ -56,7 +56,7 @@ int add_to_list(int lst, int val_to_add) {
 */
 
 boolean is_pair(int pair_index) {
-   if (pair_index <= 0 || pair_index >= 100) {
+   if (pair_index <= 0 || pair_index >= PS_SZ) {
       return false;
    } else {
       return true;

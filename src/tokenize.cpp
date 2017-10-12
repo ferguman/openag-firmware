@@ -10,15 +10,15 @@
 boolean next_char_is(String *str, int char_ptr, char compare_char);
 
 // Convert the input message string into a list of tokens. 
-// Tokens are constructed as pairs. The car of the token contains the
+// If the extracted token is an Integer, Float, or String type then it
+// is added to the list.
+// If the extracted token is a quote character, a parenthesis, or a Symbol then
+// it is added to the list as a pair.  The car of the pair contains the
 // token type (as a single character) and the cdr contains a pointer to a data type (e.g. integer, 
 // string, char) that is appropriate for the given token type.
 // The following token types are generated: 
 // ' -> The ' character serves as the quote character and is passed through as is.
 // ( or ) -> parantheses are passed through as is.
-// N -> Integers or Floats (e.g. 1001 or 1001.001 Numbers are generated when a number is 
-//         succesfully parsed from the input stream.
-// X -> Strings are generated when strings (deliminated by ") are encountered.
 // S -> A symbol is generated when none of the above token types apply and the input is legal.
 //
 
@@ -122,4 +122,10 @@ void test_tokenize() {
    char test5[] = "argument"; 
    assert_c_str_equals(tn, test5, get_str(cdr(caddr(result))));
 
+   String test6 = F("(foo_bar 125 56.32)");
+   result = tokenize(&test6);
+   char test7[] = "foo_bar";
+   assert_c_str_equals(tn, test7, get_str(cdr(cadr(result))));
+   assert_int_equals(tn, 125, get_int(caddr(result)));
+   assert_int_equals(tn, 5632, (int) (100 * get_float(car(cdddr(result)))));
 }

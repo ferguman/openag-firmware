@@ -86,21 +86,27 @@ int parse_iter(int list_stack, int cur_list, int token_list) {
       }
    }
 
-   // Beginning of quote or a symbol
-   if ((get_char(caar(token_list)) == '\'') || (get_char(caar(token_list)) == 'S')) {
+   // Beginning of quote
+   if (get_char(caar(token_list)) == '\'') {
       int nl = add_list_item(cur_list, cons(car(token_list), nil));
       return parse_iter(cons(nl, list_stack), nl, cdr(token_list));
    }
-
-   // Add strings, floats and integers to the current list
-   if (is_type(cdar(token_list))) {
-      int nl = add_list_item(cur_list, cdar(token_list));
+   
+   // A symbol
+   if (get_char(caar(token_list)) == 'S') {
+      int nl = add_list_item(cur_list, car(token_list));
       // If the symbol is quoted then pop to the quotes parent list.
       if (get_char(car(list_stack)) == '\'')  {
          return parse_iter(cdr(list_stack), cdr(list_stack), cdr(token_list));
       } else {
          return parse_iter(list_stack, nl, cdr(token_list));
       }
+   }
+
+   // Add strings, floats and integers to the current list
+   if (is_type(car(token_list))) {
+      int nl = add_list_item(cur_list, car(token_list));
+      return parse_iter(list_stack, nl, cdr(token_list));
    }
        
    // Something is wrong.
@@ -111,14 +117,17 @@ int parse_iter(int list_stack, int cur_list, int token_list) {
 
 void test_parse() {
 
-   // Test parse()
-   // assert_int_equals(F("parse.cpp"), 0, parse(0));
-
-   // int test1 = cons(make_char('X'),nil);
-   //assert_int_equals(F("parse.cpp"), 0, parse(test1));
+   String tn = F("parse.cpp");
 
    //Pass (foobar) to parse.
    char symbol[7] = "foobar"; 
-   int test2 = parse(cons(cons(make_char('('),nil), cons(cons(make_char('S'), make_str(symbol)), cons(cons(make_char(')'), nil), nil))));
-   assert_str_equals(F("parse.cpp"), F("foobar"), get_str(car(test2)));
+   int test2 = parse(cons(cons(make_char('('),nil), 
+                          cons(cons(make_char('S'), make_str(symbol)), 
+                          cons(cons(make_char(')'), nil),nil))));
+
+   assert_int_equals(tn, 0, cdr(test2));
+ 
+   char test3[] = "foobar"; 
+   assert_char_equals(tn, 'S', get_char(caar(test2)));
+   assert_c_str_equals(tn, test3, get_str(cdar(test2)));
 }

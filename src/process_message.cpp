@@ -29,7 +29,8 @@ boolean remove_backspaces(String *input_str, unsigned int input_cur_pos, unsigne
 }
 
 int process_message(String *input) {
-//int foobar = run_tests(0);
+
+   //int foobar = run_tests(0);
 
    //Scan the input and removed backspaced characters
    
@@ -67,9 +68,11 @@ int process_message(String *input) {
 
 void test_process_message() {
 
+   String tn = F("process_message.cpp");
+
    String test1 = F("(ab\x8)");
    String test2 = "(a)";
-   assert_true(F("process_message.cpp"), remove_backspaces(&test1, 0, 0));
-   assert_str_equals(F("process_message.cpp"), test2, test1);
+   assert_true(tn, remove_backspaces(&test1, 0, 0));
+   assert_str_equals(tn, test2, test1);
 
 }

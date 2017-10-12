@@ -7,6 +7,8 @@
 #include <apply.h>
 #include <types.h>
 #include <process_message.h>
+#include <interpret.h>
+#include <built_in_functions.h>
 
 void print_test_data(String test_name, int a, int b) {
    Serial.print(test_name); Serial.print(F(":a=")); Serial.print(a);
@@ -102,9 +104,11 @@ int run_tests(int arg_list) {
    test_types();
    test_extract_symbol();
    test_extract_num();
+   test_process_message(); 
    test_tokenize();
    test_parse();
-   test_process_message(); 
+   test_interpret();
+   test_built_in_functions();
 
    char result[] = "End of Tests";
    return cons(make_str(result), nil);

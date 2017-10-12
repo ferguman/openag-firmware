@@ -9,10 +9,12 @@ int add_digit_to_num(int digit, int num);
 boolean is_digit(char ascii_char);
 int convert_ascii_to_digit(int ascii_char);
 int make_num_extract(int pos, int numer, int denom, boolean in_numerator);
-int extract_num_iter(String *str, int cur_int, unsigned int start_pos, unsigned int cur_pos, boolean in_numerator);
+int extract_num_iter(String *str, int cur_int, unsigned int start_pos, unsigned int cur_pos, 
+                     boolean in_numerator);
 
 // Return 0 if no number is found.
-// If the number is an integer then return cons(the end position of the number in the string, an integer type) 
+// If the number is an integer then return cons(One plus the end position of the number
+//  in the string, an integer type) 
 // If the number is a float then return cons(the end position of the number in the string, a float type) 
 //
 int extract_num(String *str, unsigned int cur_pos) {
@@ -21,7 +23,8 @@ int extract_num(String *str, unsigned int cur_pos) {
    // Is the character a negative sign = ASCII 45
    if (str->charAt(cur_pos) == 45) {
       if ((cur_pos+1 < str->length()) && is_digit(str->charAt(cur_pos+1))) {
-         return extract_num_iter(str, -1 * convert_ascii_to_digit(str->charAt(cur_pos+1)), cur_pos, cur_pos+2, true);
+         return extract_num_iter(str, -1 * convert_ascii_to_digit(str->charAt(cur_pos+1)), 
+                                 cur_pos, cur_pos+2, true);
       } else {
          return 0;
       }
@@ -48,7 +51,7 @@ int extract_num_iter(String *str, int cur_int, unsigned int start_pos, unsigned 
    //Beyond the last character of the input string. 
    if (cur_pos >= str->length()) {
       if (start_pos < cur_pos && start_pos < str->length()) {
-         return make_num_extract(cur_pos, cur_int, 0, in_numerator);
+         return make_num_extract(cur_pos, cur_int, 0, true);
       } else {
          return 0;
       }
@@ -66,8 +69,12 @@ int extract_num_iter(String *str, int cur_int, unsigned int start_pos, unsigned 
          Serial.println("Error in extract_num_iter: Couldn't extract fractional part of a number.");
          return 0;
       }
-   } else {
+   }
+
+   // Check for multiple decimal points - not allowed!
+   if (str->charAt(cur_pos) == 46 && !(in_numerator)) {
       Serial.println(F("Error in extract_num_iter: Mulitple decimal points detected."));
+      return 0;
    }
 
    // Check for digit
@@ -81,7 +88,8 @@ int extract_num_iter(String *str, int cur_int, unsigned int start_pos, unsigned 
    } 
 
    //No more digit characters
-   return make_num_extract(cur_pos, cur_int, 0, in_numerator);
+   //return make_num_extract(cur_pos, cur_int, 0, in_numerator);
+   return make_num_extract(cur_pos, cur_int, 0, true);
 }
 
 int add_digit_to_num(int digit, int num) {
@@ -98,9 +106,12 @@ int add_digit_to_num(int digit, int num) {
 //
 int make_num_extract(int pos, int numer, int denom, boolean in_numerator) {
 
+//Serial.print("make_num_extract: numer: "); Serial.println(numer);
+//Serial.print("make_num_extract: denom: "); Serial.println(denom);
+//Serial.print("make_num_extract: in_numer: "); Serial.println(in_numerator);
+
    if (in_numerator) {
       //Return an integer
-      //return cons(make_int(pos), cons(make_char('N'), cons(make_int(numer), cons(make_int(denom),nil))));
       return cons(make_int(pos), make_int(numer));
    } else {
       //Return a float
@@ -139,9 +150,9 @@ void test_extract_num() {
  
    assert_int_equals(tn, 3, convert_ascii_to_digit('3'));
 
-   int num = make_num_extract(99, 3, 4, false);
+   int num = make_num_extract(99, 49, 21, false);
    assert_int_equals(tn, 99, get_int(car(num)));
-   assert_float_equals(tn, 0.75, get_float(cdr(num)));
+   assert_int_equals(tn, 4921, (int) (100 * get_float(cdr(num))));
 
    assert_int_equals(tn, 75, add_digit_to_num(5, 7));
    assert_int_equals(tn, -8385, add_digit_to_num(5, -838));
@@ -154,7 +165,11 @@ void test_extract_num() {
    str = "-1234.7869";
    num = extract_num(&str, 0);
    assert_int_equals(tn, 10, get_int(car(num))); 
-   assert_float_equals(tn, (float) -1234/7869, get_float(cdr(num)));
+   assert_int_equals(tn, -12347, (int) (10 * get_float(cdr(num))));
+
+   num = make_num_extract(99, -1234, 7869, false);
+   assert_int_equals(tn, 99, get_int(car(num)));
+   assert_int_equals(tn, -12347, (int) (10 * get_float(cdr(num))));
 
    str = "?";
    assert_int_equals(tn, extract_num(&str, 0), 0); 

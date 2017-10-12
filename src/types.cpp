@@ -1,6 +1,9 @@
 #include "Arduino.h"
 #include <test.h>
 
+// function signatures
+float produce_float(int frac_part, int cur_numer,  int max_int_mag);
+
 //TODO - Need to refactor each make_ function and make sure you check for buffer overflow
 //       while building the types.
 
@@ -17,6 +20,7 @@
 const int TS_OFFSET = 10000;
 const int TS_SZ = 1000;
 const int TS_MAX_INDEX = TS_SZ - 1;
+const int MAX_INT_MAG = 10000;
 
 int op = 0;
 char obj_store[TS_SZ];
@@ -31,6 +35,21 @@ boolean is_type(int type_ptr) {
    } else {
       return false;
    }
+}
+
+boolean is_char(int obj_ptr) {
+
+   int ptr = obj_ptr - TS_OFFSET;
+
+   if (ptr <= 0 || ptr >=TS_SZ) {
+      return false; 
+   } else {
+      if (obj_store[ptr] == 'C') {
+         return true;
+      } else {
+         return false;
+      }
+   } 
 }
 
 int make_char(char c) {
@@ -69,7 +88,7 @@ int make_int(int a) {
       return 0; //Error
    }
 
-   if (a < -10000 || a > 10000) {
+   if (a < - MAX_INT_MAG || a > MAX_INT_MAG) {
       Serial.println(F("Integer Overflow. Integers must be less than 10,000 in magnitude."));
       return 0;
    }
@@ -99,11 +118,12 @@ int get_int(int obj_ptr) {
 
 int make_float(int numer, int denom) {
 
+   // Floats take 17 characters in the object store.
    if (op < 0 || op > TS_SZ - 17) {
       return 0; //Error
    }
 
-   int float_ptr = op + 1;
+   int float_ptr = op;
    obj_store[float_ptr] = 'F';
 
    int numer_ptr = make_int(numer);
@@ -118,23 +138,59 @@ int make_float(int numer, int denom) {
 
 }
 
+void diag_float(int obj_ptr) {
+
+   Serial.print("Object Pointer: "); Serial.println(obj_ptr);
+
+   if (obj_ptr <= TS_OFFSET || obj_ptr > (TS_OFFSET + TS_SZ - 17)) {
+      Serial.println(F("diag_float: Illegal float pointer."));
+      return;
+   }
+
+   if (obj_store[obj_ptr - TS_OFFSET] != 'F') {
+      Serial.println(F("diag_float: Non-float type."));
+      return;
+   }
+
+   Serial.print("Numerator: "); Serial.println(get_int(obj_ptr+1));
+   Serial.print("Denomintor: "); Serial.println(get_int(obj_ptr+9));
+}
+
 float get_float(int obj_ptr) {
 
    int ptr = obj_ptr - TS_OFFSET;
 
    if (ptr <= 0 || ptr > TS_SZ - 17) {
+      Serial.println(F("types.cpp: Illegal float pointer in get_float."));
       return 0;
    }
 
    if (obj_store[ptr] != 'F') {
+      Serial.println(F("types.cpp: Attempt to get a float on a non-float type."));
       return 0;
    } else {
 
-      int numer = get_int(ptr + 1);
-      int denom = get_int(ptr + 9); 
+      int int_part = get_int(ptr + 1 + TS_OFFSET);
+      int frac_part = get_int(ptr + 9 + TS_OFFSET); 
 
-      return (float) (numer/denom);
+      return (float)int_part + produce_float(frac_part, 10,  MAX_INT_MAG);
    }
+}
+
+
+float produce_float(int frac_part, int cur_numer,  int max_int_mag) {
+
+   if (frac_part > max_int_mag) {
+      Serial.println(F("types.cpp: produce_float: number is to large."));
+      return 0;
+   }
+
+   if (frac_part < cur_numer) {
+      return (float)frac_part / (float)cur_numer;
+   }
+
+   return produce_float(frac_part, cur_numer * 10, max_int_mag);
+
 }
 
 int make_str(char *str) {
@@ -197,8 +253,9 @@ void print_result(int ptr) {
 
 void print_type_stats() {
 
-   Serial.print("The Type system used "); Serial.print(op); Serial.print(" types out of a maximum ");
-   Serial.print(TS_SZ); Serial.println(" possible types.");
+   Serial.print("The Type system used "); Serial.print(op); 
+   Serial.print(" bytes out of a maximum ");
+   Serial.print(TS_SZ); Serial.println(" possible bytes.");
 }
 
 void test_types() {
@@ -210,16 +267,18 @@ void test_types() {
 
    int test = make_float(45, 175);
    assert_char_equals(tn, 'F', obj_store[test-TS_OFFSET]);
-   assert_char_equals(tn, 'I', obj_store[test-TS_OFFSET]+1);
-   assert_char_equals(tn, 'I', obj_store[test-TS_OFFSET]+9);
+   assert_char_equals(tn, 'I', obj_store[test-TS_OFFSET+1]);
+   assert_char_equals(tn, 'I', obj_store[test-TS_OFFSET+1]);
    assert_int_equals(tn, 45, get_int(test+1));
    assert_int_equals(tn, 175, get_int(test+9));
 
-   assert_float_equals(tn, (float) 3/4, get_float(make_float(3, 4)));
+   assert_float_equals(tn, 34, (int) (10 * (get_float(make_float(3, 4)))));
 
    assert_char_equals(tn, 'U', get_char(make_char('U')));
 
    char test2[] = "foobar";
    assert_c_str_equals(tn, test2, get_str(make_str(test2)));
 
+   int test3 = (int) (10000.0 * produce_float(1234, 10,  MAX_INT_MAG));
+   assert_int_equals(tn, 1234, test3);
 }
