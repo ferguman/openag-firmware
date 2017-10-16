@@ -17,6 +17,8 @@ boolean self_evaluating(int exp);
 int list_of_values(int exps, int env); 
 boolean is_variable(int exp);
 int lookup_variable(int exp);
+boolean is_quoted(int exp);
+int quoted_item(int exp);
 
 // Accept a parse tree as input.  
 //
@@ -30,7 +32,9 @@ int interpret(int exp) {
    // pair -> cons('M' or 'B', Integer) M-> module function, B-> built in fucniotn 
    // Integer -> index of function.
    //
-   if (is_variable(exp)) { return lookup_variable(exp); };
+   if (is_variable(exp)) { return lookup_variable(exp); }
+
+   if (is_quoted(exp)) { return quoted_item(exp); }
 
    if (is_pair(exp)) {
       // TODO: redo apply to use the above function pair struction to invoke the proper function.
@@ -41,6 +45,17 @@ int interpret(int exp) {
       return 0;
    }
 }
+
+boolean is_quoted(int exp) {
+
+   if (is_char(exp) && get_char(exp) == '\'') {
+      return true;
+   } else {
+      return false;
+   }
+}
+
+int quoted_item(int exp) { return cdr(exp); }
 
 int lookup_variable(int exp) {
 

@@ -37,8 +37,22 @@ boolean is_type(int type_ptr) {
    }
 }
 
-boolean is_char(int obj_ptr) {
+boolean is_typeof(char type_sym, int obj_ptr) {
+   if (is_type(obj_ptr)) {
+      if (obj_store[obj_ptr - TS_OFFSET] == type_sym) {
+         return true;
+      } else {
+         return false;
+      }
+   } else {
+      return false;
+   }
+}
 
+boolean is_int(int obj_ptr) {return is_typeof('I', obj_ptr);}
+boolean is_char(int obj_ptr) {return is_typeof('C', obj_ptr);}
+
+/*
    int ptr = obj_ptr - TS_OFFSET;
 
    if (ptr <= 0 || ptr >=TS_SZ) {
@@ -51,6 +65,7 @@ boolean is_char(int obj_ptr) {
       }
    } 
 }
+*/
 
 int make_char(char c) {
    if (op < 0 || op >= TS_SZ) {

@@ -28,24 +28,30 @@ typedef int (*function_ptr)(int i);
 // return (*(fp_array[2])) (args); to call functions.
 // 
 
-const int NBIF = 5;  //Set to size of fname_array.
+const int NBIF = 8;  //Set to size of fname_array.
 
 // This array holds points to all the built-in functions.
 const function_ptr fp_array[] = {
-   &apply_error, 
-   &air_temp,
-   &run_tests,
-   &i2c_begin,
-   &i2c_request_from
+   &apply_error,           //0 
+   &air_temp,              //1
+   &run_tests,             //2
+   &i2c_begin,             //3
+   &i2c_request_from,      //4
+   &i2c_begin_trans,       //5
+   &i2c_end_trans,         //6
+   &i2c_write              //7
 };
 
 // This array holds the names of all the built in functions.
-const char *fname_array[5] = {
+const char *fname_array[NBIF] = {
    "apply_error",
    "air_temp",
    "unit_tests",
    "i2c_begin",
-   "i2c_request_from"
+   "i2c_request_from",
+   "i2c_begin_trans",
+   "i2c_end_trans",
+   "i2c_write"
 };
 
 //Install Modules

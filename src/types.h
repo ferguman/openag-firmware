@@ -6,6 +6,7 @@ boolean is_type(int type_ptr);
 void clear_types();
 int make_int(int a);
 int make_float(int numer, int denom);
+boolean is_int(int obj_ptr); 
 float get_float(int ptr);
 void diag_float(int obj_ptr);
 int make_char(char c);

@@ -36,11 +36,15 @@ int parse(int token_list) {
     }
 
     // All list must start with a '('.
-    if (get_char(caar(token_list)) == '(') {
+    if (get_char(car(token_list)) == '(') {
+
        int cur_list = cons(nil, nil);  // Return this to the user after it is filled with content.
        int parsed_list = cons(cur_list, nil);
+
        // Put an empty high level pair on the stack so that the parser can check for stack underflow.
-       if (parsed_list  == parse_iter(cons(cur_list, parsed_list), cur_list, cdr(token_list))) {
+       // Put the head of the parsed list as the top of the stack for easy retreival at the end of the 
+       // parsing iterations.
+       if (cur_list  == parse_iter(cons(parsed_list, cons(cur_list, nil)), cur_list, cdr(token_list))) {
           return cur_list;
        } else {
           Serial.println(F("Error in parse.cpp: Parsing failed."));
@@ -61,19 +65,28 @@ int parse(int token_list) {
 //
 int parse_iter(int list_stack, int cur_list, int token_list) {
 
+/*
+   if (is_char(car(token_list))) {
+      Serial.print("Current token: "); Serial.println(get_char(car(token_list)));
+   }
+   if (is_char(caar(token_list))) {
+      Serial.print("Current token: "); Serial.println(get_char(caar(token_list)));
+   }
+*/
+     
    // No more tokens to parse.
    if (token_list == nil) {
-      return list_stack;
+      return car(list_stack);
    }
 
    // Start of list
-   if (get_char(caar(token_list)) == '(') {
+   if (get_char(car(token_list)) == '(') {
       int nl = cons(nil, nil);
       return parse_iter(cons(nl, list_stack), add_list_item(cur_list, nl), cdr(token_list));
    }
 
    // End of list
-   if (get_char(caar(token_list)) == ')') {
+   if (get_char(car(token_list)) == ')') {
       if (cdr(list_stack) == nil) {
          Serial.println(F("Error in parse_iter: Unbalanced paranthesises."));
          return 0; 
@@ -87,9 +100,11 @@ int parse_iter(int list_stack, int cur_list, int token_list) {
    }
 
    // Beginning of quote
-   if (get_char(caar(token_list)) == '\'') {
-      int nl = add_list_item(cur_list, cons(car(token_list), nil));
-      return parse_iter(cons(nl, list_stack), nl, cdr(token_list));
+   if (get_char(car(token_list)) == '\'') {
+      int quoted_list = cons(car(token_list), nil);
+      int nl = add_list_item(cur_list, quoted_list);
+
+      return parse_iter(cons(quoted_list, cons(nl, list_stack)), quoted_list, cdr(token_list));
    }
    
    // A symbol
@@ -97,7 +112,7 @@ int parse_iter(int list_stack, int cur_list, int token_list) {
       int nl = add_list_item(cur_list, car(token_list));
       // If the symbol is quoted then pop to the quotes parent list.
       if (get_char(car(list_stack)) == '\'')  {
-         return parse_iter(cdr(list_stack), cdr(list_stack), cdr(token_list));
+         return parse_iter(cddr(list_stack), cdr(list_stack), cdr(token_list));
       } else {
          return parse_iter(list_stack, nl, cdr(token_list));
       }
@@ -121,13 +136,15 @@ void test_parse() {
 
    //Pass (foobar) to parse.
    char symbol[7] = "foobar"; 
-   int test2 = parse(cons(cons(make_char('('),nil), 
+   int test2 = parse(cons(make_char('('), 
                           cons(cons(make_char('S'), make_str(symbol)), 
-                          cons(cons(make_char(')'), nil),nil))));
+                          cons(make_char(')'),nil))));
 
    assert_int_equals(tn, 0, cdr(test2));
  
    char test3[] = "foobar"; 
    assert_char_equals(tn, 'S', get_char(caar(test2)));
    assert_c_str_equals(tn, test3, get_str(cdar(test2)));
+
+
 }
