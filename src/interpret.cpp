@@ -24,7 +24,7 @@ int quoted_item(int exp);
 //
 int interpret(int exp) {
 
-   Serial.print("first item is: "); Serial.println(get_str(cdar(exp)));
+   //Serial.print("eval-current char: "); Serial.println(get_char(caar(exp)));
 
    if (self_evaluating(exp)) { return exp; };
 
@@ -37,7 +37,6 @@ int interpret(int exp) {
    if (is_quoted(exp)) { return quoted_item(exp); }
 
    if (is_pair(exp)) {
-      // TODO: redo apply to use the above function pair struction to invoke the proper function.
       return apply(interpret(get_operator(exp)), 
                    list_of_values(get_operands(exp),0), 0);
    } else {
@@ -48,14 +47,17 @@ int interpret(int exp) {
 
 boolean is_quoted(int exp) {
 
-   if (is_char(exp) && get_char(exp) == '\'') {
+   if (is_char(car(exp)) && get_char(car(exp)) == '\'') {
       return true;
    } else {
       return false;
    }
 }
 
-int quoted_item(int exp) { return cdr(exp); }
+int quoted_item(int exp) { 
+
+   return cdr(exp);
+}
 
 int lookup_variable(int exp) {
 

@@ -39,12 +39,13 @@ int parse(int token_list) {
     if (get_char(car(token_list)) == '(') {
 
        int cur_list = cons(nil, nil);  // Return this to the user after it is filled with content.
-       int parsed_list = cons(cur_list, nil);
+       //int parsed_list = cons(cur_list, nil);
 
        // Put an empty high level pair on the stack so that the parser can check for stack underflow.
        // Put the head of the parsed list as the top of the stack for easy retreival at the end of the 
        // parsing iterations.
-       if (cur_list  == parse_iter(cons(parsed_list, cons(cur_list, nil)), cur_list, cdr(token_list))) {
+       //if (cur_list  == parse_iter(cons(parsed_list, cons(cur_list, nil)), cur_list, cdr(token_list))) {
+       if (parse_iter(nil, cur_list, cdr(token_list))) {
           return cur_list;
        } else {
           Serial.println(F("Error in parse.cpp: Parsing failed."));
@@ -76,44 +77,63 @@ int parse_iter(int list_stack, int cur_list, int token_list) {
      
    // No more tokens to parse.
    if (token_list == nil) {
-      return car(list_stack);
+      Serial.println("Error in parse_iter: Unexpected end of input tokens.");
+      return false;
+      //return car(list_stack);
    }
 
    // Start of list
    if (get_char(car(token_list)) == '(') {
       int nl = cons(nil, nil);
-      return parse_iter(cons(nl, list_stack), add_list_item(cur_list, nl), cdr(token_list));
+      int parent_list = add_list_item(cur_list, nl);
+      return parse_iter(cons(parent_list, list_stack), nl, cdr(token_list));
    }
 
    // End of list
    if (get_char(car(token_list)) == ')') {
-      if (cdr(list_stack) == nil) {
-         Serial.println(F("Error in parse_iter: Unbalanced paranthesises."));
-         return 0; 
-      } else {
-         if (get_char(cadr(list_stack)) == '\'') {
-            return parse_iter(cddr(list_stack), cddr(list_stack), cdr(token_list));
+
+      if (list_stack == nil)  {
+         if (cdr(token_list) == nil) {
+            //We are at the end of the list
+            return true;
          } else {
-            return parse_iter(cdr(list_stack), cdr(list_stack), cdr(token_list));
+            Serial.println("Error in parse_iter: Unexpected last paranthesis found.");
+            return false;
+         }
+      } 
+
+      if (get_char(caar(list_stack)) == '\'') {
+         Serial.println("Error in parser_iter: Unbalanced last paranthesis found inside a symbol.");
+         return false;
+      } else {
+         if (get_char(caadr(list_stack)) == '\'') {
+            return parse_iter(cadddr(list_stack), caddr(list_stack), cdr(token_list));
+         } else {
+            return parse_iter(cadr(list_stack), cadr(list_stack), cdr(token_list));         
          }
       }
    }
 
    // Beginning of quote
    if (get_char(car(token_list)) == '\'') {
-      int quoted_list = cons(car(token_list), nil);
-      int nl = add_list_item(cur_list, quoted_list);
 
-      return parse_iter(cons(quoted_list, cons(nl, list_stack)), quoted_list, cdr(token_list));
+      int quoted_list = cons(car(token_list), nil);
+      int parent_list  = add_list_item(cur_list, quoted_list);
+
+      return parse_iter(cons(quoted_list, cons(parent_list, list_stack)), quoted_list, cdr(token_list));
    }
    
    // A symbol
    if (get_char(caar(token_list)) == 'S') {
-      int nl = add_list_item(cur_list, car(token_list));
+
       // If the symbol is quoted then pop to the quotes parent list.
-      if (get_char(car(list_stack)) == '\'')  {
-         return parse_iter(cddr(list_stack), cdr(list_stack), cdr(token_list));
+      if (get_char(caar(list_stack)) == '\'')  {
+         // Store token in cdr of cur_list.
+         set_cdr(cur_list, car(token_list));
+         return parse_iter(cddr(list_stack), cadr(list_stack), cdr(token_list));
       } else {
+         // Add token to the end of the current list.
+         int nl = add_list_item(cur_list, car(token_list));
          return parse_iter(list_stack, nl, cdr(token_list));
       }
    }
@@ -146,5 +166,19 @@ void test_parse() {
    assert_char_equals(tn, 'S', get_char(caar(test2)));
    assert_c_str_equals(tn, test3, get_str(cdar(test2)));
 
+   char symbol2[6] = "hello";
+   int test4 = parse(cons(make_char('('), 
+                     cons(cons(make_char('S'), make_str(symbol)), 
+                     cons(make_char('\''), 
+                     cons(cons(make_char('S'), make_str(symbol2)),
+                     cons(make_char(')'), nil))))));
+
+   assert_char_equals(tn, 'S', get_char(caar(test4)));
+   assert_c_str_equals(tn, symbol, get_str(cdar(test4)));
+   assert_char_equals(tn, '\'', get_char(caadr(test4)));
+   assert_char_equals(tn, 'S', get_char(cadr(cadr(test4))));
+   assert_c_str_equals(tn, symbol2, get_str(cddr(cadr(test4))));
+   //assert_char_equals(tn, 'S', get_char(car((cadr(cadr(test4))))));
+   //assert_c_str_equals(tn, symbol2, get_str(cdr(cadr(cadr(test4)))));
 
 }
