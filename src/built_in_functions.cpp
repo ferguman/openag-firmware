@@ -6,6 +6,7 @@
 #include <types.h>
 #include <pair.h>
 #include <wire_w.h>
+#include <atlas_w.h>
 
 // Signatures of built-ins that are in this file.
 int apply_error(int i); 
@@ -28,7 +29,7 @@ typedef int (*function_ptr)(int i);
 // return (*(fp_array[2])) (args); to call functions.
 // 
 
-const int NBIF = 10;  //Set to size of fname_array.
+const int NBIF = 12;  //Set to size of fname_array.
 
 // This array holds points to all the built-in functions.
 const function_ptr fp_array[] = {
@@ -41,7 +42,9 @@ const function_ptr fp_array[] = {
    &i2c_end_trans,         //6
    &i2c_write,             //7
    &i2c_send,              //8
-   &i2c_read               //9
+   &i2c_read,              //9
+   &i2c_cmd,               //10
+   &atlas_show_ph          //11
 };
 
 // This array holds the names of all the built in functions.
@@ -55,7 +58,9 @@ const char *fname_array[NBIF] = {
    "i2c_end_trans",
    "i2c_write",
    "i2c_send",
-   "i2c_read"
+   "i2c_read",
+   "i2c_cmd",
+   "atlas_show_ph"
 };
 
 //Install Modules

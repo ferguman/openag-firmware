@@ -1,4 +1,5 @@
 #include "Arduino.h"
+#include <pair.h>
 #include <test.h>
 
 // function signatures
@@ -263,7 +264,25 @@ char *get_str(int obj_ptr) {
 }
 
 void print_result(int ptr) {
-   Serial.println(F("print_result is not implemented."));
+
+   if (ptr == -1) {
+      //Assume everything worked ok and there is nothing to print.
+      return;
+   }
+
+   if (ptr == 0) {
+      //Assume a failure with nothing to print.
+      Serial.println(F("Processing failed."));
+      return;
+   }
+
+   if (is_pair(ptr)) {
+      Serial.println(F("Print_result is not implemented."));
+      return;
+   }
+
+   Serial.println(F("Error: Unknow result returned by the processing."));
+   return;
 }
 
 void print_type_stats() {
