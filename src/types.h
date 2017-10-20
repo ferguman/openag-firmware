@@ -14,6 +14,7 @@ boolean is_char(int obj_ptr);
 char get_char(int obj_ptr);
 int make_str(char *x);
 char *get_str(int obj_ptr);
+boolean is_str(int obj_prt);
 int get_int(int obj_ptr);
 const int nil = 0;
 void print_result(int ptr); 

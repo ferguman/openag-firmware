@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include <pair.h>
+#include <types.h>
 #include <test.h>
 
 // function signatures
@@ -52,6 +53,7 @@ boolean is_typeof(char type_sym, int obj_ptr) {
 
 boolean is_int(int obj_ptr) {return is_typeof('I', obj_ptr);}
 boolean is_char(int obj_ptr) {return is_typeof('C', obj_ptr);}
+boolean is_str(int obj_ptr) {return is_typeof('X', obj_ptr);}
 
 /*
    int ptr = obj_ptr - TS_OFFSET;
@@ -263,25 +265,31 @@ char *get_str(int obj_ptr) {
    }
 }
 
-void print_result(int ptr) {
+void print_result(int args) {
 
-   if (ptr == -1) {
+   if (args == -1) {
       //Assume everything worked ok and there is nothing to print.
       return;
    }
 
-   if (ptr == 0) {
+   if (args == 0) {
       //Assume a failure with nothing to print.
       Serial.println(F("Processing failed."));
       return;
    }
 
-   if (is_pair(ptr)) {
-      Serial.println(F("Print_result is not implemented."));
+   if (is_str(args)) {
+      Serial.println(get_str(args));
       return;
    }
 
-   Serial.println(F("Error: Unknow result returned by the processing."));
+   if (is_pair(args)) {
+      Serial.println(get_str(car(args)));
+      return;
+   }
+
+   Serial.print(F("Error: Unknown result returned by the processing: "));
+   Serial.println(args);
    return;
 }
 

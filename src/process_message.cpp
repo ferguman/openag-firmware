@@ -47,11 +47,11 @@ int process_message(String *input) {
          if (is_pair(parse_tree)) {
             //Intepret the parse tree. The result can be a list or 
             //one of the built-in types.
-            int interpret_return = interpret(parse_tree);
+            //int interpret_return = interpret(parse_tree);
 
-            if (is_pair(interpret_return)) {
-               print_result(interpret_return);
-            } 
+            //if (is_pair(interpret_return)) {
+               print_result(interpret(parse_tree));
+            //} 
          } 
       }
    }
