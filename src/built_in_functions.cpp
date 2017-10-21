@@ -7,11 +7,11 @@
 #include <pair.h>
 #include <wire_w.h>
 #include <atlas_w.h>
+#include <openag_modules.h>
 
 // Signatures of built-ins that are in this file.
 int apply_error(int i); 
 int air_temp(int args);
-
 
 // TODO: Create native functions for:
 // 1) Display the 64 bit addresses of all connected One Wire devices.
@@ -63,27 +63,10 @@ const char *fname_array[NBIF] = {
    "atlas_show_ph"
 };
 
-//Install Modules
-int am2315_1_w(int args);
-
-const int NMODS = 1;
-
-//This array holds the pointers to all the Module functions.
-const function_ptr mod_array[] = {
-   &am2315_1_w
-};
-
-//This array holds the name of all the module functions.
-const char *mname_array[1] = {
-   "am2315_1"
-};
-
 // Look for a built in function that matches the name given.  If one is found then 
-// return cons('B' or 'M', the functions index);
+// return cons('B', the functions index);
 //
 int find_built_in_function(int function_name) {
-
-   //int function_index = 0;
 
    char *fn = get_str(function_name); 
 
@@ -98,32 +81,11 @@ int find_built_in_function(int function_name) {
       }
    }
 
-   // Look for an invocation of a module function
-   for (int i = 0; i < NMODS; i++) {
-      if (strcmp(fn, mname_array[i]) == 0) {
-         return cons(make_char('M'), get_int(i));
-      }
-   }
-
    return 0;
 }
 
 int apply_built_in_function(int func, int args) {
-
-   // Check for a built-in function call.
-   if (get_char(car(func)) == 'B') {
-   //return (*(fp_array[fi])) (args);
-      return (*(fp_array[get_int(cdr(func))])) (args);
-   }
-
-   // Check for a module function call.
-   if (get_char(car(func)) == 'M') {
-      return (*(mod_array[get_int(cdr(func))])) (args);
-   }
-
-   Serial.println(F("built_in_functions.cpp: apply_built_in_function: Uknown function."));
-   return 0;
-  
+   return (*(fp_array[get_int(cdr(func))])) (args);
 }
 
 // Built-in functions
@@ -132,24 +94,11 @@ int apply_error(int i) {
    Serial.print(F("Apply Error.  Unknown built-in function call."));
    return 0;
 }
-
-/*
-int test_func_args (int i) {
-   return i;
-}
-*/
-
-int am2315_1_w(int args) {
-
-Serial.println(get_str(car(args)));
-return 0;
-
-}
    
 //  Take an air temperature reading.
 int air_temp(int args) {
 
-   extern Ds18b20 ds18b20_1;
+   //extern Ds18b20 ds18b20_1;
    ds18b20_1.update();
 
    Serial.print("DS18b20: ");

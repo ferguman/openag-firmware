@@ -6,6 +6,7 @@
 #include <pair.h>
 #include <built_in_functions.h>
 #include <test.h>
+#include <environment.h>
 
 int get_operands(int exp) { return cdr(exp); }
 int get_operator(int exp) { return car(exp); }
@@ -40,7 +41,7 @@ int interpret(int exp) {
       return apply(interpret(get_operator(exp)), 
                    list_of_values(get_operands(exp),0), 0);
    } else {
-      Serial.println("interpret.cpp: Unkown input");
+      Serial.println("interpret.cpp: Unknown input");
       return 0;
    }
 }
@@ -61,7 +62,7 @@ int quoted_item(int exp) {
 
 int lookup_variable(int exp) {
 
-   int result = find_built_in_function(cdr(exp));
+   int result = find_function(cdr(exp));
 
    if (is_pair(result)) {
       return result;

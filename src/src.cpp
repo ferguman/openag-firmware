@@ -1,12 +1,28 @@
 #include "Arduino.h"
-#include <openag_module.h>
 #include <process_message.h>
+#include <openag_modules.h>
 
-//New stuff
-#include <src.h>
+boolean AUTO_START = false;
 
-Am2315 am2315_1;
-Ds18b20 ds18b20_1(5);
+// Message string
+String message = "";
+bool stringComplete = false;
+const int COMMAND_LENGTH = 18; // status + num_actuators
+const unsigned int MESSAGE_LENGTH = 500;
+
+// Main logic
+void actuatorLoop();
+void sensorLoop();
+void updateLoop();
+
+// Utility functions
+void send_invalid_message_length_error(String msg);
+void resetMessage();
+int split(String messages, String* splitMessages,  char delimiter=',');
+bool beginModule(Module &module, String name);
+bool checkModule(Module &module, String name);
+bool str2bool(String str);
+void procMsg();
 
 // These functions are defined in the Arduino.h and are the framework.
 void setup() {
@@ -16,40 +32,13 @@ void setup() {
   while(!Serial){
     // wait for serial port to connect, needed for USB
   }
+
   message.reserve(MESSAGE_LENGTH);
 
-  beginModule(am2315_1, "AM2315 #1");
-  beginModule(ds18b20_1, "DS18B20 #1");
+  if (AUTO_START) {
+     beginModules();
+  }
 
-/*
-  // Begin sensors
-  beginModule(am2315_1, "AM2315 #1");
-  beginModule(mhz16_1, "MHZ16 #1");
-  beginModule(ds18b20_1, "DS18B20 #1");
-  beginModule(water_level_sensor_low_1, "Water Level Low sensor");
-  beginModule(water_level_sensor_high_1, "Water Level High sensor");
-  beginModule(atlas_ph_1, "Atlas pH #1");
-  beginModule(atlas_ec_1, "Atlas EC #1");
-
-  // Begin Actuators
-  beginModule(pump_1_nutrient_a_1, "Pump 1, Nutrient A");
-  beginModule(pump_2_nutrient_b_1, "Pump 2, Nutrient B");
-  beginModule(pump_3_ph_up_1, "Pump 3, pH Up");
-  beginModule(pump_4_ph_down_1, "Pump 4, pH Down");
-  beginModule(pump_5_water_1, "Pump 5, Water");
-  beginModule(chiller_fan_1, "Chiller Fan");
-  beginModule(chiller_pump_1, "Chiller Pump");
-  beginModule(heater_core_2_1, "Heater core #2");
-  beginModule(air_flush_1, "Air Flush");
-  beginModule(water_aeration_pump_1, "Water Aeration Pump");
-  beginModule(water_circulation_pump_1, "Water Circulation Pump");
-  beginModule(chamber_fan_1, "Chamber Circulation Fan");
-  beginModule(led_blue_1, "LED Blue");
-  beginModule(led_white_1, "LED White");
-  beginModule(led_red_1, "LED Red");
-  beginModule(heater_core_1_1, "Heater Core #1");
-  beginModule(chiller_compressor_1, "Chiller Compressor #1");
-*/
 }
 
 void loop() {
@@ -317,22 +306,6 @@ int split(String messages, String* splitMessages,  char delimiter){
   return chunk_count;
 }
 
-void sendModuleStatus(Module &module, String name){
-  Serial.print(module.status_level); Serial.print(',');
-  Serial.print(name);  Serial.print(',');
-  Serial.print(module.status_code);  Serial.print(',');
-  Serial.print(module.status_msg);   Serial.print('\n');
-  Serial.flush();
-}
-
-
-bool beginModule(Module &module, String name){
-  bool status = module.begin() == OK;
-  if(!status){
-    sendModuleStatus(module, name);
-  }
-  return status;
-}
 
 /*
 bool checkModule(Module &module, String name){
