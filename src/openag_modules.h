@@ -9,6 +9,5 @@ extern Ds18b20 ds18b20_1;
 
 int find_module_function(int function_name);
 int apply_module_function(int func, int args);
-boolean beginModules();
 
 #endif

@@ -16,26 +16,9 @@ int find_function(int function_name) {
    if (!fn){
       return 0;
    }
-/*  
-   // Look for an invocation of a built in function 
-   for (int i = 1; i < NBIF; i++) {
-      if (strcmp(fn, fname_array[i]) == 0) {
-         return cons(make_char('B'), make_int(i));
-      }
-   }
-*/
 
    func_ptr = find_built_in_function(function_name);
    if (is_pair(func_ptr)) { return func_ptr; }
-
-/*
-   // Look for an invocation of a module function
-   for (int i = 0; i < NMODS; i++) {
-      if (strcmp(fn, mname_array[i]) == 0) {
-         return cons(make_char('M'), get_int(i));
-      }
-   }
-*/
 
    func_ptr = find_module_function(function_name);
    if (is_pair(func_ptr)) { return func_ptr; }

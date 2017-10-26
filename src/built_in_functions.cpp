@@ -8,10 +8,14 @@
 #include <wire_w.h>
 #include <atlas_w.h>
 #include <openag_modules.h>
+#include <src.h>
+#include <onewire_w.h>
 
 // Signatures of built-ins that are in this file.
 int apply_error(int i); 
-int air_temp(int args);
+int water_temp(int args);
+int config_open_ag_loop(int args);
+int help(int args);
 
 // TODO: Create native functions for:
 // 1) Display the 64 bit addresses of all connected One Wire devices.
@@ -29,12 +33,12 @@ typedef int (*function_ptr)(int i);
 // return (*(fp_array[2])) (args); to call functions.
 // 
 
-const int NBIF = 12;  //Set to size of fname_array.
+const int NBIF = 16;  //Set to size of fname_array.
 
 // This array holds points to all the built-in functions.
 const function_ptr fp_array[] = {
    &apply_error,           //0 
-   &air_temp,              //1
+   &water_temp,            //1
    &run_tests,             //2
    &i2c_begin,             //3
    &i2c_request_from,      //4
@@ -44,13 +48,17 @@ const function_ptr fp_array[] = {
    &i2c_send,              //8
    &i2c_read,              //9
    &i2c_cmd,               //10
-   &atlas_show_ph          //11
+   &atlas_show_ph,         //11
+   &config_open_ag_loop,   //12
+   &help,                  //13
+   &i2c_help,              //14
+   &one_wire_addr          //15
 };
 
 // This array holds the names of all the built in functions.
 const char *fname_array[NBIF] = {
    "apply_error",
-   "air_temp",
+   "water_temp",
    "unit_tests",
    "i2c_begin",
    "i2c_request_from",
@@ -60,7 +68,11 @@ const char *fname_array[NBIF] = {
    "i2c_send",
    "i2c_read",
    "i2c_cmd",
-   "atlas_show_ph"
+   "atlas_show_ph",
+   "set_oa_lp",
+   "help",
+   "i2c_help",
+   "one_wire_addr"
 };
 
 // Look for a built in function that matches the name given.  If one is found then 
@@ -90,21 +102,46 @@ int apply_built_in_function(int func, int args) {
 
 // Built-in functions
 
+int config_open_ag_loop(int args) {
+Serial.println("got to config_open_ag_loop()");
+return -1;
+}
+
 int apply_error(int i) {
    Serial.print(F("Apply Error.  Unknown built-in function call."));
    return 0;
 }
-   
-//  Take an air temperature reading.
-int air_temp(int args) {
 
-   //extern Ds18b20 ds18b20_1;
-   ds18b20_1.update();
+//  Take a water  temperature reading.
+int water_temp(int args) {
+
+   ds18b20.update();
 
    Serial.print("DS18b20: ");
-   Serial.println(ds18b20_1.get_temperature());
+   Serial.println(ds18b20.get_temperature());
 
-   return 0;
+   return -1;
+}
+   
+
+
+int help(int args) {
+
+   if (args == nil) {  
+
+      Serial.println(F("(help)              Prints this message."));
+      Serial.println(F("(unit_tests)        Runs unit tests.  Helpful for testing that "));
+      Serial.println(F("                    the Serial Monitor that is installed is a")); 
+      Serial.println(F("                    stable version."));
+      Serial.println(F("(i2c_help)          Print help for the I2C commands."));
+   
+      return -1;
+
+   } else {
+
+      Serial.println(F("Unknown help command."));
+      return 0;
+   }
 }
 
 void test_built_in_functions() {

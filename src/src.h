@@ -1,9 +1,7 @@
-// Specify the header files for the sensors and actuators that are installed in your
-// grow environment.
+#ifndef SRC
+#define SRC
 
-//#include <openag_am2315.h>
-//#include <openag_ds18b20.h>
+   extern Am2315 am2315_1;
+   extern Ds18b20 ds18b20;
 
-// The following code creates the local variables that src.cpp needs. It also contains
-// function signatures that src.cpp needs.
-
+#endif

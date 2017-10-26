@@ -1,7 +1,7 @@
 #ifndef TEST
 #define TEST
 
-// Meant to be public
+boolean c_strs_equal(char *a, char *b);
 void assert_true(String test_name, boolean a);
 void assert_int_equals(String test_name, int a, int b);
 void assert_float_equals(String test_name, float a, float b);

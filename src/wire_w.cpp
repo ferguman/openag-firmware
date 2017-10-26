@@ -20,6 +20,19 @@ boolean read_chars(char *read_buffer, int buffer_index);
 // (atlas_show_ph (i2c_cmd 99 'R 2000 20 1))
 //
 
+//
+
+int i2c_help(int args) {
+
+   Serial.println(F("(i2c_help)          Prints this message."));
+   Serial.println(F("(i2c_cmd args)      args: i2c_addr data_delay #bytes_to_read send_stop)"));
+   Serial.println(F("                    i2c_addr -> 7 bit address of device to send cmd to."));
+   Serial.println(F("                    data -> Data that should be written. Specify strings as"));
+   Serial.println(F("                    as symbols (e.g. 'Find)")); 
+
+   return -1;
+
+}
 // Arguments: i2c address (7 bits), payload (an integer or symbol), delay between
 // send and read in milliseconds, Number of bytes as an Integer, Send Stop as Integer (0 or 1)
 //

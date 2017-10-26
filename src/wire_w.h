@@ -1,6 +1,7 @@
 #ifndef WIRE_W
 #define WIRE_W
 
+int i2c_help(int args);
 int i2c_cmd(int args);
 int i2c_send(int args);
 int i2c_read(int args);
