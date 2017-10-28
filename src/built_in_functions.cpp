@@ -1,15 +1,17 @@
 #include "Arduino.h"
-#include <openag_module.h>
-#include <openag_am2315.h>
-#include <openag_ds18b20.h>
 #include <test.h>
 #include <types.h>
 #include <pair.h>
 #include <wire_w.h>
 #include <atlas_w.h>
 #include <openag_modules.h>
-#include <src.h>
 #include <onewire_w.h>
+
+#include <openag_module.h>
+#include <openag_am2315.h>
+#include <openag_ds18b20.h>
+#include <openag_binary_actuator.h>
+#include <src.h>
 
 // Signatures of built-ins that are in this file.
 int apply_error(int i); 
@@ -122,8 +124,6 @@ int water_temp(int args) {
 
    return -1;
 }
-   
-
 
 int help(int args) {
 
@@ -133,7 +133,8 @@ int help(int args) {
       Serial.println(F("(unit_tests)        Runs unit tests.  Helpful for testing that "));
       Serial.println(F("                    the Serial Monitor that is installed is a")); 
       Serial.println(F("                    stable version."));
-      Serial.println(F("(i2c_help)          Print help for the I2C commands."));
+      Serial.println(F("(i2c_help)          Print help for I2C commands."));
+      Serial.println(F("(open_ag_help)      Print help for Open Ag Module commands."));
    
       return -1;
 

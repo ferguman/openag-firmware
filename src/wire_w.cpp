@@ -25,10 +25,16 @@ boolean read_chars(char *read_buffer, int buffer_index);
 int i2c_help(int args) {
 
    Serial.println(F("(i2c_help)          Prints this message."));
-   Serial.println(F("(i2c_cmd args)      args: i2c_addr data_delay #bytes_to_read send_stop)"));
-   Serial.println(F("                    i2c_addr -> 7 bit address of device to send cmd to."));
-   Serial.println(F("                    data -> Data that should be written. Specify strings as"));
-   Serial.println(F("                    as symbols (e.g. 'Find)")); 
+   Serial.println(F("(i2c_cmd args)      Send a command to an I2C device. Accepts 5 arguments:"));
+   Serial.println(F("                    1) i2c_addr -> 7 bit address of device to send data to."));
+   Serial.println(F("                    2) data -> Data that should be written. Specify strings as"));
+   Serial.println(F("                               as symbols (e.g. 'R)")); 
+   Serial.println(F("                    3) read delay -> The number of milliseconds to pause between writing the command to the ")); 
+   Serial.println(F("                                     device and reading data from the device.")); 
+   Serial.println(F("                    4) # of bytes to read")); 
+   Serial.println(F("                    5) send stop bit -> Set to 1 to send a stop message after the i2c read. Refer to the Arudino ")); 
+   Serial.println(F("                                        Wire libary (Wire.RequestFrom() command) for information on how to use this")); 
+   Serial.println(F("                                        bit with values of 0.")); 
 
    return -1;
 

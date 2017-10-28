@@ -42,7 +42,7 @@ int tokenize(String *str) {
           return 0;  //Error
        }
    } else {
-      Serial.println("All lines must be fully parenthesized.");
+      Serial.println("All commands  must be parenthesized. Type (help) to get started.");
       return 0;
    }
 }

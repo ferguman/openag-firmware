@@ -3,6 +3,7 @@
 #include <openag_modules.h>
 #include <openag_am2315.h>
 #include <openag_ds18b20.h>
+#include <openag_binary_actuator.h>
 
 // The following three Serial monitor flags are added.
 boolean AUTO_START = false;
@@ -10,8 +11,15 @@ boolean fc_loop_on = false;
 boolean fc_cmd_received =  false;
 
 // The sensor and module instances are created here.
+//
+// Sensors
+//
 Am2315 am2315_1;
 Ds18b20 ds18b20(5);
+
+// Actuators
+//
+BinaryActuator air_flush_1(36, true, 10000);
 
 /*
 MHZ16 mhz16_1(77);
@@ -407,3 +415,10 @@ void updateLoop(){
 */
 }
 
+bool beginModule(Module &module, String name){
+  bool status = module.begin() == OK;
+  if(!status){
+    sendModuleStatus(module, name);
+  }
+  return status;
+}

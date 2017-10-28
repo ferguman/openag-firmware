@@ -3,25 +3,53 @@
 #include <pair.h>
 #include <types.h>
 
-#include <openag_module.h>
 #include <openag_am2315.h>
 #include <openag_ds18b20.h>
+#include <openag_binary_actuator.h>
 #include <src.h>
 
-// Create an instance of each Module that will run on this food computer.
-// Note: Add/Subtract from this list to customize your food computer
-//       to contain different sensors and actuators.
-//
-#include <openag_modules_instances.h>
-
 //local function signatures.
-bool beginModule(Module &module, String name);
 void sendModuleStatus(Module &module, String name);
+int send_begin_cmd(int args);
+int send_update_cmd(int args);
 
-// Setup wrapper functions and function name table so that the serial
-// monitor can call functions that access Module functions.
+// Specify the installed module classes and names here.
 //
-//Install module wrapper functions
+const uint8_t NMODS = 3;
+
+Module *mod_ptr_array[] = {
+   &am2315_1,
+   &ds18b20,
+   &air_flush_1
+};
+
+//This array holds the names of all the modules.
+const char *mname_array[NMODS] = {
+   "am2315",
+   "ds18b20",
+   "air_flush"
+};
+
+// Look for a module class that matches the name given.  If one is found then 
+// return the class.
+//
+Module *find_module(int module_name) {
+
+   char *mn = get_str(module_name); 
+
+   if (!mn){
+      return 0;
+   }
+  
+   // Look for the module 
+   for (int i = 0; i < NMODS; i++) {
+      if (strcmp(mn, mname_array[i]) == 0) {
+         return mod_ptr_array[i];
+      }
+   }
+
+   return 0;
+}
 
 // All the built in functions take one argument (an integer) which is assumed to point
 // to a pair based list of function parameters.  The built in function is responsible
@@ -29,21 +57,20 @@ void sendModuleStatus(Module &module, String name);
 
 typedef int (*function_ptr)(int i);
 
-const int NMODS = 2;
+const uint8_t NMOD_FUNCS = 1;
 
-int am2315_1_w(int args);
-int ds18b20_w(int args);
+// Module function signatures
+//
+int oa_mod_cmd(int args);
 
 //This array holds the pointers to all the Module functions.
-const function_ptr mod_array[] = {
-   &am2315_1_w,
-   &ds18b20_w
+const function_ptr mod_array[NMOD_FUNCS] = {
+   &oa_mod_cmd
 };
 
 //This array holds the name of all the module functions.
-const char *mname_array[NMODS] = {
-   "am2315_1",
-   "ds18b20"
+const char *mfname_array[NMODS] = {
+   "oa_mod_cmd"
 };
 
 // Look for a module function that matches the name given.  If one is found then 
@@ -59,7 +86,7 @@ int find_module_function(int function_name) {
   
    // Look for an invocation of a module function
    for (int i = 0; i < NMODS; i++) {
-      if (strcmp(fn, mname_array[i]) == 0) {
+      if (strcmp(fn, mfname_array[i]) == 0) {
          return cons(make_char('M'), make_int(i));
       }
    }
@@ -74,65 +101,71 @@ int apply_module_function(int func, int args) {
 // This section contains the module functions called from the serial monitor
 //
 
-char *show_open_ag_module_status(uint8 status_code) {
+int show_open_ag_module_status(uint8_t status_code) {
 
    if (status_code == OK) {
-      Serial.
-
-}
-
-int am2315_1_w(int args) {
-
-   char begin[] = "begin";
-   char update[] = "update";
-   char temp_and_hum[] = "temp_and_hum";
-
-   if (get_char(caar(args)) == 'S' && strcmp(begin, get_str(cdar(args))) == 0) {
-      Serial.print("am2315 Begin command status:");
-      Serial.println(show_open_ag_module_status(am2315_1.begin()));
-      return -1;
+      Serial.println(F("Module response: OK"));
+      return -1;      
+   }
+   if (status_code == WARN) {
+      Serial.println(F("Module response: WARN"));
+      return -1;      
+   }
+   if (status_code == ERROR) {
+      Serial.println(F("Module response: ERROR"));
+      return -1;      
    }
 
-   if (get_char(caar(args)) == 'S' && strcmp(update, get_str(cdar(args))) == 0) {
-      am2315_1.update();
-      return -1;
-   }
-
-   if (get_char(caar(args)) == 'S' && strcmp(temp_and_hum, get_str(cdar(args))) == 0) {
-      Serial.print("am2315_1: Temp=");
-      Serial.print(am2315_1.get_air_temperature());      
-      Serial.print(", Humidity=");
-      Serial.println(am2315_1.get_air_humidity());
-      return -1;
-   }
-
-   Serial.println(F("Error: Unkown am2315 command."));
+   Serial.println(F("Error: Unknown module response code."));
+   
    return 0;
 }
 
-int ds18b20_w(int args) {
+boolean is_cmd(int args, char *cmd) {
+
+   if (get_char(caadr(args)) == 'S' && strcmp(cmd, get_str(cdadr(args))) == 0) {
+      return true;
+   } else {
+      return false;
+   }
+}
+
+// args -> module_name and command
+//
+int oa_mod_cmd(int args) {
 
    char begin[] = "begin";
    char update[] = "update";
-   char temp[] = "temp";
+   //char temp_and_hum[] = "temp_and_hum";
 
-   if (get_char(caar(args)) == 'S' && strcmp(begin, get_str(cdar(args))) == 0) {
-      ds18b20.begin();
-      return -1;
-   }
+   if (is_cmd(args, begin)) {return send_begin_cmd(args); }
+   if (is_cmd(args, update)) {return send_update_cmd(args); }
 
-   if (get_char(caar(args)) == 'S' && strcmp(update, get_str(cdar(args))) == 0) {
-      ds18b20.update();
-      return -1;
-   }
+   Serial.println(F("openag_modules.cpp:oa_mod_cmd: Error: Unknown command."));
+   return 0;
 
-   if (get_char(caar(args)) == 'S' && strcmp(temp, get_str(cdar(args))) == 0) {
-      Serial.print("DS18b20: ");
-      Serial.println(ds18b20.get_temperature());
-      return -1;
-   }
+}
 
-   Serial.println(F("Error: Unkown ds18b20 command."));
+int send_begin_cmd(int args) {
+
+   Serial.println("in send_begin_cmd");
+
+   Module *mod = find_module(cdar(args));
+
+   if (mod) {return show_open_ag_module_status(mod->begin());}
+
+   Serial.println(F("Error in openag_modules: Unknown module name."));
    return 0;
 }
 
+int send_update_cmd(int args) {
+
+   Serial.println("in send_update_cmd");
+
+   Module *mod = find_module(cdar(args));
+
+   if (mod) {return show_open_ag_module_status(mod->update());}
+
+   Serial.println(F("Error in openag_modules: Unknown module name."));
+   return 0;
+}

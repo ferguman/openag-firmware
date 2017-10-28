@@ -133,6 +133,9 @@ int run_tests(int arg_list) {
    test_built_in_functions();
 
    char result[] = "End of Tests";
-   return cons(make_str(result), nil);
+   int ret_val = cons(make_str(result), nil); 
 
+   print_type_stats(); print_pair_stats();
+
+   return  ret_val;
 }

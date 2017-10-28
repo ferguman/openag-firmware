@@ -33,7 +33,7 @@ int process_message(String *input) {
    //int foobar = run_tests(0);
 
    //Scan the input and removed backspaced characters
-   
+   //
    if (remove_backspaces(input, 0, 0)) {
 
       //Tokenize the input. Returns a list of tokens.
@@ -47,17 +47,14 @@ int process_message(String *input) {
          if (is_pair(parse_tree)) {
             //Intepret the parse tree. The result can be a list or 
             //one of the built-in types.
-            //int interpret_return = interpret(parse_tree);
-
-            //if (is_pair(interpret_return)) {
-               print_result(interpret(parse_tree));
-            //} 
+            //
+            print_result(interpret(parse_tree));
          } 
       }
    }
 
 
-   print_type_stats(); print_pair_stats();
+   //print_type_stats(); print_pair_stats();
    clear_pairs();
    clear_types();
 

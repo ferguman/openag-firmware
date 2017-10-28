@@ -16,6 +16,7 @@ int cadr(int pairIndex);
 int cdar(int pairIndex);
 int cddr(int pairIndex);
 int cdddr(int pairIndex); 
+int cdadr(int pairIndex);
 int cadddr(int pairIndex);
 int caddr(int pairIndex);
 int caadr(int pairIndex);
