@@ -58,3 +58,8 @@ uint8_t Ds18b20::update() {
 float Ds18b20::get_temperature() {
   return _temperature;
 }
+
+int Ds18b20::cmd(int args) {
+
+   return -1;
+}

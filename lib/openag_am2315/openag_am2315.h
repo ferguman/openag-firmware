@@ -45,6 +45,7 @@ class Am2315 : public Module {
     uint8_t update();
     float get_air_temperature();
     float get_air_humidity();
+    int cmd(int args);
 
   private:
     // Private variables

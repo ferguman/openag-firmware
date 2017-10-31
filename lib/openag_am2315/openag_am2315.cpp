@@ -107,3 +107,20 @@ bool Am2315::readData() {
   }
   return false;
 }
+
+int Am2315::cmd(int args) {
+  return -1;
+}
+
+/*
+   int temp_hum[] = "th";
+
+   if (this->is_cmd(args, temp_hum)) {
+      Serial.print(F("Air Temp.: "); Serial.println(_air_temperature);
+      Serial.print(F("Humidity: "); Serial.println(_humidity);
+      return -1;
+   }
+
+   return Module::cmd(args);
+}
+*/

@@ -4,24 +4,21 @@
 #include <pair.h>
 #include <wire_w.h>
 #include <atlas_w.h>
-#include <openag_modules.h>
 #include <onewire_w.h>
-
-#include <openag_module.h>
-#include <openag_am2315.h>
-#include <openag_ds18b20.h>
-#include <openag_binary_actuator.h>
+#include <openag_modules.h>
 #include <src.h>
+
+//#include <openag_module.h>
+//#include <openag_am2315.h>
+//#include <openag_ds18b20.h>
+//#include <openag_binary_actuator.h>
+//#include <openag_pwm_actuator.h>
 
 // Signatures of built-ins that are in this file.
 int apply_error(int i); 
 int water_temp(int args);
 int config_open_ag_loop(int args);
 int help(int args);
-
-// TODO: Create native functions for:
-// 1) Display the 64 bit addresses of all connected One Wire devices.
-// 
 
 // All the built in functions take one argument (an integer) which is assumed to point
 // to a pair based list of function parameters.  The built in function is responsible
@@ -35,7 +32,7 @@ typedef int (*function_ptr)(int i);
 // return (*(fp_array[2])) (args); to call functions.
 // 
 
-const int NBIF = 16;  //Set to size of fname_array.
+const int NBIF = 17;  //Set to size of fname_array.
 
 // This array holds points to all the built-in functions.
 const function_ptr fp_array[] = {
@@ -54,7 +51,8 @@ const function_ptr fp_array[] = {
    &config_open_ag_loop,   //12
    &help,                  //13
    &i2c_help,              //14
-   &one_wire_addr          //15
+   &one_wire_addr,         //15
+   &openag_help            //16
 };
 
 // This array holds the names of all the built in functions.
@@ -74,7 +72,8 @@ const char *fname_array[NBIF] = {
    "set_oa_lp",
    "help",
    "i2c_help",
-   "one_wire_addr"
+   "one_wire_addr",
+   "openag_help"
 };
 
 // Look for a built in function that matches the name given.  If one is found then 
@@ -114,16 +113,21 @@ int apply_error(int i) {
    return 0;
 }
 
+// TODO: Factor this routine out of the code.
 //  Take a water  temperature reading.
 int water_temp(int args) {
 
-   ds18b20.update();
+   return 0;
+}
+/*
+   ds18b20_1.update();
 
    Serial.print("DS18b20: ");
-   Serial.println(ds18b20.get_temperature());
+   Serial.println(ds18b20_1.get_temperature());
 
    return -1;
 }
+*/
 
 int help(int args) {
 

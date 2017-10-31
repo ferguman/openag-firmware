@@ -24,6 +24,7 @@ class Ds18b20 : public Module {
     uint8_t begin();
     uint8_t update();
     float get_temperature();
+    int cmd(int args);
 
   private:
     OneWire _oneWire;

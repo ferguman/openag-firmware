@@ -1,6 +1,10 @@
 #ifndef OPENAG_MODULE
 #define OPENAG_MODULE
 
+#include <pair.h>
+#include <types.h>
+#include <openag_modules.h>
+
 #if (ARDUINO >= 100)
  #include "Arduino.h"
 #else
@@ -23,6 +27,12 @@ class Module {
     uint8_t status_level;
     String status_msg;
     uint8_t status_code;
+
+    virtual int cmd(int args) = 0;
+
+//  private:
+    boolean is_cmd(int args, char *cmd);
+    int common_cmd(int args);
 };
 
 #endif

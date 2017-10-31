@@ -6,28 +6,43 @@
 #include <openag_am2315.h>
 #include <openag_ds18b20.h>
 #include <openag_binary_actuator.h>
+#include <openag_pwm_actuator.h>
+#include <openag_mhz16.h>
 #include <src.h>
 
 //local function signatures.
 void sendModuleStatus(Module &module, String name);
 int send_begin_cmd(int args);
 int send_update_cmd(int args);
+int send_set_cmd(int args);
 
 // Specify the installed module classes and names here.
 //
-const uint8_t NMODS = 3;
+const uint8_t NMODS = 9;
 
 Module *mod_ptr_array[] = {
-   &am2315_1,
-   &ds18b20,
-   &air_flush_1
+   &am2315_1,          //0
+   &ds18b20_1,         //1
+   &air_flush_1,       //2
+   &chamber_fan_1,     //3
+   &chiller_fan_1,     //4
+   &led_blue_1,        //5
+   &led_white_1,       //6
+   &led_red_1,         //7
+   &mhz16_1            //8
 };
 
 //This array holds the names of all the modules.
 const char *mname_array[NMODS] = {
    "am2315",
    "ds18b20",
-   "air_flush"
+   "air_flush",
+   "chamber_fan",
+   "chiller_fan",
+   "blue_led",
+   "white_led",
+   "red_led",
+   "co2"
 };
 
 // Look for a module class that matches the name given.  If one is found then 
@@ -65,7 +80,7 @@ int oa_mod_cmd(int args);
 
 //This array holds the pointers to all the Module functions.
 const function_ptr mod_array[NMOD_FUNCS] = {
-   &oa_mod_cmd
+   &oa_mod_cmd,
 };
 
 //This array holds the name of all the module functions.
@@ -99,21 +114,26 @@ int apply_module_function(int func, int args) {
 }
 
 // This section contains the module functions called from the serial monitor
-//
 
-int show_open_ag_module_status(uint8_t status_code) {
 
-   if (status_code == OK) {
-      Serial.println(F("Module response: OK"));
-      return -1;      
-   }
-   if (status_code == WARN) {
-      Serial.println(F("Module response: WARN"));
-      return -1;      
-   }
-   if (status_code == ERROR) {
-      Serial.println(F("Module response: ERROR"));
-      return -1;      
+int show_open_ag_module_status(int arg) {
+
+   if(is_int(arg)) { 
+
+      int status_code = get_int(arg);
+
+      if (status_code == OK) {
+         Serial.println(F("Module response: OK"));
+         return -1;      
+      }
+      if (status_code == WARN) {
+         Serial.println(F("Module response: WARN"));
+         return -1;      
+      }
+      if (status_code == ERROR) {
+         Serial.println(F("Module response: ERROR"));
+         return -1;      
+      }
    }
 
    Serial.println(F("Error: Unknown module response code."));
@@ -130,42 +150,20 @@ boolean is_cmd(int args, char *cmd) {
    }
 }
 
-// args -> module_name and command
-//
 int oa_mod_cmd(int args) {
 
-   char begin[] = "begin";
-   char update[] = "update";
-   //char temp_and_hum[] = "temp_and_hum";
-
-   if (is_cmd(args, begin)) {return send_begin_cmd(args); }
-   if (is_cmd(args, update)) {return send_update_cmd(args); }
-
-   Serial.println(F("openag_modules.cpp:oa_mod_cmd: Error: Unknown command."));
-   return 0;
-
-}
-
-int send_begin_cmd(int args) {
-
-   Serial.println("in send_begin_cmd");
+   Serial.println("in oa_mod_cmd_2"); 
 
    Module *mod = find_module(cdar(args));
 
-   if (mod) {return show_open_ag_module_status(mod->begin());}
+   if (mod) {return show_open_ag_module_status(mod->cmd(args));}
 
-   Serial.println(F("Error in openag_modules: Unknown module name."));
+   Serial.println(F("Error in openag_modules:oa_mod_cmd_2: Unknown module name."));
    return 0;
 }
 
-int send_update_cmd(int args) {
+int openag_help(int args) {
 
-   Serial.println("in send_update_cmd");
-
-   Module *mod = find_module(cdar(args));
-
-   if (mod) {return show_open_ag_module_status(mod->update());}
-
-   Serial.println(F("Error in openag_modules: Unknown module name."));
    return 0;
+
 }

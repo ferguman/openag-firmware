@@ -315,6 +315,8 @@ void test_types() {
    assert_int_equals(tn, 175, get_int(test+9));
 
    assert_float_equals(tn, 34, (int) (10 * (get_float(make_float(3, 4)))));
+   assert_float_equals(tn, 1, (int) (10 * (get_float(make_float(0, 1)))));
+   assert_float_equals(tn, 8, (int) (10 * (get_float(make_float(0, 8)))));
 
    assert_char_equals(tn, 'U', get_char(make_char('U')));
 
