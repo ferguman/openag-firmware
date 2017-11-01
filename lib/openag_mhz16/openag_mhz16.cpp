@@ -101,15 +101,17 @@ int MHZ16::get_air_carbon_dioxide() {
   return _sensor.ppm;
 }
 
-int MHZ16:cmd(int args) {
+int MHZ16::cmd(int args) {
 
    Serial.println("in mhz16");
 
    char read[] = "read";
 
-   if (this->is_cmd(args, read) {
-      return (make_int(this->get_air_carbon_dioxide()));
+   if (this->is_cmd(args, read)) {
+      Serial.print(F("CO2: ")); Serial.println(this->get_air_carbon_dioxide());
+      return make_int(OK);
+      //return (make_int(this->get_air_carbon_dioxide()));
    }
 
-   return Module::cmd(args);
+   return Module::common_cmd(args);
 }

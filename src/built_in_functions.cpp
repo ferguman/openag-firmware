@@ -6,13 +6,16 @@
 #include <atlas_w.h>
 #include <onewire_w.h>
 #include <openag_modules.h>
-#include <src.h>
 
-//#include <openag_module.h>
-//#include <openag_am2315.h>
-//#include <openag_ds18b20.h>
-//#include <openag_binary_actuator.h>
-//#include <openag_pwm_actuator.h>
+#include <openag_module.h>
+#include <openag_am2315.h>
+#include <openag_mhz16.h>
+#include <openag_ds18b20.h>
+#include <openag_binary_actuator.h>
+#include <openag_pwm_actuator.h>
+#include <openag_atlas_ph.h>
+#include <openag_atlas_ec.h>
+#include <src.h>
 
 // Signatures of built-ins that are in this file.
 int apply_error(int i); 
@@ -138,7 +141,7 @@ int help(int args) {
       Serial.println(F("                    the Serial Monitor that is installed is a")); 
       Serial.println(F("                    stable version."));
       Serial.println(F("(i2c_help)          Print help for I2C commands."));
-      Serial.println(F("(open_ag_help)      Print help for Open Ag Module commands."));
+      Serial.println(F("(openag_help)       Print help for Open Ag Module commands."));
    
       return -1;
 

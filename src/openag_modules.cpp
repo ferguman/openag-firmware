@@ -8,6 +8,8 @@
 #include <openag_binary_actuator.h>
 #include <openag_pwm_actuator.h>
 #include <openag_mhz16.h>
+#include <openag_atlas_ph.h>
+#include <openag_atlas_ec.h>
 #include <src.h>
 
 //local function signatures.
@@ -18,19 +20,28 @@ int send_set_cmd(int args);
 
 // Specify the installed module classes and names here.
 //
-const uint8_t NMODS = 9;
+const uint8_t NMODS = 17;
 
 Module *mod_ptr_array[] = {
-   &am2315_1,          //0
-   &ds18b20_1,         //1
-   &air_flush_1,       //2
-   &chamber_fan_1,     //3
-   &chiller_fan_1,     //4
-   &led_blue_1,        //5
-   &led_white_1,       //6
-   &led_red_1,         //7
-   &mhz16_1            //8
+   &am2315_1,                   //0
+   &ds18b20_1,                  //1
+   &air_flush_1,                //2
+   &chamber_fan_1,              //3
+   &chiller_fan_1,              //4
+   &led_blue_1,                 //5
+   &led_white_1,                //6
+   &led_red_1,                  //7
+   &mhz16_1,                    //8
+   &atlas_ph_1,                 //9
+   &atlas_ec_1,                 //10
+   &pump_5_water_1,             //11
+   &chiller_pump_1,             //12
+   &heater_core_2_1,            //13
+   &water_aeration_pump_1,      //14
+   &water_circulation_pump_1,   //15
+   &heater_core_1_1             //16
 };
+
 
 //This array holds the names of all the modules.
 const char *mname_array[NMODS] = {
@@ -42,10 +53,19 @@ const char *mname_array[NMODS] = {
    "blue_led",
    "white_led",
    "red_led",
-   "co2"
+   "co2",
+   "ph",
+   "ec",
+   "water_pump",
+   "chiller_pump",
+   "heater_core_2",
+   "water_aeration_pump",
+   "water_circ_pump",
+   "heater_core_1"
 };
 
 // Look for a module class that matches the name given.  If one is found then 
+
 // return the class.
 //
 Module *find_module(int module_name) {
@@ -152,8 +172,6 @@ boolean is_cmd(int args, char *cmd) {
 
 int oa_mod_cmd(int args) {
 
-   Serial.println("in oa_mod_cmd_2"); 
-
    Module *mod = find_module(cdar(args));
 
    if (mod) {return show_open_ag_module_status(mod->cmd(args));}
@@ -162,8 +180,37 @@ int oa_mod_cmd(int args) {
    return 0;
 }
 
+void print_installed_module_list() {
+
+   Serial.println(F("The following modules are installed on this system:"));
+
+   for (int i=0; i < NMODS; i++) {
+      Serial.println(mname_array[i]);
+   }
+
+}
+
+//const char *mname_array[NMODS] = {
+
 int openag_help(int args) {
 
-   return 0;
+   if (args == nil) {  
 
+      Serial.println(F("(oenag_help)              Prints this message."));
+      Serial.println(F("(oa_mod_cmd)              Runs an Open Ag Module command. Accepts up to 3 arguments.")); 
+      Serial.println(F("                          1) Module name, See list below. Example: 'am2315 or 'co2"));
+      Serial.println(F("                          2) Command: One of 'begin, 'update, 'read, or 'set"));
+      Serial.println(F("                          3) Set commands take an argument.  Example 0"));
+      Serial.println(F("                          Example Command: (oa_mod_cmd 'blue_led 'set 0.8)")); 
+      Serial.println(F(""));
+
+      print_installed_module_list();
+   
+      return -1;
+
+   } else {
+
+      Serial.println(F("Unknown openag help command."));
+      return 0;
+   }
 }
