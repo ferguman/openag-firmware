@@ -8,13 +8,22 @@
 #include <openag_modules.h>
 
 #include <openag_module.h>
+
 #include <openag_am2315.h>
-#include <openag_mhz16.h>
 #include <openag_ds18b20.h>
-#include <openag_binary_actuator.h>
-#include <openag_pwm_actuator.h>
+#include <openag_mhz16.h>
 #include <openag_atlas_ph.h>
 #include <openag_atlas_ec.h>
+
+#include <openag_binary_sensor.h>
+#include <openag_binary_actuator.h>
+#include <openag_pwm_actuator.h>
+#include <openag_doser_pump.h>
+#include <openag_pulse_actuator.h>
+#include <openag_tone_actuator.h>
+
+#include <src.h>
+
 #include <src.h>
 
 // Signatures of built-ins that are in this file.
@@ -35,7 +44,7 @@ typedef int (*function_ptr)(int i);
 // return (*(fp_array[2])) (args); to call functions.
 // 
 
-const int NBIF = 17;  //Set to size of fname_array.
+const int NBIF = 16;  //Set to size of fname_array.
 
 // This array holds points to all the built-in functions.
 const function_ptr fp_array[] = {
@@ -54,8 +63,7 @@ const function_ptr fp_array[] = {
    &config_open_ag_loop,   //12
    &help,                  //13
    &i2c_help,              //14
-   &one_wire_addr,         //15
-   &openag_help            //16
+   &one_wire_addr          //15
 };
 
 // This array holds the names of all the built in functions.
@@ -75,8 +83,7 @@ const char *fname_array[NBIF] = {
    "set_oa_lp",
    "help",
    "i2c_help",
-   "one_wire_addr",
-   "openag_help"
+   "one_wire_addr"
 };
 
 // Look for a built in function that matches the name given.  If one is found then 

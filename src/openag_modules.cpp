@@ -5,11 +5,17 @@
 
 #include <openag_am2315.h>
 #include <openag_ds18b20.h>
-#include <openag_binary_actuator.h>
-#include <openag_pwm_actuator.h>
 #include <openag_mhz16.h>
 #include <openag_atlas_ph.h>
 #include <openag_atlas_ec.h>
+
+#include <openag_binary_sensor.h>
+#include <openag_binary_actuator.h>
+#include <openag_pwm_actuator.h>
+#include <openag_doser_pump.h>
+#include <openag_pulse_actuator.h>
+#include <openag_tone_actuator.h>
+
 #include <src.h>
 
 //local function signatures.
@@ -20,7 +26,7 @@ int send_set_cmd(int args);
 
 // Specify the installed module classes and names here.
 //
-const uint8_t NMODS = 17;
+const uint8_t NMODS = 24;
 
 Module *mod_ptr_array[] = {
    &am2315_1,                   //0
@@ -39,8 +45,16 @@ Module *mod_ptr_array[] = {
    &heater_core_2_1,            //13
    &water_aeration_pump_1,      //14
    &water_circulation_pump_1,   //15
-   &heater_core_1_1             //16
+   &heater_core_1_1,            //16
+   &water_level_sensor_high_1,  //17
+   &water_level_sensor_low_1,   //18
+   &pump_1_nutrient_a_1,        //19
+   &pump_2_nutrient_b_1,        //20
+   &pump_3_ph_up_1,             //21
+   &pump_4_ph_down_1,           //22
+   &chiller_compressor_1        //23
 };
+
 
 
 //This array holds the names of all the modules.
@@ -59,9 +73,16 @@ const char *mname_array[NMODS] = {
    "water_pump",
    "chiller_pump",
    "heater_core_2",
-   "water_aeration_pump",
+   "water_aeration",
    "water_circ_pump",
-   "heater_core_1"
+   "heater_core_1",
+   "water_high",
+   "water_low",
+   "nut_pump_1",
+   "nut_pump_2",
+   "ph_up",
+   "ph_down",
+   "chiller_comp"
 };
 
 // Look for a module class that matches the name given.  If one is found then 
@@ -92,7 +113,7 @@ Module *find_module(int module_name) {
 
 typedef int (*function_ptr)(int i);
 
-const uint8_t NMOD_FUNCS = 1;
+const uint8_t NMOD_FUNCS = 3;
 
 // Module function signatures
 //
@@ -100,12 +121,16 @@ int oa_mod_cmd(int args);
 
 //This array holds the pointers to all the Module functions.
 const function_ptr mod_array[NMOD_FUNCS] = {
-   &oa_mod_cmd,
+   &oa_mod_cmd,            //0
+   &oa_mod_cmd,            //1
+   &openag_help            //2
 };
 
 //This array holds the name of all the module functions.
 const char *mfname_array[NMODS] = {
-   "oa_mod_cmd"
+   "oa_mod_cmd",
+   "c",
+   "openag_help"
 };
 
 // Look for a module function that matches the name given.  If one is found then 
@@ -202,6 +227,10 @@ int openag_help(int args) {
       Serial.println(F("                          2) Command: One of 'begin, 'update, 'read, or 'set"));
       Serial.println(F("                          3) Set commands take an argument.  Example 0"));
       Serial.println(F("                          Example Command: (oa_mod_cmd 'blue_led 'set 0.8)")); 
+      Serial.println(F(""));
+
+      Serial.println(F("(c)                       Short form of the (oa_mod_cmd) command"));
+      Serial.println(F("                          Example Command: (c 'blue_led 'set 0.8)")); 
       Serial.println(F(""));
 
       print_installed_module_list();

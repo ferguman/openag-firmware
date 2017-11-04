@@ -4,10 +4,14 @@
 #include <openag_am2315.h>
 #include <openag_mhz16.h>
 #include <openag_ds18b20.h>
+#include <openag_binary_sensor.h>
 #include <openag_binary_actuator.h>
 #include <openag_pwm_actuator.h>
 #include <openag_atlas_ph.h>
 #include <openag_atlas_ec.h>
+#include <openag_doser_pump.h>
+#include <openag_pulse_actuator.h>
+#include <openag_tone_actuator.h>
 
 #include <types.h>
 #include <pair.h>
@@ -27,8 +31,11 @@ Ds18b20 ds18b20_1(5);
 MHZ16 mhz16_1(77);
 AtlasPh atlas_ph_1(99);
 AtlasEc atlas_ec_1(100);
+BinarySensor water_level_sensor_high_1(3, false);
+BinarySensor water_level_sensor_low_1(4, false);
 
-// Actuators
+//TODO - sort these by pin number.
+// Actuator Instances. Sorted by pin number.
 //
 BinaryActuator air_flush_1(36, true, 10000);
 BinaryActuator chamber_fan_1(39, true, 10000);
@@ -43,18 +50,13 @@ BinaryActuator heater_core_2_1(35, true, 10000);
 BinaryActuator water_aeration_pump_1(37, true, 10000);
 BinaryActuator water_circulation_pump_1(38, true, 10000);
 BinaryActuator heater_core_1_1(43, true, 10000);
-
-/*
-BinarySensor water_level_sensor_high_1(3, false);
-BinarySensor water_level_sensor_low_1(4, false);
-
-// Actuator Instances. Sorted by pin number.
 DoserPump pump_1_nutrient_a_1(28, true);
 DoserPump pump_2_nutrient_b_1(29, true);
 PulseActuator pump_3_ph_up_1(30, true);
 PulseActuator pump_4_ph_down_1(31, true);
 ToneActuator chiller_compressor_1(9, false, 140, -1);
-*/
+
+
 
 // Message string
 String message = "";
