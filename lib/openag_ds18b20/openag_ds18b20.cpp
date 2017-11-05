@@ -61,5 +61,12 @@ float Ds18b20::get_temperature() {
 
 int Ds18b20::cmd(int args) {
 
-   return -1;
+   char read[] = "read";
+
+   if (this->is_cmd(args, read)) {
+      Serial.print(F("Water Temp.: ")); Serial.println(_temperature);
+      return make_int(status_code);
+   }
+
+   return Module::common_cmd(args);
 }

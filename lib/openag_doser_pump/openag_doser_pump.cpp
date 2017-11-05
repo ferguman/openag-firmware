@@ -14,7 +14,7 @@ uint8_t DoserPump::begin() {
   pinMode(_pin, OUTPUT);
   digitalWrite(_pin, bool2command(false));
   _on_duration = 0;
-  _off_duration = _dosingFreq;
+  _off_duration = _dosingPeriod;
   return status_level;
 }
 
@@ -37,19 +37,18 @@ uint8_t DoserPump::update() {
     _isOn = false;
     _last_pulse = curr_time;
   }
-  if(!_isOn && curr_time - _last_pulse > _off_duration){
+
+  if (!_isOn && (curr_time - _last_pulse > _off_duration) && (_on_duration > 0) ) {
     _isOn = true;
     _last_pulse = curr_time;
   }
+
   digitalWrite(_pin, bool2command(_isOn));
   return status_level;
 }
 
 // Set the pump driver to pump the rate (ml/h).
 uint8_t DoserPump::set_cmd(float rate) {
-
-  Serial.print("In Doser set_cmd. Rate = ");
-  Serial.println(rate);
 
   uint32_t curr_time = millis();
 
@@ -67,12 +66,12 @@ uint8_t DoserPump::set_cmd(float rate) {
   }
 
   // onRatio cannot be greater than 1 if we check for UPPER_BOUND above
-  // Therefore we can assume that _on_duration is less than dosingFreq
+  // Therefore we can assume that _on_duration is less than dosingPeriod
   // and _off_duration is positive.
   float onRatio = rate / _upperBound;
 
-  _on_duration = onRatio * _dosingFreq;
-  _off_duration = _dosingFreq - _on_duration;
+  _on_duration = onRatio * _dosingPeriod;
+  _off_duration = _dosingPeriod - _on_duration;
 
   // Update the most recent command
   _last_cmd = curr_time;
@@ -92,11 +91,11 @@ uint8_t DoserPump::bool2command(bool isOn){
 
 void DoserPump::show_state() {
 
-   Serial.print(F("Dosing Period (msec): ")); Serial.println(_dosingFreq);
+   Serial.print(F("Dosing Period (msec): ")); Serial.println(_dosingPeriod);
    Serial.print(F("Dosing Rate Lower Bound: ")); Serial.println(_lowerBound);
    Serial.print(F("Dosing Rate Upper Bound: ")); Serial.println(_upperBound);
 
-   Serial.print(F("Auto shutoff time (msec): ")); Serial.println(_shutoff_ms);
+   Serial.print(F("Auto shut-off timeout (msec): ")); Serial.println(_shutoff_ms);
    Serial.print(F("Current On Duration (msec): ")); Serial.println(_on_duration);
    Serial.print(F("Current Off Duration (msec): ")); Serial.println(_off_duration);
 
@@ -108,17 +107,21 @@ void DoserPump::show_state() {
 
 int DoserPump::cmd(int args) {
 
-   Serial.println("in doser pump cmd");
-
    char set_cmd[] = "set";
    char state_cmd[] = "state";
+   char set_timeout[] = "set_to";
 
    if (this->is_cmd(args, set_cmd)) {
-      return make_int(this->set_cmd((float)get_float(car(cddr(args)))));
+      return make_int(this->set_cmd(get_float(car(cddr(args)))));
    }
 
    if (this->is_cmd(args, state_cmd)) {
       this->show_state();
+      return make_int(OK);
+    }
+
+   if (this->is_cmd(args, set_timeout)) {
+      _shutoff_ms = get_int(car(cddr(args)));
       return make_int(OK);
     }
 

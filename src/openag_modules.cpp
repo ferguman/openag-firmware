@@ -40,7 +40,7 @@ Module *mod_ptr_array[] = {
    &mhz16_1,                    //8
    &atlas_ph_1,                 //9
    &atlas_ec_1,                 //10
-   &pump_5_water_1,             //11
+   &chiller_compressor_1,       //11
    &chiller_pump_1,             //12
    &heater_core_2_1,            //13
    &water_aeration_pump_1,      //14
@@ -50,9 +50,9 @@ Module *mod_ptr_array[] = {
    &water_level_sensor_low_1,   //18
    &pump_1_nutrient_a_1,        //19
    &pump_2_nutrient_b_1,        //20
-   &pump_3_ph_up_1,             //21
-   &pump_4_ph_down_1,           //22
-   &chiller_compressor_1        //23
+   &pump_5_water_1,             //21
+   &pump_3_ph_up_1,             //22
+   &pump_4_ph_down_1            //23
 };
 
 
@@ -70,7 +70,7 @@ const char *mname_array[NMODS] = {
    "co2",
    "ph",
    "ec",
-   "water_pump",
+   "chiller_comp",
    "chiller_pump",
    "heater_core_2",
    "water_aeration",
@@ -80,9 +80,9 @@ const char *mname_array[NMODS] = {
    "water_low",
    "nut_pump_1",
    "nut_pump_2",
+   "water_pump",
    "ph_up",
-   "ph_down",
-   "chiller_comp"
+   "ph_down"
 };
 
 // Look for a module class that matches the name given.  If one is found then 

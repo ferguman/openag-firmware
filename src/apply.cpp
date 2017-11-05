@@ -9,7 +9,6 @@
 int apply(int op, int args, int env) { 
 
    if (is_pair(op)) {
-      //return apply_built_in_function(op, args);
       return apply_function(op, args);
    } else {
       return 0;
