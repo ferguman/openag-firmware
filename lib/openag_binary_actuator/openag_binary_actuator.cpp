@@ -1,6 +1,6 @@
 #include "openag_binary_actuator.h"
 
-BinaryActuator::BinaryActuator(int pin, bool is_active_low, int shutoff_ms) {
+BinaryActuator::BinaryActuator(int pin, bool is_active_low, uint32_t shutoff_ms) {
   _pin = pin;
   _is_active_low = is_active_low;
   _shutoff_ms = shutoff_ms;

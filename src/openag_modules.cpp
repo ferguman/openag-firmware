@@ -23,31 +23,38 @@ void sendModuleStatus(Module &module, String name);
 int send_begin_cmd(int args);
 int send_update_cmd(int args);
 int send_set_cmd(int args);
+int show_mods(int args);
+int begin_mods(int args);
+int check_actuator_loop(int args);
+int check_sensor_loop(int args);
+int read_sensors(int args);
+int fc(int args);
 
 // Specify the installed module classes and names here.
 //
 const uint8_t NMODS = 24;
+const uint8_t ACTUATOR_OFFSET = 7;
 
 Module *mod_ptr_array[] = {
-   &am2315_1,                   //0
+   &am2315_1,                   //0 - Put sensors at the head of the list.
    &ds18b20_1,                  //1
-   &air_flush_1,                //2
-   &chamber_fan_1,              //3
-   &chiller_fan_1,              //4
-   &led_blue_1,                 //5
-   &led_white_1,                //6
-   &led_red_1,                  //7
-   &mhz16_1,                    //8
-   &atlas_ph_1,                 //9
-   &atlas_ec_1,                 //10
-   &chiller_compressor_1,       //11
-   &chiller_pump_1,             //12
-   &heater_core_2_1,            //13
-   &water_aeration_pump_1,      //14
-   &water_circulation_pump_1,   //15
-   &heater_core_1_1,            //16
-   &water_level_sensor_high_1,  //17
-   &water_level_sensor_low_1,   //18
+   &mhz16_1,                    //2
+   &atlas_ph_1,                 //3
+   &atlas_ec_1,                 //4
+   &water_level_sensor_high_1,  //5
+   &water_level_sensor_low_1,   //6
+   &air_flush_1,                //7 - First Actuator in the list.
+   &chamber_fan_1,              //8
+   &chiller_fan_1,              //9
+   &led_blue_1,                 //10
+   &led_white_1,                //11
+   &led_red_1,                  //12
+   &chiller_compressor_1,       //13
+   &chiller_pump_1,             //14
+   &heater_core_2_1,            //15
+   &water_aeration_pump_1,      //16
+   &water_circulation_pump_1,   //17
+   &heater_core_1_1,            //18
    &pump_1_nutrient_a_1,        //19
    &pump_2_nutrient_b_1,        //20
    &pump_5_water_1,             //21
@@ -55,29 +62,27 @@ Module *mod_ptr_array[] = {
    &pump_4_ph_down_1            //23
 };
 
-
-
 //This array holds the names of all the modules.
 const char *mname_array[NMODS] = {
-   "am2315",
-   "ds18b20",
+   "air_temp_hum",
+   "water_temp",
+   "co2",
+   "ph",
+   "ec",
+   "water_high",
+   "water_low",
    "air_flush",
    "chamber_fan",
    "chiller_fan",
    "blue_led",
    "white_led",
    "red_led",
-   "co2",
-   "ph",
-   "ec",
    "chiller_comp",
    "chiller_pump",
    "heater_core_2",
    "water_aeration",
    "water_circ_pump",
    "heater_core_1",
-   "water_high",
-   "water_low",
    "nut_pump_1",
    "nut_pump_2",
    "water_pump",
@@ -113,7 +118,7 @@ Module *find_module(int module_name) {
 
 typedef int (*function_ptr)(int i);
 
-const uint8_t NMOD_FUNCS = 3;
+const uint8_t NMOD_FUNCS = 9;
 
 // Module function signatures
 //
@@ -123,14 +128,26 @@ int oa_mod_cmd(int args);
 const function_ptr mod_array[NMOD_FUNCS] = {
    &oa_mod_cmd,            //0
    &oa_mod_cmd,            //1
-   &openag_help            //2
+   &openag_help,           //2
+   &show_mods,             //3
+   &begin_mods,            //4
+   &check_actuator_loop,   //5
+   &check_sensor_loop,     //6
+   &read_sensors,          //7
+   &fc                     //8
 };
 
 //This array holds the name of all the module functions.
 const char *mfname_array[NMODS] = {
    "oa_mod_cmd",
    "c",
-   "openag_help"
+   "openag_help",
+   "show_mods",
+   "begin_mods",
+   "check_actuators",
+   "check_sensors",
+   "read_sensors",
+   "fc"
 };
 
 // Look for a module function that matches the name given.  If one is found then 
@@ -205,36 +222,132 @@ int oa_mod_cmd(int args) {
    return 0;
 }
 
-void print_installed_module_list() {
+int show_mods(int args) {
 
    Serial.println(F("The following modules are installed on this system:"));
 
    for (int i=0; i < NMODS; i++) {
+
+      if (i == 0) {
+         Serial.println(F("SENSORS:"));
+      }
+
+      if (i == ACTUATOR_OFFSET) {
+         Serial.println(F(""));
+         Serial.println(F("ACTUATORS:"));
+      }
+
       Serial.println(mname_array[i]);
    }
 
+   return -1;
+
 }
 
-//const char *mname_array[NMODS] = {
+int begin_mods(int args) {
+
+   beginModules();
+   return -1;
+
+}
+
+int check_actuator_loop(int args) {
+
+   boolean all_good = checkActuatorLoop(); 
+
+   if (all_good) {
+      Serial.println(F("All actuator Modules are OK."));
+   } else {
+      Serial.println(F("One or more actuator Modules are in an error state."));
+   }
+
+   return -1;
+}
+
+int check_sensor_loop(int args) {
+
+   boolean all_good = checkSensorLoop();
+
+   if (all_good) {
+      Serial.println(F("All sensor Modules are OK."));
+   } else {
+      Serial.println(F("One or more sensor Modules are in an error state."));
+   }
+
+   return -1;
+}
+
+int read_sensors(int args) {
+
+   sensorLoop();
+
+   return -1;
+}
+
+int fc(int args) {
+
+   char on[] = "on";
+   char off[] = "off";
+   char read[] = "read";
+
+   if (strcmp(on, get_str(cdar(args))) == 0) {
+      fc_loop_on = true;
+      return -1;
+   }
+
+   if (strcmp(off, get_str(cdar(args))) == 0) {
+      fc_loop_on = false;
+      return -1;
+   }
+
+   if (strcmp(read, get_str(cdar(args))) == 0) {
+
+      Serial.print(F("This food computer microcontroller control loop is currently "));
+      if (fc_loop_on) {
+         Serial.println(F("ON."));
+      } else {
+         Serial.println(F("OFF."));
+      }
+      return -1;
+   }
+
+   Serial.println(F("Unknown parameter."));
+
+   return 0;
+}
 
 int openag_help(int args) {
 
    if (args == nil) {  
 
-      Serial.println(F("(oenag_help)              Prints this message."));
+      Serial.println(F("(begin_mods)              Initialize all installed Openag Modules."));
+      Serial.println(F(""));
+      Serial.println(F("(c)                       Short form of the (oa_mod_cmd) command"));
+      Serial.println(F("                          Example Command: (c 'blue_led 'set 0.8)")); 
+      Serial.println(F(""));
+      Serial.println(F("(check_actuators)         Check all the installed Openag Modules. Print the status of"));
+      Serial.println(F("                          all sensors that are not in the OK state."));
+      Serial.println(F(""));
+      Serial.println(F("(check_sensors)           Check all the installed Openag sensors.  Print the status of"));
+      Serial.println(F("                          all sensors that are not in the OK state."));
+      Serial.println(F(""));
+      Serial.println(F("(fc)                      Turn the microcontroller's control loop on or off. Accepts 1 argument."));
+      Serial.println(F("                          1) Cmd: One of 'on, 'off, or 'read."));
+      Serial.println(F("                          Example Command: (fc 'on)")); 
+      Serial.println(F(""));
       Serial.println(F("(oa_mod_cmd)              Runs an Open Ag Module command. Accepts up to 3 arguments.")); 
-      Serial.println(F("                          1) Module name, See list below. Example: 'am2315 or 'co2"));
+      Serial.println(F("                          1) Module name, Type (show_mods) to see the list. Example: 'ph"));
       Serial.println(F("                          2) Command: One of 'begin, 'update, 'read, or 'set"));
       Serial.println(F("                          3) Set commands take an argument.  Example 0"));
       Serial.println(F("                          Example Command: (oa_mod_cmd 'blue_led 'set 0.8)")); 
       Serial.println(F(""));
-
-      Serial.println(F("(c)                       Short form of the (oa_mod_cmd) command"));
-      Serial.println(F("                          Example Command: (c 'blue_led 'set 0.8)")); 
+      Serial.println(F("(openag_help)             Prints this message."));
       Serial.println(F(""));
+      Serial.println(F("(read_sensors)            Show sensor data as a comma seperated list. The sensor data is returned"));
+      Serial.println(F("                          as status,hum,temp,co2,water_temperature,water_low,water_high,ph,ec."));
+      Serial.println(F(""));
+      Serial.println(F("(show_mods)               Lists all the Sensors and Actuators installed on this system."));
 
-      print_installed_module_list();
-   
       return -1;
 
    } else {

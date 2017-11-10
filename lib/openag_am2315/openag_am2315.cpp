@@ -115,7 +115,7 @@ int Am2315::cmd(int args) {
    if (this->is_cmd(args, temp_hum)) {
       Serial.print(F("Air Temp.: ")); Serial.println(_air_temperature);
       Serial.print(F("Humidity: ")); Serial.println(_air_humidity);
-      return make_int(OK);
+      return make_int(status_level);
    }
 
    return Module::common_cmd(args);

@@ -25,7 +25,7 @@ class MHZ16 : public Module {
     bool _is_on;
     const static uint32_t _leave_off_for = 2000;
     uint32_t _time_of_last_power_cycle;
-    const static uint32_t _power_cycle_interval = 43200000;
+    const static uint32_t _power_cycle_interval = 43200000;   //12 hours
 
     void readData();
 

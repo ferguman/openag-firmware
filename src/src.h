@@ -1,6 +1,13 @@
 #ifndef SRC
 #define SRC
 
+void beginModules();
+bool checkActuatorLoop();
+bool checkSensorLoop();
+void sensorLoop();
+
+extern boolean fc_loop_on;
+
 //FC Version 2 - 7 sensors
 extern Am2315 am2315_1;
 extern Ds18b20 ds18b20_1;

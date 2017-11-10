@@ -47,8 +47,8 @@ boolean is_sym_char(String *str, int char_pos) {
       return true;
    }
 
-   //Accept "-"
-   if (str->charAt(char_pos) == 95) {
+   //Accept "-", "?", and ","
+   if (str->charAt(char_pos) == 95 || str->charAt(char_pos) == 63 || str->charAt(char_pos) == 44) {
       return true;
    }
 

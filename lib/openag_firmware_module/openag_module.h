@@ -31,6 +31,7 @@ class Module {
     virtual int cmd(int args) = 0;
 
 //  private:
+    int show_status();
     boolean is_cmd(int args, char *cmd);
     int common_cmd(int args);
 };

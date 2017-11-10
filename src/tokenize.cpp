@@ -67,7 +67,6 @@ int token_iter(String *str, unsigned int cur_pos, int token_list) {
 
    //Check for parenthesis or ' (i.e sybmol) characters.
    if (str->charAt(cur_pos) == '(' || str->charAt(cur_pos) == ')' || str->charAt(cur_pos) == '\'') {
-       //return token_iter(str, cur_pos + 1, add_list_item(token_list, cons(make_char(str->charAt(cur_pos)),nil)));
        return token_iter(str, cur_pos + 1, add_list_item(token_list, make_char(str->charAt(cur_pos))));
    }
 

@@ -7,6 +7,8 @@
 #include <pair.h>
 #include <types.h>
 
+const int FC_CMD_DETECTED = 1;
+
 boolean remove_backspaces(String *input_str, unsigned int input_cur_pos, unsigned int output_cur_pos) {
 
    // Stop when you reach the end of the input string.
@@ -30,10 +32,7 @@ boolean remove_backspaces(String *input_str, unsigned int input_cur_pos, unsigne
 
 int process_message(String *input) {
 
-   //int foobar = run_tests(0);
-
    //Scan the input and removed backspaced characters
-   //
    if (remove_backspaces(input, 0, 0)) {
 
       //Tokenize the input. Returns a list of tokens.
@@ -53,8 +52,6 @@ int process_message(String *input) {
       }
    }
 
-
-   //print_type_stats(); print_pair_stats();
    clear_pairs();
    clear_types();
 

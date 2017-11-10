@@ -103,8 +103,6 @@ int MHZ16::get_air_carbon_dioxide() {
 
 int MHZ16::cmd(int args) {
 
-   Serial.println("in mhz16");
-
    char read[] = "read";
 
    if (this->is_cmd(args, read)) {

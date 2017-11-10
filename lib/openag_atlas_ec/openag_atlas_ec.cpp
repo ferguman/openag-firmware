@@ -14,13 +14,18 @@ AtlasEc::AtlasEc(int i2c_address) {
 }
 
 uint8_t AtlasEc::begin() {
+
   Wire.begin();
   Wire.setTimeout(40);
+
   // Enable only the EC reading
+  Wire.beginTransmission(_i2c_address);
   Wire.print("O,EC,1");
   Wire.print("O,TDS,0");
   Wire.print("O,S,0");
   Wire.print("O,SG,0");
+  Wire.endTransmission();
+
   return status_level;
 }
 

@@ -7,7 +7,7 @@
 class BinaryActuator : public Module {
   public:
     // Constructor
-    BinaryActuator(int pin, bool is_active_low, int shutoff_ms);
+    BinaryActuator(int pin, bool is_active_low, uint32_t shutoff_ms);
 
     // Public functions
     uint8_t begin();
@@ -19,7 +19,7 @@ class BinaryActuator : public Module {
     // Private variables
     int _pin;
     bool _is_active_low;
-    int _shutoff_ms = 10000;
+    uint32_t _shutoff_ms = 10000;
     uint32_t _last_cmd;
 };
 
