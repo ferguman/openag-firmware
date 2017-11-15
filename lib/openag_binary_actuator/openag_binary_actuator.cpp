@@ -45,12 +45,29 @@ uint8_t BinaryActuator::set_cmd(bool cmd) {
   return status_level;
 }
 
+void BinaryActuator::show_state() {
+
+   Serial.print(F("Binary Actuator is :"));
+
+   if (digitalRead(_pin) ^ _is_active_low) {
+      Serial.println(F(" On."));
+   } else {
+      Serial.println(F(" Off."));
+   } 
+}
+
 int BinaryActuator::cmd(int args) {
 
    char set_cmd[] = "set";
+   char state[] = "state";
 
    if (this->is_cmd(args, set_cmd)) {
       return make_int(this->set_cmd((boolean)get_int(car(cddr(args)))));
+   }
+
+   if (this->is_cmd(args, state)) {
+      this->show_state();
+      return make_int(status_level);
    }
 
    return Module::common_cmd(args);

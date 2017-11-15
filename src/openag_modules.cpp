@@ -91,7 +91,6 @@ const char *mname_array[NMODS] = {
 };
 
 // Look for a module class that matches the name given.  If one is found then 
-
 // return the class.
 //
 Module *find_module(int module_name) {
@@ -176,7 +175,6 @@ int apply_module_function(int func, int args) {
 }
 
 // This section contains the module functions called from the serial monitor
-
 
 int show_open_ag_module_status(int arg) {
 
@@ -337,7 +335,7 @@ int openag_help(int args) {
       Serial.println(F(""));
       Serial.println(F("(oa_mod_cmd)              Runs an Open Ag Module command. Accepts up to 3 arguments.")); 
       Serial.println(F("                          1) Module name, Type (show_mods) to see the list. Example: 'ph"));
-      Serial.println(F("                          2) Command: One of 'begin, 'update, 'read, or 'set"));
+      Serial.println(F("                          2) Command: One of 'begin, 'update, 'read, 'state' or 'set"));
       Serial.println(F("                          3) Set commands take an argument.  Example 0"));
       Serial.println(F("                          Example Command: (oa_mod_cmd 'blue_led 'set 0.8)")); 
       Serial.println(F(""));

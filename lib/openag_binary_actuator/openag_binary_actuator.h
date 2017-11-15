@@ -21,6 +21,7 @@ class BinaryActuator : public Module {
     bool _is_active_low;
     uint32_t _shutoff_ms = 10000;
     uint32_t _last_cmd;
+    void show_state();
 };
 
 #endif

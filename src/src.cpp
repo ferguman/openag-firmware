@@ -19,10 +19,10 @@
 
 // Set AUTO_START equal to false to disable the invocation off all the
 // module's begin methods in the Arduino setup() function.
-boolean AUTO_START = false;
+boolean AUTO_START = true;
 
 // The following two flags are used by the serial  monitor.
-boolean fc_loop_on = false;
+boolean fc_loop_on = true;
 
 // Sensors
 //
@@ -81,7 +81,7 @@ boolean fc_cmd_detected();
 // These functions are defined in the Arduino.h and are the framework.
 void setup() {
 
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("Open Ag Serial Monitor Starting.");
   while(!Serial){
     // wait for serial port to connect, needed for USB
@@ -444,5 +444,5 @@ bool beginModule(Module &module, String name){
 }
 
 boolean fc_cmd_detected() {
-   return (message.substring(0,1).equals("0,"));
+   return (message.substring(0,2).equals("0,"));
 }
