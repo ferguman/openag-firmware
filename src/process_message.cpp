@@ -9,6 +9,13 @@
 
 const int FC_CMD_DETECTED = 1;
 
+// Removes backspaces characters (ASCII 8) by shifting everything left. Note that this
+// routine does not resize the String. So that after it operates the resulting String
+// will the equivalent of a copy of itself with backspaces removed concatented with 
+// enough characters to keep its lengtht he same.  It is assumed that downstream processing
+// scans the string from left to right and ends at some token(s) such as carriage return and
+// line feeds within the string thereby ignoring the junk on the end.
+//
 boolean remove_backspaces(String *input_str, unsigned int input_cur_pos, unsigned int output_cur_pos) {
 
    // Stop when you reach the end of the input string.
@@ -67,6 +74,6 @@ void test_process_message() {
    String test1 = F("(ab\x8)");
    String test2 = "(a)";
    assert_true(tn, remove_backspaces(&test1, 0, 0));
-   assert_str_equals(tn, test2, test1);
+   assert_str_equals(tn, test2, test1.substring(0, 3));
 
 }

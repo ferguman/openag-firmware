@@ -10,8 +10,8 @@
 boolean next_char_is(String *str, int char_ptr, char compare_char);
 
 // Convert the input message string into a list of tokens. 
-// If the input can be cast to an Integer, Float, or String type then 
-// the case is performed and the resulting Type is added to the list.
+// If the input can be cast to an Integer, Float, or String Type then 
+// the cast is performed and the resulting Type is added to the list.
 // If the input is a quote character then it is passed through as is.
 // If the input is a parenthesis, or a Symbol then
 // it is added to the list as a pair.  The car of the pair contains the
@@ -59,7 +59,6 @@ int token_iter(String *str, unsigned int cur_pos, int token_list) {
       return token_list;
    }
 
-
    //Throw away space characters.
    if (str->charAt(cur_pos) == ' ' || str->charAt(cur_pos) == '\t') {
        return token_iter(str, cur_pos + 1, token_list);
@@ -98,7 +97,13 @@ int token_iter(String *str, unsigned int cur_pos, int token_list) {
    }
 
    //Check for string.
-   //TODO: Write string extractor.
+   //TODO: Write string extractor
+/*
+   int str_token = extract_string(str, cur_pos);
+   if (is_pair(str_token)) {
+      return token_iter(str, get_int(car(str_token)), add_list_item(token_list, cdr(str_token)));
+   }
+*/
 
    Serial.print("Error in tokenizer. Illegal character encountered. ASCII: ");
    Serial.println((int) str->charAt(cur_pos));

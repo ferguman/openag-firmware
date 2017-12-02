@@ -23,6 +23,7 @@ const int TS_OFFSET = 10000;
 const int TS_SZ = 1000;
 const int TS_MAX_INDEX = TS_SZ - 1;
 const int MAX_INT_MAG = 10000;
+const int INT_STORAGE_SIZE = 8;
 
 int op = 0;
 char obj_store[TS_SZ];
@@ -54,21 +55,6 @@ boolean is_typeof(char type_sym, int obj_ptr) {
 boolean is_int(int obj_ptr) {return is_typeof('I', obj_ptr);}
 boolean is_char(int obj_ptr) {return is_typeof('C', obj_ptr);}
 boolean is_str(int obj_ptr) {return is_typeof('X', obj_ptr);}
-
-/*
-   int ptr = obj_ptr - TS_OFFSET;
-
-   if (ptr <= 0 || ptr >=TS_SZ) {
-      return false; 
-   } else {
-      if (obj_store[ptr] == 'C') {
-         return true;
-      } else {
-         return false;
-      }
-   } 
-}
-*/
 
 int make_char(char c) {
    if (op < 0 || op >= TS_SZ) {
@@ -115,7 +101,8 @@ int make_int(int a) {
    obj_store[op] = 'I';
    int int_ptr = op;
    itoa(a, &obj_store[op+1], 10);
-   op = op + 7;
+   op = op + (INT_STORAGE_SIZE - 1);
+
    return int_ptr + TS_OFFSET;
 }
 
@@ -134,20 +121,21 @@ int get_int(int obj_ptr) {
    }
 }
 
-int make_float(int numer, int denom) {
+int make_float(int int_part, int frac_part ) {
 
    // Floats take 17 characters in the object store.
    if (op < 0 || op > TS_SZ - 17) {
       return 0; //Error
    }
 
+   op++;
    int float_ptr = op;
    obj_store[float_ptr] = 'F';
 
-   int numer_ptr = make_int(numer);
-   int denom_ptr = make_int(denom);
+   int int_part_ptr = make_int(int_part);
+   int frac_part_ptr = make_int(frac_part);
 
-   if (numer_ptr + 8 != denom_ptr) {
+   if (int_part_ptr + INT_STORAGE_SIZE != frac_part_ptr) {
       Serial.println(F("types.cpp: Error creating float.  Non-consecutive type pointers issued."));
       return 0;
    }
@@ -191,26 +179,34 @@ float get_float(int obj_ptr) {
       int int_part = get_int(ptr + 1 + TS_OFFSET);
       int frac_part = get_int(ptr + 9 + TS_OFFSET); 
 
-      return (float)int_part + produce_float(frac_part, 10,  MAX_INT_MAG);
+      if (int_part < 0) {
+         return (float)int_part - produce_float(frac_part, 1,  MAX_INT_MAG);
+      } else {
+         return (float)int_part + produce_float(frac_part, 1,  MAX_INT_MAG);
+      }
    }
 }
 
-
-float produce_float(int frac_part, int cur_numer,  int max_int_mag) {
+float produce_float(int frac_part, int cur_denom,  int max_int_mag) {
 
    if (frac_part > max_int_mag) {
       Serial.println(F("types.cpp: produce_float: number is to large."));
       return 0;
    }
 
-   if (frac_part < cur_numer) {
-      return (float)frac_part / (float)cur_numer;
+   if (frac_part < cur_denom) {
+      return (float)frac_part / (float)cur_denom;
    }
 
-   return produce_float(frac_part, cur_numer * 10, max_int_mag);
+   return produce_float(frac_part, cur_denom * 10, max_int_mag);
 
 }
 
+// The pair of characters \" is interpretted as the single character ". 
+// This allows higher level routines to allow embedded "'s in user
+// strings that are specified as string literals, such as at the command line:
+// eg. (cmd "string arg with \" inside it.")
+//
 int make_str(char *str) {
 
    if (op < 0 || op >= TS_MAX_INDEX) {
@@ -224,11 +220,20 @@ int make_str(char *str) {
       int input_str_ptr = 0;
 
       while (str[input_str_ptr]) {
+
          if (op < TS_MAX_INDEX) {
             op++;
-//Serial.print("Putting ASCII "); Serial.print((int) str[input_str_ptr]); Serial.println(" into string.");
-            obj_store[op] = str[input_str_ptr];
-            input_str_ptr++;
+
+            if ((str[input_str_ptr] == 92) && (str[input_str_ptr + 1] == 34)) {
+               // Keep an eye out for escaped quote characters: \".
+               obj_store[op] = str[input_str_ptr + 1];
+               input_str_ptr = input_str_ptr + 2;
+            } else {
+               // No escaped characters so save the next character in the type storage buffer.
+               obj_store[op] = str[input_str_ptr];
+               input_str_ptr++;
+            }
+
          } else {
             Serial.println(F("types.cpp. Type buffer overflow in make_str()"));
             op = str_ptr - 1;
@@ -310,7 +315,7 @@ void test_types() {
    int test = make_float(45, 175);
    assert_char_equals(tn, 'F', obj_store[test-TS_OFFSET]);
    assert_char_equals(tn, 'I', obj_store[test-TS_OFFSET+1]);
-   assert_char_equals(tn, 'I', obj_store[test-TS_OFFSET+1]);
+   assert_char_equals(tn, 'I', obj_store[test-TS_OFFSET+INT_STORAGE_SIZE+1]);
    assert_int_equals(tn, 45, get_int(test+1));
    assert_int_equals(tn, 175, get_int(test+9));
 
@@ -323,6 +328,15 @@ void test_types() {
    char test2[] = "foobar";
    assert_c_str_equals(tn, test2, get_str(make_str(test2)));
 
-   int test3 = (int) (10000.0 * produce_float(1234, 10,  MAX_INT_MAG));
+   int test3 = (int) (10000.0 * produce_float(1234, 1,  MAX_INT_MAG));
    assert_int_equals(tn, 1234, test3);
+
+   // Test "foo\"bar"
+   char test4[] = {102, 111, 111, 92, 34, 98, 97, 114, 0}; 
+   char *test5 = get_str(make_str(test4));
+   assert_true(tn, test5[0] == 102);
+   assert_true(tn, test5[2] == 111);
+   assert_true(tn, test5[3] == 34);
+   assert_true(tn, test5[6] == 114);
+   assert_true(tn, test5[7] == 0);
 }

@@ -14,7 +14,7 @@ int extract_num_iter(String *str, int cur_int, unsigned int start_pos, unsigned 
 
 // Return 0 if no number is found.
 // If the number is an integer then return cons(One plus the end position of the number
-//  in the string, an integer type) 
+// in the string, an integer type) 
 // If the number is a float then return cons(the end position of the number in the string, a float type) 
 //
 int extract_num(String *str, unsigned int cur_pos) {
@@ -165,6 +165,7 @@ void test_extract_num() {
    str = "-1234.7869";
    num = extract_num(&str, 0);
    assert_int_equals(tn, 10, get_int(car(num))); 
+
    assert_int_equals(tn, -12347, (int) (10 * get_float(cdr(num))));
 
    num = make_num_extract(99, -1234, 7869, false);

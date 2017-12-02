@@ -59,7 +59,7 @@ void print_str_test_data(String test_name, String a, String b) {
 }
 
 void assert_str_equals(String test_name, String a, String b) {
-   print_pass_fail(a == b);
+   print_pass_fail(a.equals(b));
    print_str_test_data(test_name, a, b);
 }
 
@@ -83,27 +83,6 @@ boolean c_strs_equal(char *a, char *b) {
 }
 
 void assert_c_str_equals(String test_name, char *a, char *b) {
-/*
-   char *ac;
-   char *bc;
-   ac = a;
-   bc = b;
-
-   boolean pass = true;
-   while (*ac && pass) {
-      if (*ac != *bc) {
-          pass = false;
-      }
-      ac++;
-      bc++;
-   }
-
-   if (*ac != *bc) {
-      pass = false;
-   }
-
-   print_pass_fail(pass);
-*/
 
    print_pass_fail(c_strs_equal(a, b));
 
@@ -113,7 +92,6 @@ void assert_c_str_equals(String test_name, char *a, char *b) {
    Serial.print(b);
    Serial.println("");
 }
-
 
 int run_tests(int arg_list) { 
 

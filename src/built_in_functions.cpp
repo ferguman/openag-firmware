@@ -182,6 +182,6 @@ void test_built_in_functions() {
 
    assert_true(tn, is_pair(test2));
    assert_char_equals(tn, 'B', get_char(car(test2)));
-   assert_int_equals(tn, 2, get_int(cdr(test2))); 
+   assert_int_equals(tn, 1, get_int(cdr(test2))); 
 
 }
