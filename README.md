@@ -8,4 +8,4 @@ The purpose of this code is to provide a tool that allows the following:
 
 3) Be compatible with the OpenAg code. The code is compatible with OpenAg firmware functionality. After debugging is done one can configure the code to boot up in a manner that is functionaly the same as the OpenAg firmware. Thus the code can be run on an operationl V2 FC instead of the OpenAg firmware.
 
-Status - Not ready for prime time yet.  I hope to realease an alpha version by end of November, 2017.
+Status - Not ready for prime time yet.  I hope to realease an alpha version by end of December, 2017.
