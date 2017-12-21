@@ -5,6 +5,7 @@
 #include <test.h>
 #include <extract_symbol.h>
 #include <extract_num.h>
+#include <extract_string.h>
 
 // Internal routines
 boolean next_char_is(String *str, int char_ptr, char compare_char);
@@ -97,15 +98,12 @@ int token_iter(String *str, unsigned int cur_pos, int token_list) {
    }
 
    //Check for string.
-   //TODO: Write string extractor
-/*
    int str_token = extract_string(str, cur_pos);
    if (is_pair(str_token)) {
       return token_iter(str, get_int(car(str_token)), add_list_item(token_list, cdr(str_token)));
    }
-*/
 
-   Serial.print("Error in tokenizer. Illegal character encountered. ASCII: ");
+   Serial.print("Error in tokenizer. Illegal input encountered. ASCII: ");
    Serial.println((int) str->charAt(cur_pos));
    return 0;
 }

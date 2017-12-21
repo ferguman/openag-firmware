@@ -9,6 +9,7 @@
 #include <process_message.h>
 #include <interpret.h>
 #include <built_in_functions.h>
+#include <extract_string.h>
 
 void print_test_data(String test_name, int a, int b) {
    Serial.print(test_name); Serial.print(F(":a=")); Serial.print(a);
@@ -109,6 +110,7 @@ int run_tests(int arg_list) {
    test_parse();
    test_interpret();
    test_built_in_functions();
+   test_extract_string();
 
    char result[] = "End of Tests";
    int ret_val = cons(make_str(result), nil); 

@@ -224,15 +224,8 @@ int make_str(char *str) {
          if (op < TS_MAX_INDEX) {
             op++;
 
-            if ((str[input_str_ptr] == 92) && (str[input_str_ptr + 1] == 34)) {
-               // Keep an eye out for escaped quote characters: \".
-               obj_store[op] = str[input_str_ptr + 1];
-               input_str_ptr = input_str_ptr + 2;
-            } else {
-               // No escaped characters so save the next character in the type storage buffer.
-               obj_store[op] = str[input_str_ptr];
-               input_str_ptr++;
-            }
+            obj_store[op] = str[input_str_ptr];
+            input_str_ptr++;
 
          } else {
             Serial.println(F("types.cpp. Type buffer overflow in make_str()"));
