@@ -17,12 +17,12 @@
 #include <pair.h>
 #include <openag_modules.h>
 
-// Set AUTO_START equal to false to disable the invocation off all the
-// module's begin methods in the Arduino setup() function.
-boolean AUTO_START = true;
+// Set AUTO_START equal to false to disable the invocation of the
+// Food Computer module begin methods in the Arduino setup() function.
+boolean AUTO_START = false;
 
-// The following two flags are used by the serial  monitor.
-boolean fc_loop_on = true;
+// The following flag turns the Food Computer control loop on or off.
+boolean fc_loop_on = false;
 
 // Sensors
 //
