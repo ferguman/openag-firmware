@@ -8,6 +8,7 @@ void sensorLoop();
 
 extern boolean fc_loop_on;
 
+/* **********************************
 //FC Version 2 - 7 sensors
 extern Am2315 am2315_1;
 extern Ds18b20 ds18b20_1;
@@ -37,5 +38,6 @@ extern DoserPump pump_2_nutrient_b_1;
 extern PulseActuator pump_3_ph_up_1;
 extern PulseActuator pump_4_ph_down_1;
 extern ToneActuator chiller_compressor_1;
+**************************** */
 
 #endif

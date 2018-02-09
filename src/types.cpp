@@ -325,11 +325,13 @@ void test_types() {
    assert_int_equals(tn, 1234, test3);
 
    // Test "foo\"bar"
+   // Note that the string type does not process escaped characters. That is done by the tokenizer.
    char test4[] = {102, 111, 111, 92, 34, 98, 97, 114, 0}; 
    char *test5 = get_str(make_str(test4));
-   assert_true(tn, test5[0] == 102);
-   assert_true(tn, test5[2] == 111);
-   assert_true(tn, test5[3] == 34);
-   assert_true(tn, test5[6] == 114);
-   assert_true(tn, test5[7] == 0);
+   assert_char_equals(tn, 'f', test5[0]);
+   assert_char_equals(tn, 'o', test5[2]);
+   assert_char_equals(tn, '\\', test5[3]);
+   assert_char_equals(tn, '"', test5[4]);
+   assert_char_equals(tn, 'r', test5[7]);
+   assert_char_equals(tn, 0, test5[8]);
 }

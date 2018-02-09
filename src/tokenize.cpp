@@ -24,7 +24,7 @@ boolean next_char_is(String *str, int char_ptr, char compare_char);
 // ( or ) -> parantheses are passed through as is.
 // S -> A symbol is generated when none of the above token types apply and the input is legal.
 // I, F, S -> Integer, Float and Strings are added to the token list as they are encountered in the 
-//            in the input stream.
+//            input stream.
 //
 
 int tokenize(String *str) {

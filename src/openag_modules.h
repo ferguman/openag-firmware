@@ -1,9 +1,14 @@
 #ifndef OPENAG_MODULES
 #define OPENAG_MODULES
 
-int find_module_function(int function_name);
-int apply_module_function(int func, int args);
-int openag_help(int args);
-int show_open_ag_module_status(int status_code);
+int openag_modules_show_mod_status(int arg);
+Module *find_module(int module_name); 
+void openag_modules_show_mods(); 
+void set_actuators(String splitMessages[]);
+bool checkActuatorLoop();
+void beginModules();
+void updateLoop();
+bool checkSensorLoop();
+void sensorLoop();
 
 #endif

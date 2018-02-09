@@ -7,6 +7,7 @@
 #include <wire_w.h>
 #include <atlas_w.h>
 #include <onewire_w.h>
+#include <openag_module.h>
 #include <openag_modules.h>
 
 // Signatures of built-ins that are in this file.

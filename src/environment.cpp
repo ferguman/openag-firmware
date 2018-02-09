@@ -2,10 +2,16 @@
 #include <pair.h>
 #include <types.h>
 #include <built_in_functions.h>
-#include <openag_modules.h>
+// #include <openag_modules.h>
+#include <openag_monitor_commands.h>
 
-// Look for a built in function that matches the name given.  If one is found then 
-// return cons('B' or 'M', the functions index);
+// Look for a built in function that matches the name given.
+// The system stores two types of functions: M - Module functions and B - Build in Functions.
+// The M (Module) functions implement commands related to the Open Ag Module and Food Computer 
+// functionality.
+// The B (Built-in) functions contain all the non-M commands.
+//
+// If a function is found then return it as cons('B' or 'M', the functions index);
 //
 int find_function(int function_name) {
 
