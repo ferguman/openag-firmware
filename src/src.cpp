@@ -90,8 +90,10 @@ void serialEvent() {
     resetMessage();
   }
   while (Serial.available()) {
+
     // get the new byte:
     char inChar = (char)Serial.read();
+
     // add it to the inputString but first check for potential overflow:
     // (this can happen if a few partial lines are received sequentially without newlines)
     if (message.length() == (MESSAGE_LENGTH - 2)) {
@@ -99,6 +101,7 @@ void serialEvent() {
       stringComplete = true;
       return;
     }
+
     message += inChar;
     // if the incoming character is a newline, set a flag
     // so the main loop can do something about it:

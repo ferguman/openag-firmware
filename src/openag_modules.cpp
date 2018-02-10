@@ -149,10 +149,10 @@ void set_actuators(String splitMessages[]) {
 
 }
 
-// Put calls for each Actuator below.
+// Put checkModule(...) calls in this function for each Actuator.
 //
 // The Openag V2 FC calls this function (from src.cpp) in order to check all the 
-// actuators.
+// Actuators.
 //
 bool checkActuatorLoop(){
 
@@ -179,6 +179,11 @@ bool checkActuatorLoop(){
   return allActuatorSuccess;
 }
 
+// Put checkModule(...) calls in this function for each Sensor.
+//
+// The Openag V2 FC calls this function (from src.cpp) in order to check all the 
+// Sensors.
+//
 bool checkSensorLoop() {
 
   bool allSensorSuccess = true;
@@ -197,7 +202,7 @@ bool checkSensorLoop() {
 
 // Put code here for each Sensor.  This routine is invoked (via the Arduino serial port and src.cpp) by the 
 // OpenAG FC V2 Controller (.e.g. Raspberry PI Model 3B) ROS Node and thus changes here will make the code 
-// incompatible with the current the current Controller code.
+// incompatible with the current Controller code.
 // 
 // Prints the data in CSV format via serial.
 // Columns: status,hum,temp,co2,water_temperature,water_low,water_high,ph,ec
