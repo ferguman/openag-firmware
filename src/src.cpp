@@ -26,7 +26,7 @@ void send_invalid_message_length_error(String msg);
 void resetMessage();
 int split(String messages, String* splitMessages,  char delimiter=',');
 int procMsg();
-boolean fc_cmd_detected();
+boolean csv_firmware_cmd_detected();
 
 // These functions are defined in the Arduino.h and are the framework.
 void setup() {
@@ -55,16 +55,23 @@ void loop() {
    // If we have not received a message, then do nothing.  This lets our ROS
    // node control the message traffic.  For every message sent to this arduino
    // code, one is sent back.
+   //
    if(!stringComplete){
       return;
    }
 
-   // If command is not a food computer actuator command or the food computer loop is off then
-   // interpret the incoming message as a serial command.
-   if (!fc_cmd_detected() || !fc_loop_on) { 
+   // The FC V2 Controller (e.g. Raspberry Pi 3 Model B) sends commands to the firmware as a comma seperated value list (csv).
+   // Don't process csv commands here. This clause is for picking up the "Lispy" like firmware commands (e.g. (help)). 
+   // Also if the food computer loop is off then process all commands here, the assumption being that no csv commands will
+   // be sent when the food computer is off.
+   //
+   if (!csv_firmware_cmd_detected() || !fc_loop_on) { 
       procMsg();
       return;
    }
+
+   // If the processor gets to this point in the code then the food computer loop is ON and 
+   // the Serial subsystem has detected an incoming comma seperated list command.
 
    // An actuator command has been detected and the food computer loop is enabled so
    // check the actuators and sensors, set the actuators as per the received command and return
@@ -226,6 +233,6 @@ bool any(bool *all){
   return false;
 }
 
-boolean fc_cmd_detected() {
+boolean csv_firmware_cmd_detected() {
    return (message.substring(0,2).equals("0,"));
 }
