@@ -32,7 +32,7 @@ void sendModuleStatus(Module &module, String name);
 //
 // Actuator Instances. Sorted by pin number.
 //
-BinaryActuator grow_light(6, true, 180000);
+BinaryActuator grow_light(6, true, 10000);
 
 // Put pointers to instantiated modules into the mod_ptr_array.
 //

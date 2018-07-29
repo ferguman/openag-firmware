@@ -7,10 +7,10 @@
 
 // Set AUTO_START equal to false to disable the invocation of the
 // Food Computer module begin methods in the Arduino setup() function.
-boolean AUTO_START = true;
+boolean AUTO_START = false;
 
 // The following flag turns the Food Computer control loop on or off.
-boolean fc_loop_on = true;
+boolean fc_loop_on = false;
 
 // Message string
 String message = "";
