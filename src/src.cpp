@@ -78,7 +78,7 @@ void loop() {
    // all the sensor readings.
    //
    checkActuatorLoop();
-   actuatorLoop();
+   actuatorLoop();            // Parse the comma seperated string in the serial buffer and invoke the actuators.
 
    bool allSensorSuccess = checkSensorLoop();
 

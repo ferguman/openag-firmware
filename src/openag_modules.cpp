@@ -5,11 +5,15 @@
 
 // Put includes for all the system's modules here.
 //
+/* -
 #include <openag_am2315.h>
 #include <openag_ds18b20.h>
 #include <openag_mhz16.h>
 #include <openag_atlas_ph.h>
 #include <openag_atlas_ec.h>
+*/
+
+#include <dht22.h>
 
 #include <openag_binary_sensor.h>
 #include <openag_binary_actuator.h>
@@ -29,24 +33,27 @@ void sendModuleStatus(Module &module, String name);
 //
 // Sensors
 //
+SensorDht22 dht22(A0);                               // air temperature and humidity
 //
 // Actuator Instances. Sorted by pin number.
 //
-BinaryActuator grow_light(6, true, 180000);
+BinaryActuator grow_light(6, true, 10000);
 
 // Put pointers to instantiated modules into the mod_ptr_array.
-//
-const uint8_t NMODS = 1;
-const uint8_t ACTUATOR_OFFSET = 0;
+// Remember to update NMODS and ACTUATOR_OFFSET to be correct.
+const uint8_t NMODS = 2;
+const uint8_t ACTUATOR_OFFSET = 1;
 
 Module *mod_ptr_array[] = {
-   &grow_light           //0 - first Actuator in the list
+   &dht22,               //0 - put sensors at the head of the list
+   &grow_light           //1 - first Actuator in the list
 };
 
 // Put the name of the modules in the mname_array data structure.
 //
 //This array holds the names of all the modules.
 const char *mname_array[NMODS] = {
+   "air_temp_hum",
    "grow_light"
 };
 
@@ -89,6 +96,7 @@ bool checkSensorLoop() {
   bool allSensorSuccess = true;
 
   // Run Update on all sensors
+  allSensorSuccess = checkModule(dht22, "dht22") && allSensorSuccess;
 
   return allSensorSuccess;
 }
@@ -103,6 +111,8 @@ bool checkSensorLoop() {
 void sensorLoop(){
 
   Serial.print(OK);                                             Serial.print(',');
+  Serial.print(dht22.get_air_humidity());                       Serial.print(',');
+  Serial.print(dht22.get_air_temperature());
   Serial.print('\n');
 
   // https://www.arduino.cc/en/serial/flush
@@ -114,6 +124,7 @@ void sensorLoop(){
 void beginModules() {
 
   // Begin Sensors
+  beginModule(dht22, "dht22");
 
   // Begin Actuators
   beginModule(grow_light, "Grow Light");
@@ -127,6 +138,7 @@ void beginModules() {
 //
 void updateLoop(){
 
+  dht22.update();
   grow_light.update();
 }
 
