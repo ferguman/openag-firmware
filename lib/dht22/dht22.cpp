@@ -6,7 +6,6 @@
  */
 #include "dht22.h"
 
-
 SensorDht22::SensorDht22(int pin){
 
   pin_ = pin;

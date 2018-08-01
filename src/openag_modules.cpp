@@ -6,7 +6,6 @@
 // Put includes for all the system's modules here.
 //
 /* -
-#include <openag_am2315.h>
 #include <openag_ds18b20.h>
 #include <openag_mhz16.h>
 #include <openag_atlas_ph.h>
@@ -37,16 +36,22 @@ SensorDht22 dht22(A0);                               // air temperature and humi
 //
 // Actuator Instances. Sorted by pin number.
 //
-BinaryActuator grow_light(6, true, 10000);
+BinaryActuator humidifier(9, true, 10000);    //AC port 1
+BinaryActuator grow_light(8, true, 10000);    //AC port 2
+BinaryActuator ac_3(7, true, 10000);          //AC port 3
+BinaryActuator air_heat(6, true, 10000);      //AC port 4
 
 // Put pointers to instantiated modules into the mod_ptr_array.
 // Remember to update NMODS and ACTUATOR_OFFSET to be correct.
-const uint8_t NMODS = 2;
+const uint8_t NMODS = 5;
 const uint8_t ACTUATOR_OFFSET = 1;
 
 Module *mod_ptr_array[] = {
-   &dht22,               //0 - put sensors at the head of the list
-   &grow_light           //1 - first Actuator in the list
+   &dht22,               //0 - put Sensors at the head of the list
+   &humidifier,          //1 - first Actuator in the list
+   &grow_light,          //2
+   &ac_3,                //3
+   &air_heat             //4
 };
 
 // Put the name of the modules in the mname_array data structure.
@@ -54,7 +59,10 @@ Module *mod_ptr_array[] = {
 //This array holds the names of all the modules.
 const char *mname_array[NMODS] = {
    "air_temp_hum",
-   "grow_light"
+   "humidifier",
+   "grow_light",
+   "ac_3",
+   "air_heat"
 };
 
 // Put lines for all the FC V2 actuators below. If you modify this function
@@ -66,9 +74,14 @@ const char *mname_array[NMODS] = {
 // The OpenAg FC V2 control loop calls this method in order to send actuator
 // commands.  
 //
+// TBD - add help text for the set_actuator command.
+// 
 void set_actuators(String splitMessages[]) {
 
-  grow_light.set_cmd(str2bool(splitMessages[1]));                 // BinaryActuator bool
+  humidifier.set_cmd(str2bool(splitMessages[1]));                 // BinaryActuator bool
+  grow_light.set_cmd(str2bool(splitMessages[2]));                 // BinaryActuator bool
+  ac_3.set_cmd(str2bool(splitMessages[3]));                       // BinaryActuator bool
+  air_heat.set_cmd(str2bool(splitMessages[4]));                   // BinaryActuator bool
 
 }
 
@@ -81,7 +94,10 @@ bool checkActuatorLoop() {
 
   bool allActuatorSuccess = true;
 
+  allActuatorSuccess = checkModule(humidifier, "Humidifier") && allActuatorSuccess;
   allActuatorSuccess = checkModule(grow_light, "Grow Light") && allActuatorSuccess;
+  allActuatorSuccess = checkModule(ac_3,  "AC #3") && allActuatorSuccess;
+  allActuatorSuccess = checkModule(air_heat, "Air Heater") && allActuatorSuccess;
 
   return allActuatorSuccess;
 }
@@ -127,21 +143,24 @@ void beginModules() {
   beginModule(dht22, "dht22");
 
   // Begin Actuators
+  beginModule(humidifier, "Humididier");
   beginModule(grow_light, "Grow Light");
+  beginModule(ac_3, "AC #3");
+  beginModule(air_heat, "Air Heater");
 }
 
-// Put an update method call here for each Module.
-//
 // Runs the update loop - The update method is what causes Sensors to take new readings.  The update
 // method causes actuators to invoke their built-in control loop and change the actuator outputs as 
 // per the control loop's logic.
 //
 void updateLoop(){
 
-  dht22.update();
-  grow_light.update();
+   for (int i=0; i < NMODS; i++) {
+      (*(mod_ptr_array[i])).update();
+   }
 }
 
+// You don't need to change anything beneath this line in order to add/remove/change sensors or actuators.
 bool beginModule(Module &module, String name){
   bool status = module.begin() == OK;
   if(!status){
@@ -157,8 +176,7 @@ void sendModuleStatus(Module &module, String name){
   Serial.flush();
 }
 
-//If a the module does not have OK status then print it's 
-//status.
+//If a the module does not have OK status then print it's status.
 //
 bool checkModule(Module &module, String name){
 
