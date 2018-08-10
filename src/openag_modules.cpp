@@ -13,6 +13,7 @@
 */
 
 #include <dht22.h>
+#include <tsl2561.h>
 
 #include <openag_binary_sensor.h>
 #include <openag_binary_actuator.h>
@@ -33,6 +34,8 @@ void sendModuleStatus(Module &module, String name);
 // Sensors
 //
 SensorDht22 dht22(A0);                               // air temperature and humidity
+SensorTsl2561 tsl2561(0x29);                         // tsl2561 has 3 possible i2c address (0x39, 0x29, 0x49)
+                                                     // selectable with jumpers.
 //
 // Actuator Instances. Sorted by pin number.
 //
@@ -43,15 +46,16 @@ BinaryActuator air_heat(6, true, 10000);      //AC port 4
 
 // Put pointers to instantiated modules into the mod_ptr_array.
 // Remember to update NMODS and ACTUATOR_OFFSET to be correct.
-const uint8_t NMODS = 5;
-const uint8_t ACTUATOR_OFFSET = 1;
+const uint8_t NMODS = 6;
+const uint8_t ACTUATOR_OFFSET = 2;
 
 Module *mod_ptr_array[] = {
    &dht22,               //0 - put Sensors at the head of the list
-   &humidifier,          //1 - first Actuator in the list
-   &grow_light,          //2
-   &ac_3,                //3
-   &air_heat             //4
+   &tsl2561,             //1
+   &humidifier,          //2 - first Actuator in the list
+   &grow_light,          //3
+   &ac_3,                //4
+   &air_heat             //5
 };
 
 // Put the name of the modules in the mname_array data structure.
@@ -59,11 +63,17 @@ Module *mod_ptr_array[] = {
 //This array holds the names of all the modules.
 const char *mname_array[NMODS] = {
    "air_temp_hum",
+   "light_meter",
    "humidifier",
    "grow_light",
    "ac_3",
    "air_heat"
 };
+
+uint8_t get_command_length() {
+   // commands are started by the string 0, hence the 1 in the equation below.
+   return (1 + NMODS - ACTUATOR_OFFSET);
+}
 
 // Put lines for all the FC V2 actuators below. If you modify this function
 // then you must make sure the calling code in src.cpp is updated to send 
@@ -113,6 +123,8 @@ bool checkSensorLoop() {
 
   // Run Update on all sensors
   allSensorSuccess = checkModule(dht22, "dht22") && allSensorSuccess;
+  allSensorSuccess = checkModule(tsl2561, "dht22") && allSensorSuccess;
+
 
   return allSensorSuccess;
 }
@@ -126,9 +138,15 @@ bool checkSensorLoop() {
 //
 void sensorLoop(){
 
+  //TBD: Need to put the actual dynamic status in, right?
   Serial.print(OK);                                             Serial.print(',');
+
   Serial.print(dht22.get_air_humidity());                       Serial.print(',');
   Serial.print(dht22.get_air_temperature());
+
+  Serial.print(tsl2561.lux_);                       Serial.print(',');
+  Serial.print(tsl2561.par_);
+
   Serial.print('\n');
 
   // https://www.arduino.cc/en/serial/flush
@@ -141,6 +159,7 @@ void beginModules() {
 
   // Begin Sensors
   beginModule(dht22, "dht22");
+  beginModule(tsl2561, "tsl2561");
 
   // Begin Actuators
   beginModule(humidifier, "Humididier");

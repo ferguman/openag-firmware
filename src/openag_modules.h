@@ -10,5 +10,6 @@ void beginModules();
 void updateLoop();
 bool checkSensorLoop();
 void sensorLoop();
+uint8_t get_command_length();
 
 #endif

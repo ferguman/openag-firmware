@@ -4,10 +4,11 @@
 #include <types.h>
 #include <pair.h>
 #include <openag_modules.h>
+#include <Wire.h>
 
 // Set AUTO_START equal to false to disable the invocation of the
 // Food Computer module begin methods in the Arduino setup() function.
-boolean AUTO_START = false;
+boolean AUTO_START = true;
 
 // The following flag turns the Food Computer control loop on or off.
 boolean fc_loop_on = false;
@@ -15,7 +16,10 @@ boolean fc_loop_on = false;
 // Message string
 String message = "";
 bool stringComplete = false;
-const int COMMAND_LENGTH = 18; // status + num_actuators
+
+//- const int COMMAND_LENGTH = 18; // status + num_actuators -> 0,c1,c2, ... c17
+const int COMMAND_LENGTH = get_command_length();
+
 const unsigned int MESSAGE_LENGTH = 500;
 
 // Main logic
@@ -38,6 +42,9 @@ void setup() {
   while(!Serial){
     // wait for serial port to connect, needed for USB
   }
+
+  // Start the I2C interface.
+  Wire.begin();
 
   message.reserve(MESSAGE_LENGTH);
 
@@ -197,9 +204,13 @@ void resetMessage() {
 }
 
 int split(String messages, String* splitMessages,  char delimiter){
+
   int indexOfComma = 0;
   int chunk_count = 0;
+  
   for(int i = 0; i < COMMAND_LENGTH; i++){
+
+    // find the index of the next deliminator starting at indexOfComma+1
     int nextIndex = messages.indexOf(delimiter, indexOfComma+1);
     String nextMessage;
 
@@ -207,19 +218,25 @@ int split(String messages, String* splitMessages,  char delimiter){
     if(indexOfComma == 0){
       indexOfComma = -1;
     }
+
     if(nextIndex == -1){
+      // We are at the end of the message so "take" the rest of it.
       nextMessage = messages.substring(indexOfComma+1);
     }else{
+      // "take" the next command.
       nextMessage = messages.substring(indexOfComma+1, nextIndex);
     }
     splitMessages[i] = nextMessage;
     indexOfComma = nextIndex;
     chunk_count++;
+
     if(nextIndex == -1) break; // make sure to exit the loop if we've reached the last message.
   }
+
   if(indexOfComma != -1){
     return -1; //if there are more commas than (COMMAND_LENGTH - 1) it's a long read
   }
+
   return chunk_count;
 }
 
