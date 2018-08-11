@@ -43,10 +43,14 @@ BinaryActuator humidifier(9, true, 10000);    //AC port 1
 BinaryActuator grow_light(8, true, 10000);    //AC port 2
 BinaryActuator ac_3(7, true, 10000);          //AC port 3
 BinaryActuator air_heat(6, true, 10000);      //AC port 4
+BinaryActuator vent_fan(14, true, 10000);
+BinaryActuator circ_fan(15, true, 10000);
+BinaryActuator chamber_light(53, true, 10000);
+BinaryActuator mb_light(52, true, 10000);
 
 // Put pointers to instantiated modules into the mod_ptr_array.
 // Remember to update NMODS and ACTUATOR_OFFSET to be correct.
-const uint8_t NMODS = 6;
+const uint8_t NMODS = 10;
 const uint8_t ACTUATOR_OFFSET = 2;
 
 Module *mod_ptr_array[] = {
@@ -55,7 +59,11 @@ Module *mod_ptr_array[] = {
    &humidifier,          //2 - first Actuator in the list
    &grow_light,          //3
    &ac_3,                //4
-   &air_heat             //5
+   &air_heat,            //5
+   &vent_fan,            //6
+   &circ_fan,            //7
+   &chamber_light,       //8
+   &mb_light             //9
 };
 
 // Put the name of the modules in the mname_array data structure.
@@ -67,7 +75,11 @@ const char *mname_array[NMODS] = {
    "humidifier",
    "grow_light",
    "ac_3",
-   "air_heat"
+   "air_heat",
+   "vent_fan",
+   "circ_fan",
+   "chamber_light",
+   "mb_light"
 };
 
 uint8_t get_command_length() {
@@ -85,6 +97,9 @@ uint8_t get_command_length() {
 // commands.  
 //
 // TBD - add help text for the set_actuator command.
+// TBD - move the argument conversion (e.g. str2bool) to the module. Then all
+//       argumentws can be passed as strings in this routine and thus the system can loop
+//       through mod_ptr_array and call the actuators one by one.
 // 
 void set_actuators(String splitMessages[]) {
 
@@ -92,10 +107,13 @@ void set_actuators(String splitMessages[]) {
   grow_light.set_cmd(str2bool(splitMessages[2]));                 // BinaryActuator bool
   ac_3.set_cmd(str2bool(splitMessages[3]));                       // BinaryActuator bool
   air_heat.set_cmd(str2bool(splitMessages[4]));                   // BinaryActuator bool
-
+  vent_fan.set_cmd(str2bool(splitMessages[5]));                   // BinaryActuator bool
+  circ_fan.set_cmd(str2bool(splitMessages[6]));                   // BinaryActuator bool
+  chamber_light.set_cmd(str2bool(splitMessages[7]));              // BinaryActuator bool
+  mb_light.set_cmd(str2bool(splitMessages[8]));                   // BinaryActuator bool
 }
 
-// Put checkModule(...) calls in this function for each Actuator.
+//- Put checkModule(...) calls in this function for each Actuator.
 //
 // The Openag V2 FC calls this function (from src.cpp) in order to check all the 
 // Actuators.
@@ -104,15 +122,21 @@ bool checkActuatorLoop() {
 
   bool allActuatorSuccess = true;
 
+   for (int i=ACTUATOR_OFFSET; i < NMODS; i++) {
+      //- (*(mod_ptr_array[i])).update();
+      allActuatorSuccess = checkModule(*(mod_ptr_array[i]), mname_array[i]) && allActuatorSuccess;
+   }
+  /* -
   allActuatorSuccess = checkModule(humidifier, "Humidifier") && allActuatorSuccess;
   allActuatorSuccess = checkModule(grow_light, "Grow Light") && allActuatorSuccess;
   allActuatorSuccess = checkModule(ac_3,  "AC #3") && allActuatorSuccess;
   allActuatorSuccess = checkModule(air_heat, "Air Heater") && allActuatorSuccess;
+  */
 
   return allActuatorSuccess;
 }
 
-// Put checkModule(...) calls in this function for each Sensor.
+//- Put checkModule(...) calls in this function for each Sensor.
 //
 // The Openag V2 FC calls this function (from src.cpp) in order to check all the 
 // Sensors.
@@ -121,10 +145,15 @@ bool checkSensorLoop() {
 
   bool allSensorSuccess = true;
 
+  for (int i=0; i < ACTUATOR_OFFSET; i++) {
+      allSensorSuccess = checkModule(*(mod_ptr_array[i]), mname_array[i]) && allSensorSuccess;
+   }
+
+  /* -
   // Run Update on all sensors
   allSensorSuccess = checkModule(dht22, "dht22") && allSensorSuccess;
   allSensorSuccess = checkModule(tsl2561, "dht22") && allSensorSuccess;
-
+  */
 
   return allSensorSuccess;
 }
@@ -153,10 +182,15 @@ void sensorLoop(){
   // Wait until done writing.
   Serial.flush();
 }
-// Put a call to beginModule here for each Module.
+//- Put a call to beginModule here for each Module.
 //
 void beginModules() {
 
+  for (int i=0; i < NMODS; i++) {
+      beginModule(*(mod_ptr_array[i]), mname_array[i]);
+  }
+
+  /* -
   // Begin Sensors
   beginModule(dht22, "dht22");
   beginModule(tsl2561, "tsl2561");
@@ -166,6 +200,7 @@ void beginModules() {
   beginModule(grow_light, "Grow Light");
   beginModule(ac_3, "AC #3");
   beginModule(air_heat, "Air Heater");
+  */
 }
 
 // Runs the update loop - The update method is what causes Sensors to take new readings.  The update
