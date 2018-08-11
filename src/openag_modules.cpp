@@ -113,7 +113,6 @@ void set_actuators(String splitMessages[]) {
   mb_light.set_cmd(str2bool(splitMessages[8]));                   // BinaryActuator bool
 }
 
-//- Put checkModule(...) calls in this function for each Actuator.
 //
 // The Openag V2 FC calls this function (from src.cpp) in order to check all the 
 // Actuators.
@@ -123,20 +122,12 @@ bool checkActuatorLoop() {
   bool allActuatorSuccess = true;
 
    for (int i=ACTUATOR_OFFSET; i < NMODS; i++) {
-      //- (*(mod_ptr_array[i])).update();
       allActuatorSuccess = checkModule(*(mod_ptr_array[i]), mname_array[i]) && allActuatorSuccess;
    }
-  /* -
-  allActuatorSuccess = checkModule(humidifier, "Humidifier") && allActuatorSuccess;
-  allActuatorSuccess = checkModule(grow_light, "Grow Light") && allActuatorSuccess;
-  allActuatorSuccess = checkModule(ac_3,  "AC #3") && allActuatorSuccess;
-  allActuatorSuccess = checkModule(air_heat, "Air Heater") && allActuatorSuccess;
-  */
 
   return allActuatorSuccess;
 }
 
-//- Put checkModule(...) calls in this function for each Sensor.
 //
 // The Openag V2 FC calls this function (from src.cpp) in order to check all the 
 // Sensors.
@@ -148,12 +139,6 @@ bool checkSensorLoop() {
   for (int i=0; i < ACTUATOR_OFFSET; i++) {
       allSensorSuccess = checkModule(*(mod_ptr_array[i]), mname_array[i]) && allSensorSuccess;
    }
-
-  /* -
-  // Run Update on all sensors
-  allSensorSuccess = checkModule(dht22, "dht22") && allSensorSuccess;
-  allSensorSuccess = checkModule(tsl2561, "dht22") && allSensorSuccess;
-  */
 
   return allSensorSuccess;
 }
@@ -182,26 +167,15 @@ void sensorLoop(){
   // Wait until done writing.
   Serial.flush();
 }
-//- Put a call to beginModule here for each Module.
-//
+
+
 void beginModules() {
 
   for (int i=0; i < NMODS; i++) {
       beginModule(*(mod_ptr_array[i]), mname_array[i]);
   }
-
-  /* -
-  // Begin Sensors
-  beginModule(dht22, "dht22");
-  beginModule(tsl2561, "tsl2561");
-
-  // Begin Actuators
-  beginModule(humidifier, "Humididier");
-  beginModule(grow_light, "Grow Light");
-  beginModule(ac_3, "AC #3");
-  beginModule(air_heat, "Air Heater");
-  */
 }
+
 
 // Runs the update loop - The update method is what causes Sensors to take new readings.  The update
 // method causes actuators to invoke their built-in control loop and change the actuator outputs as 
