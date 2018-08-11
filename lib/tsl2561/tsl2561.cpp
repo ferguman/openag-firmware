@@ -129,12 +129,20 @@ uint8_t SensorTsl2561::readRegister(int deviceAddress, int address) {
 
   read_register_error_ = 0;
   
-  uint8_t value;
+  //- uint8_t value;
   Wire.beginTransmission(deviceAddress);
-  Wire.write(address);                // register to read
-  Wire.endTransmission();
-  Wire.requestFrom(deviceAddress, 1); // read a byte
+  Wire.write(address);                       // register to read
+  i2c_transmission_status = Wire.endTransmission();
 
+  Wire.requestFrom(deviceAddress, 1);        // read a byte
+
+  if (Wire.available() != 1) {
+     return 0;
+  }
+
+  return Wire.read();
+
+  /* -get rid of the stuff below after the next succesful round of testing.
   uint32_t start_time = millis();
   while (1) {
     if (Wire.available()) {
@@ -147,6 +155,7 @@ uint8_t SensorTsl2561::readRegister(int deviceAddress, int address) {
   }
   value = Wire.read();
   return value;
+  */
 }
 
 void SensorTsl2561::writeRegister(int deviceAddress, int address, uint8_t val) {
@@ -162,6 +171,7 @@ void SensorTsl2561::getLux(void) {
 
   CH0_LOW=readRegister(_i2c_address,TSL2561_Channal0L);
   CH0_HIGH=readRegister(_i2c_address,TSL2561_Channal0H);
+  
   //read two bytes from registers 0x0E and 0x0F
   CH1_LOW=readRegister(_i2c_address,TSL2561_Channal1L);
   CH1_HIGH=readRegister(_i2c_address,TSL2561_Channal1H);
