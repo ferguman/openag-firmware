@@ -14,6 +14,7 @@
 
 #include <dht22.h>
 #include <tsl2561.h>
+#include <gc0011.h>
 
 #include <openag_binary_sensor.h>
 #include <openag_binary_actuator.h>
@@ -36,6 +37,8 @@ void sendModuleStatus(Module &module, String name);
 SensorDht22 dht22(A0);                               // air temperature and humidity
 SensorTsl2561 tsl2561(0x29);                         // tsl2561 has 3 possible i2c address (0x39, 0x29, 0x49)
                                                      // selectable with jumpers.
+SensorGc0011 co2(12, 11);                            // GC0011 CO2 sensor rx pin=12, tx pin=11
+
 //
 // Actuator Instances. Sorted by pin number.
 //
@@ -50,20 +53,21 @@ BinaryActuator mb_light(52, true, 10000);
 
 // Put pointers to instantiated modules into the mod_ptr_array.
 // Remember to update NMODS and ACTUATOR_OFFSET to be correct.
-const uint8_t NMODS = 10;
-const uint8_t ACTUATOR_OFFSET = 2;
+const uint8_t NMODS = 11;
+const uint8_t ACTUATOR_OFFSET = 3;
 
 Module *mod_ptr_array[] = {
    &dht22,               //0 - put Sensors at the head of the list
    &tsl2561,             //1
-   &humidifier,          //2 - first Actuator in the list
-   &grow_light,          //3
-   &ac_3,                //4
-   &air_heat,            //5
-   &vent_fan,            //6
-   &circ_fan,            //7
-   &chamber_light,       //8
-   &mb_light             //9
+   &co2,                 //2
+   &humidifier,          //3 - first Actuator in the list
+   &grow_light,          //4
+   &ac_3,                //5
+   &air_heat,            //6
+   &vent_fan,            //7
+   &circ_fan,            //8
+   &chamber_light,       //9
+   &mb_light             //10
 };
 
 // Put the name of the modules in the mname_array data structure.
@@ -72,6 +76,7 @@ Module *mod_ptr_array[] = {
 const char *mname_array[NMODS] = {
    "air_temp_hum",
    "light_meter",
+   "co2",
    "humidifier",
    "grow_light",
    "ac_3",
@@ -148,18 +153,24 @@ bool checkSensorLoop() {
 // incompatible with the current Controller code.
 // 
 // Prints the data in CSV format via serial.
-// Columns: status,hum,temp,co2,water_temperature,water_low,water_high,ph,ec
+// TBD: Need to make the following column accurate.
+// Columns: status, air hum, air temp, co2, co2 detector air temp, co2 detector air humidity,
+//          water_temperature,water_low,water_high,ph,ec
 //
 void sensorLoop(){
 
   //TBD: Need to put the actual dynamic status in, right?
-  Serial.print(OK);                                             Serial.print(',');
+  Serial.print(OK); Serial.print(',');
 
-  Serial.print(dht22.get_air_humidity());                       Serial.print(',');
-  Serial.print(dht22.get_air_temperature());
+  Serial.print(dht22.get_air_humidity()); Serial.print(',');
+  Serial.print(dht22.get_air_temperature()); Serial.print(',');
 
-  Serial.print(tsl2561.lux_);                       Serial.print(',');
-  Serial.print(tsl2561.par_);
+  Serial.print(tsl2561.lux_); Serial.print(',');
+  Serial.print(tsl2561.par_); Serial.print(',');
+  
+  Serial.print(co2.get_co2()); Serial.print(',');
+  Serial.print(co2.get_temperature()); Serial.print(',');
+  Serial.print(co2.get_humidity());
 
   Serial.print('\n');
 
