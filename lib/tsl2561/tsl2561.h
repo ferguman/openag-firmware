@@ -98,10 +98,11 @@ class SensorTsl2561 : public Module {
     uint8_t begin();
     uint8_t update(); 
     int cmd(int args);
+    void print_readings_as_csv();
 
     // Public Variables
-    int lux_; // lux
-    float par_; // (umol)*(m^-2)*(s^-1)
+    int lux_;       // lux
+    float par_;     // (umol)*(m^-2)*(s^-1)
     // note: PAR is likely only valid for Erligpowht 45W LED Red Blue Indoor Garden Plant Grow Light Hanging Lightpanel
     // found @ http://www.amazon.com/gp/product/B00S2DPYQM?psc=1&redirect=true&ref_=oh_aui_detailpage_o08_s03
 

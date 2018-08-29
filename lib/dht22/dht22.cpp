@@ -136,6 +136,12 @@ boolean SensorDht22::read() {
   }
 }
 
+void SensorDht22::print_readings_as_csv() {
+
+  Serial.print(humidity_raw_); Serial.print(',');
+  Serial.print(temperature_raw_);
+}
+
 int SensorDht22::cmd(int args) {
 
    char temp_hum[] = "read";

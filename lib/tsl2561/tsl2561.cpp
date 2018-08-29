@@ -100,8 +100,6 @@ uint8_t SensorTsl2561::get() {
   */ 
 }
 
-
-
 void SensorTsl2561::getSensorData(void) {
 
   float lux_average = 0;
@@ -286,6 +284,13 @@ String SensorTsl2561::floatToString( double val, unsigned int precision) {
   str += int(frac);
   return str;
 } 
+
+void SensorTsl2561::print_readings_as_csv() {
+
+  Serial.print(lux_); Serial.print(',');
+  Serial.print(par_);
+
+}
 
 int SensorTsl2561::cmd(int args) {
 

@@ -148,20 +148,24 @@ bool checkSensorLoop() {
   return allSensorSuccess;
 }
 
-// Put code here for each Sensor.  This routine is invoked (via the Arduino serial port and src.cpp) by the 
+// This routine is invoked (via the Arduino serial port and src.cpp) by the 
 // OpenAG FC V2 Controller (.e.g. Raspberry PI Model 3B) ROS Node and thus changes here will make the code 
 // incompatible with the current Controller code.
 // 
 // Prints the data in CSV format via serial.
-// TBD: Need to make the following column accurate.
-// Columns: status, air hum, air temp, co2, co2 detector air temp, co2 detector air humidity,
-//          water_temperature,water_low,water_high,ph,ec
 //
 void sensorLoop(){
 
   //TBD: Need to put the actual dynamic status in, right?
-  Serial.print(OK); Serial.print(',');
+  Serial.print(OK);
 
+  for (int i=0; i < ACTUATOR_OFFSET; i++) {
+
+      Serial.print(',');
+      (*(mod_ptr_array[i])).print_readings_as_csv();
+  }
+
+  /*-
   Serial.print(dht22.get_air_humidity()); Serial.print(',');
   Serial.print(dht22.get_air_temperature()); Serial.print(',');
 
@@ -171,6 +175,7 @@ void sensorLoop(){
   Serial.print(co2.get_co2()); Serial.print(',');
   Serial.print(co2.get_temperature()); Serial.print(',');
   Serial.print(co2.get_humidity());
+  */
 
   Serial.print('\n');
 
@@ -179,14 +184,13 @@ void sensorLoop(){
   Serial.flush();
 }
 
-
 void beginModules() {
 
   for (int i=0; i < NMODS; i++) {
       beginModule(*(mod_ptr_array[i]), mname_array[i]);
   }
 }
-
+    
 
 // Runs the update loop - The update method is what causes Sensors to take new readings.  The update
 // method causes actuators to invoke their built-in control loop and change the actuator outputs as 

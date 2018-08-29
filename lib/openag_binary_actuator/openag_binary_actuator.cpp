@@ -72,3 +72,9 @@ int BinaryActuator::cmd(int args) {
 
    return Module::common_cmd(args);
 }
+
+// Actuators don't support this function. 
+void BinaryActuator::print_readings_as_csv() {
+
+    Serial.print("ERROR - This module doesn't support printing readings.");
+}

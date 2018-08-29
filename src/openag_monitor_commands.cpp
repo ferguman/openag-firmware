@@ -235,12 +235,15 @@ int openag_help(int args) {
       Serial.println(F("                          3) Set commands take an argument.  Example 0"));
       Serial.println(F("                          Example Command: (oa_mod_cmd 'blue_led 'set 0.8)")); 
       Serial.println(F(""));
+      Serial.println(F("                          Some modules support additional commands. Enter (c 'mod_name 'help)"));
+      Serial.println(F("                          for more information."));
+      Serial.println(F(""));
       Serial.println(F("(openag_help)             Prints this message."));
       Serial.println(F(""));
       Serial.println(F("(read_sensors)            Show sensor data as a comma seperated list. The sensor data is returned"));
       Serial.println(F("                          as status,hum,temp,co2,water_temperature,water_low,water_high,ph,ec."));
       Serial.println(F(""));
-      Serial.println(F("(show_mods)               Lists all the Sensors and Actuators installed on this system."));
+      Serial.println(F("(show_mods)               Lists the names of the Sensor and Actuator Modules installed on this system."));
 
       return -1;
 

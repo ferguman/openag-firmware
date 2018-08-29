@@ -3,7 +3,6 @@
 
 #include <pair.h>
 #include <types.h>
-//#include <openag_modules.h>
 
 #if (ARDUINO >= 100)
  #include "Arduino.h"
@@ -23,6 +22,8 @@ class Module {
     virtual ~Module() {}; // destructor
     virtual uint8_t begin() = 0;
     virtual uint8_t update() = 0;
+    virtual void print_readings_as_csv() = 0;
+    //- void print_readings_as_csv();
 
     uint8_t status_level;
     String status_msg;

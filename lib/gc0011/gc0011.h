@@ -38,6 +38,7 @@ class SensorGc0011 : public Module {
     float get_co2();
     float get_temperature();
     float get_humidity();
+    void print_readings_as_csv();
 
     //- String get(void);
     //- String set(String instruction_code, int instruction_id, String instruction_parameter);
@@ -74,6 +75,8 @@ class SensorGc0011 : public Module {
     */
     SoftwareSerial *ss_;
     uint32_t timeout_;
+
+    static const bool TEMPERATURE_AND_HUMIDITY_ENABLED = false;
 };
 
 #endif // SENSOR_GC0011_H_

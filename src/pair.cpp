@@ -105,6 +105,7 @@ int cadddr(int pairIndex) { return car(cdr(cdr(cdr(pairIndex)))); }
 int caddr(int pairIndex) { return car(cdr(cdr(pairIndex))); }
 int caadr(int pairIndex) { return car(car(cdr(pairIndex))); }
 int caaddr(int pairIndex) { return car(car(cdr(cdr(pairIndex)))); }
+int cdaddr(int pairIndex) { return cdr(car(cdr(cdr(pairIndex)))); }
 
 void set_cdr(int lst, int item) {
    cdrValue[lst] = item;

@@ -67,20 +67,13 @@ int extract_string_iter(String *str, unsigned int cur_pos, char *sb, uint8_t cur
 }
 
 boolean legal_string_char(char input_char) {
-   
-   //Accept upper case ASCII
-   if (input_char >= 65 && input_char <= 90) {
-      return true;
-   }
-
-   //Accept lower case ASCII
-   if (input_char >= 97 && input_char <= 122) {
-      return true;
-   }
-
-   //Accept "-", "?", and ","
-   if (input_char == 95 || input_char == 63 || input_char == 44) {
-      return true;
+  
+   //TBD need to add " escaping. 
+   //Accept any printable character except for ". 
+   if (input_char != 34) {
+       if (input_char >= 32 && input_char <= 126) {
+       return true;
+       }
    }
 
    return false;

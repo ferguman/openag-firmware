@@ -13,6 +13,7 @@ class BinaryActuator : public Module {
     uint8_t begin();
     uint8_t update();
     uint8_t set_cmd(bool cmd);
+    void print_readings_as_csv();
     int cmd(int args);
 
   private:
