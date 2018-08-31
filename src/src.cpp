@@ -17,7 +17,6 @@ boolean fc_loop_on = false;
 String message = "";
 bool stringComplete = false;
 
-//- const int COMMAND_LENGTH = 18; // status + num_actuators -> 0,c1,c2, ... c17
 const int COMMAND_LENGTH = get_command_length();
 
 const unsigned int MESSAGE_LENGTH = 500;
