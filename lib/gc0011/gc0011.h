@@ -21,16 +21,14 @@
 #endif
 
 #include <support_software_serial.h>
-//- #include "module_handler.h"
 #include <openag_module.h>
 
 /** 
  *  \brief Sensor module for air co2, temperature, and humidity.
  */
 class SensorGc0011 : public Module {
+
   public:
-    // Public Functions
-    //- SensorGc0011(int rx_pin, int tx_pin, String co2_instruction_code, int co2_instruction_id, String temperature_instruction_code, int temperature_instruction_id,String humidity_instruction_code, int humidity_instruction_id);
     SensorGc0011(int rx_pin, int tx_pin);
     uint8_t begin();
     uint8_t update();
@@ -40,14 +38,6 @@ class SensorGc0011 : public Module {
     float get_humidity();
     void print_readings_as_csv();
 
-    //- String get(void);
-    //- String set(String instruction_code, int instruction_id, String instruction_parameter);
-
-    // Public Variables
-    //- float temperature;
-    //- float humidity;
-    //- float co2;
-   
   private:
     // Private Functions
     void getSensorData(void);
@@ -65,14 +55,6 @@ class SensorGc0011 : public Module {
     uint32_t _time_of_last_reading;
     const static uint32_t _min_update_interval = 10000;
 
-    /* -
-    String co2_instruction_code_;
-    int co2_instruction_id_;     
-    String temperature_instruction_code_;
-    int temperature_instruction_id_;   
-    String humidity_instruction_code_;
-    int humidity_instruction_id_; 
-    */
     SoftwareSerial *ss_;
     uint32_t timeout_;
 

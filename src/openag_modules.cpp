@@ -5,16 +5,10 @@
 
 // Put includes for all the system's modules here.
 //
-/* -
-#include <openag_ds18b20.h>
-#include <openag_mhz16.h>
-#include <openag_atlas_ph.h>
-#include <openag_atlas_ec.h>
-*/
-
 #include <dht22.h>
 #include <tsl2561.h>
 #include <gc0011.h>
+#include <ph.h>
 
 #include <openag_binary_sensor.h>
 #include <openag_binary_actuator.h>
@@ -38,6 +32,7 @@ SensorDht22 dht22(A0);                               // air temperature and humi
 SensorTsl2561 tsl2561(0x29);                         // tsl2561 has 3 possible i2c address (0x39, 0x29, 0x49)
                                                      // selectable with jumpers.
 SensorGc0011 co2(12, 11);                            // GC0011 CO2 sensor rx pin=12, tx pin=11
+SensorPh ph(A1);                                     // Analog sensor on pin A1
 
 //
 // Actuator Instances. Sorted by pin number.
@@ -53,21 +48,22 @@ BinaryActuator mb_light(52, true, 10000);
 
 // Put pointers to instantiated modules into the mod_ptr_array.
 // Remember to update NMODS and ACTUATOR_OFFSET to be correct.
-const uint8_t NMODS = 11;
-const uint8_t ACTUATOR_OFFSET = 3;
+const uint8_t NMODS = 12;
+const uint8_t ACTUATOR_OFFSET = 4;
 
 Module *mod_ptr_array[] = {
    &dht22,               //0 - put Sensors at the head of the list
    &tsl2561,             //1
    &co2,                 //2
-   &humidifier,          //3 - first Actuator in the list
-   &grow_light,          //4
-   &ac_3,                //5
-   &air_heat,            //6
-   &vent_fan,            //7
-   &circ_fan,            //8
-   &chamber_light,       //9
-   &mb_light             //10
+   &ph,                  //3
+   &humidifier,          //4 - first Actuator in the list
+   &grow_light,          //5
+   &ac_3,                //6
+   &air_heat,            //7
+   &vent_fan,            //8
+   &circ_fan,            //9
+   &chamber_light,       //10
+   &mb_light             //11
 };
 
 // Put the name of the modules in the mname_array data structure.
@@ -77,6 +73,7 @@ const char *mname_array[NMODS] = {
    "air_temp_hum",
    "light_meter",
    "co2",
+   "ph",
    "humidifier",
    "grow_light",
    "ac_3",
@@ -117,8 +114,10 @@ void set_actuators(String splitMessages[]) {
   chamber_light.set_cmd(str2bool(splitMessages[7]));              // BinaryActuator bool
   mb_light.set_cmd(str2bool(splitMessages[8]));                   // BinaryActuator bool
 }
+// ######################################################################################################
+// You don't need to change anything beneath this line in order to add/remove/change sensors or actuators.
+// ######################################################################################################
 
-//
 // The Openag V2 FC calls this function (from src.cpp) in order to check all the 
 // Actuators.
 //
@@ -165,18 +164,6 @@ void sensorLoop(){
       (*(mod_ptr_array[i])).print_readings_as_csv();
   }
 
-  /*-
-  Serial.print(dht22.get_air_humidity()); Serial.print(',');
-  Serial.print(dht22.get_air_temperature()); Serial.print(',');
-
-  Serial.print(tsl2561.lux_); Serial.print(',');
-  Serial.print(tsl2561.par_); Serial.print(',');
-  
-  Serial.print(co2.get_co2()); Serial.print(',');
-  Serial.print(co2.get_temperature()); Serial.print(',');
-  Serial.print(co2.get_humidity());
-  */
-
   Serial.print('\n');
 
   // https://www.arduino.cc/en/serial/flush
@@ -203,7 +190,6 @@ void updateLoop(){
    }
 }
 
-// You don't need to change anything beneath this line in order to add/remove/change sensors or actuators.
 bool beginModule(Module &module, String name){
   bool status = module.begin() == OK;
   if(!status){
