@@ -13,18 +13,21 @@
 
 #include <OneWire.h>
 #include <DallasTemperature.h>
+
 #include <openag_module.h>
 
 /**
  * \brief Sensor module for temperature
  */
 class Ds18b20 : public Module {
+
   public:
     Ds18b20(int pin);
     uint8_t begin();
     uint8_t update();
-    float get_temperature();
     int cmd(int args);
+    float get_temperature();
+    void print_readings_as_csv();
 
   private:
     OneWire _oneWire;

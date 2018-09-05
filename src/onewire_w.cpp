@@ -3,6 +3,17 @@
 #include <pair.h>
 #include <types.h>
 
+int one_wire_help(int args) {
+
+   Serial.println(F("(ow_help)       Prints this message."));
+   Serial.println(F("(ow_addr arg)   Find the address of a One Wire device. Accepts 1 argument:"));
+   Serial.println(F("                1) Pin Number -> Pin number of the pin to which the One Wire slave is connected."));
+   Serial.println(F("                NOTE: This command assumes one and only one One Wire device is connected"));
+   Serial.println(F("                to the given pin."));
+   return -1;
+}
+
+
 // Arguments: OneWire device Arudino pin #
 //
 int one_wire_addr(int args) {

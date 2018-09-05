@@ -29,7 +29,7 @@ typedef int (*function_ptr)(int i);
 // return (*(fp_array[2])) (args); to call functions.
 // 
 
-const int NBIF = 17;  //Set to size of fname_array.
+const int NBIF = 18;  //Set to size of fname_array.
 
 // This array holds points to all the built-in functions.
 const function_ptr fp_array[] = {
@@ -49,7 +49,8 @@ const function_ptr fp_array[] = {
    &i2c_help,              //13
    &one_wire_addr,         //14
    &iter,                  //15
-   &invoke_delay           //16
+   &invoke_delay,          //16
+   &one_wire_help          //17
 };
 
 // This array holds the names of all the built in functions.
@@ -68,9 +69,10 @@ const char *fname_array[NBIF] = {
    "set_oa_lp",
    "help",
    "i2c_help",
-   "one_wire_addr",
+   "ow_addr",
    "iter",
-   "delay"
+   "delay",
+   "ow_help"
 };
 
 // Look for a built in function that matches the name given.  If one is found then 
@@ -149,6 +151,7 @@ int help(int args) {
       Serial.println(F("                    the Serial Monitor that is installed is a")); 
       Serial.println(F("                    stable version."));
       Serial.println(F("(i2c_help)          Print help for I2C commands."));
+      Serial.println(F("(ow_help)           Print help for One Wire commands."));
       Serial.println(F("(openag_help)       Print help for Open Ag Module commands."));
    
       return -1;

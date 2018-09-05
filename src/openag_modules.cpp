@@ -9,6 +9,8 @@
 #include <tsl2561.h>
 #include <gc0011.h>
 #include <ph.h>
+#include <openag_ds18b20.h>
+#include <ec.h>
 
 #include <openag_binary_sensor.h>
 #include <openag_binary_actuator.h>
@@ -33,6 +35,8 @@ SensorTsl2561 tsl2561(0x29);                         // tsl2561 has 3 possible i
                                                      // selectable with jumpers.
 SensorGc0011 co2(12, 11);                            // GC0011 CO2 sensor rx pin=12, tx pin=11
 SensorPh ph(A1);                                     // Analog sensor on pin A1
+Ds18b20 water_temp(5);                               // Water temperature 1-Wire probe on Pin 5.
+SensorEc ec(A2, 2);                                  // Analog ec sensor on A2 with sensor power controlled by pin 2.
 
 //
 // Actuator Instances. Sorted by pin number.
@@ -48,22 +52,24 @@ BinaryActuator mb_light(52, true, 10000);
 
 // Put pointers to instantiated modules into the mod_ptr_array.
 // Remember to update NMODS and ACTUATOR_OFFSET to be correct.
-const uint8_t NMODS = 12;
-const uint8_t ACTUATOR_OFFSET = 4;
+const uint8_t NMODS = 14;
+const uint8_t ACTUATOR_OFFSET = 6;
 
 Module *mod_ptr_array[] = {
    &dht22,               //0 - put Sensors at the head of the list
    &tsl2561,             //1
    &co2,                 //2
    &ph,                  //3
-   &humidifier,          //4 - first Actuator in the list
-   &grow_light,          //5
-   &ac_3,                //6
-   &air_heat,            //7
-   &vent_fan,            //8
-   &circ_fan,            //9
-   &chamber_light,       //10
-   &mb_light             //11
+   &water_temp,          //4
+   &ec,                  //5
+   &humidifier,          //6 - first Actuator in the list
+   &grow_light,          //7
+   &ac_3,                //8
+   &air_heat,            //9
+   &vent_fan,            //10
+   &circ_fan,            //11
+   &chamber_light,       //12
+   &mb_light             //13
 };
 
 // Put the name of the modules in the mname_array data structure.
@@ -74,6 +80,8 @@ const char *mname_array[NMODS] = {
    "light_meter",
    "co2",
    "ph",
+   "water_temp",
+   "ec",
    "humidifier",
    "grow_light",
    "ac_3",
@@ -100,7 +108,7 @@ uint8_t get_command_length() {
 //
 // TBD - add help text for the set_actuator command.
 // TBD - move the argument conversion (e.g. str2bool) to the module. Then all
-//       argumentws can be passed as strings in this routine and thus the system can loop
+//       arguments can be passed as strings in this routine and thus the system can loop
 //       through mod_ptr_array and call the actuators one by one.
 // 
 void set_actuators(String splitMessages[]) {

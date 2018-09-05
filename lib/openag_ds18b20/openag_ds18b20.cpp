@@ -4,15 +4,15 @@
  */
 #include "openag_ds18b20.h"
 
-// 9/10/2017 - There is free software on the web that will poll the One wire bus and infer the 
-//             address of all the devices that are on the bus.  I ran the software (using Arduino on
-//             on my Mac and direct connecting the Arduino) and got the following value for the Ds18b20
-//             that is currenlty connected to fc3.  
-//
-//             0x28, 0xFF, 0x4D, 0x0F, 0x62, 0x17, 0x03, 0x5D
+// Note that the serial monitor command (ow_addr pin_no) will display the address of the connected slave.
+// This module assumes one connected slave on the designated PIN.  It looks up the address of the slave
+// automatically within the begin routine.
 //
 Ds18b20::Ds18b20(int pin) : _oneWire(pin) {
+//- Ds18b20::Ds18b20(int pin) {
+  //- _oneWire ow(5);
   _sensors = DallasTemperature(&_oneWire);
+  //- _sensors = DallasTemperature(&ow);
   _sensors.setWaitForConversion(false);
 }
 
@@ -59,14 +59,22 @@ float Ds18b20::get_temperature() {
   return _temperature;
 }
 
+void Ds18b20::print_readings_as_csv() {
+   Serial.print(_temperature);
+}
+
 int Ds18b20::cmd(int args) {
 
    char read[] = "read";
+   char addr[] = "addr";
 
    if (this->is_cmd(args, read)) {
       Serial.print(F("Water Temp.: ")); Serial.println(_temperature);
       return make_int(status_code);
    }
 
+   if (this->is_cmd(args, addr)) {
+       Serial.println(F("this command is not implemented."));  
+   }
    return Module::common_cmd(args);
 }
