@@ -19,6 +19,7 @@ SensorDht22::SensorDht22(int pin){
 }
 
 uint8_t SensorDht22::begin() {
+
   pinMode(pin_, INPUT);
   digitalWrite(pin_, HIGH);
   last_read_time_ = 0;
@@ -35,6 +36,7 @@ float SensorDht22::get_air_humidity() {
 }
 
 uint8_t SensorDht22::update() {
+
   getRawSensorData();
 
   return status_level;

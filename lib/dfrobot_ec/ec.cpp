@@ -26,6 +26,7 @@ uint8_t SensorEc::update() {
 
     // Turn probe power off. 
     digitalWrite(pwr_relay_ctrl_pin_, LOW);
+    delay(3);
 
     status_level = OK;
     return status_level;

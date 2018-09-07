@@ -56,6 +56,7 @@ class SensorDht22 : public Module {
 
     // status codes
     static const uint8_t CODE_CHECKSUM_FAILURE = 1;
+    static const uint8_t CODE_2_TEST = 2;
 	    
 };
 

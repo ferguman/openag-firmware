@@ -36,7 +36,7 @@ void setup() {
 
   Serial.begin(115200);
 
-  if (!fc_loop_on) {Serial.println("Open Ag Serial Monitor Starting.");}
+  if (!fc_loop_on) {Serial.println("OpenAg Serial Monitor Starting.");}
 
   while(!Serial){
     // wait for serial port to connect, needed for USB
@@ -50,6 +50,9 @@ void setup() {
   if (AUTO_START) {
      beginModules();
   }
+
+  //Send the end of response token
+  Serial.println("OK");
 }
 
 void loop() {
@@ -91,6 +94,9 @@ void loop() {
    if(allSensorSuccess){
       sensorLoop();
    }
+
+   // Send the end of response token (i.e. OK).
+   Serial.println("OK");
 }
 
 // Runs inbetween loop()s, just takes any input serial to a string buffer.

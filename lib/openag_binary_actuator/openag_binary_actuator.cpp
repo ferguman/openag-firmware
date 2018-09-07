@@ -11,18 +11,23 @@ BinaryActuator::BinaryActuator(int pin, bool is_active_low, uint32_t shutoff_ms)
 }
 
 uint8_t BinaryActuator::begin() {
+
   pinMode(_pin, OUTPUT);
+
   if (_is_active_low) {
     digitalWrite(_pin, HIGH);
   }
   else {
     digitalWrite(_pin, LOW);
   }
+
   return status_level;
 }
 
 uint8_t BinaryActuator::update() {
+
   uint32_t curr_time = millis();
+
   if ((curr_time - _last_cmd) > _shutoff_ms) {
     if (_is_active_low) {
       digitalWrite(_pin, HIGH);
@@ -31,6 +36,7 @@ uint8_t BinaryActuator::update() {
       digitalWrite(_pin, LOW);
     }
   }
+
   return status_level;
 }
 

@@ -23,6 +23,9 @@ class BinaryActuator : public Module {
     uint32_t _shutoff_ms = 10000;
     uint32_t _last_cmd;
     void show_state();
+
+    // Status codes
+    static const uint8_t CODE_TEST_CODE = 1;
 };
 
 #endif

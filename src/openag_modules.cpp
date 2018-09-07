@@ -12,12 +12,12 @@
 #include <openag_ds18b20.h>
 #include <ec.h>
 
-#include <openag_binary_sensor.h>
+// #include <openag_binary_sensor.h>
 #include <openag_binary_actuator.h>
-#include <openag_pwm_actuator.h>
-#include <openag_doser_pump.h>
-#include <openag_pulse_actuator.h>
-#include <openag_tone_actuator.h>
+//#include <openag_pwm_actuator.h>
+//#include <openag_doser_pump.h>
+//#include <openag_pulse_actuator.h>
+//#include <openag_tone_actuator.h>
 
 // Internal function declarations
 bool str2bool(String str);
@@ -172,7 +172,7 @@ void sensorLoop(){
       (*(mod_ptr_array[i])).print_readings_as_csv();
   }
 
-  Serial.print('\n');
+  Serial.println();
 
   // https://www.arduino.cc/en/serial/flush
   // Wait until done writing.
@@ -209,7 +209,7 @@ void sendModuleStatus(Module &module, String name){
   Serial.print(module.status_level); Serial.print(',');
   Serial.print(name);  Serial.print(',');
   Serial.print(module.status_code);  Serial.print(',');
-  Serial.print(module.status_msg);   Serial.print('\n');
+  Serial.println(module.status_msg);   //-   Serial.print('\n');
   Serial.flush();
 }
 
