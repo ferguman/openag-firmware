@@ -25,6 +25,7 @@ class Ds18b20 : public Module {
     Ds18b20(int pin);
     uint8_t begin();
     uint8_t update();
+    uint8_t set_cmd(const char *cmd);
     int cmd(int args);
     float get_temperature();
     void print_readings_as_csv();

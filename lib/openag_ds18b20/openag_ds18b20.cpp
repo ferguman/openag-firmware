@@ -55,6 +55,14 @@ uint8_t Ds18b20::update() {
   return status_code;
 }
 
+uint8_t Ds18b20::set_cmd(const char *cmd) {
+
+   status_code = NO_SET_CMD;
+   status_level = ERROR;
+
+   return status_level;
+}
+
 float Ds18b20::get_temperature() {
   return _temperature;
 }

@@ -27,19 +27,27 @@ uint8_t SensorDht22::begin() {
   return status_level;
 }
 
+uint8_t SensorDht22::update() {
+
+  getRawSensorData();
+
+  return status_level;
+}
+
+uint8_t SensorDht22::set_cmd(const char *cmd) {
+
+   status_code = NO_SET_CMD;
+   status_level = ERROR;
+
+   return status_level;
+}
+
 float SensorDht22::get_air_temperature() {
    return temperature_raw_;
 }
 
 float SensorDht22::get_air_humidity() {
    return humidity_raw_;
-}
-
-uint8_t SensorDht22::update() {
-
-  getRawSensorData();
-
-  return status_level;
 }
 
 void SensorDht22::getRawSensorData() {

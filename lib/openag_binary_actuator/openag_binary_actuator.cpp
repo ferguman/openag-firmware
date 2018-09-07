@@ -40,15 +40,33 @@ uint8_t BinaryActuator::update() {
   return status_level;
 }
 
-uint8_t BinaryActuator::set_cmd(bool cmd) {
-  _last_cmd = millis();
-  if (cmd ^ _is_active_low) {   //^ == XOR
-    digitalWrite(_pin, HIGH);
-  }
-  else {
-    digitalWrite(_pin, LOW);
-  }
-  return status_level;
+uint8_t BinaryActuator::set_cmd(const char *cmd_str) {
+
+    bool cmd = false;
+    if (strlen(cmd_str) == 4) {
+        if ((cmd_str[0] == 'T' || cmd_str[0] == 't') && 
+	    (cmd_str[1] == 'R' || cmd_str[1] == 'r') &&	    
+	    (cmd_str[2] == 'U' || cmd_str[2] == 'u') &&	    
+	    (cmd_str[3] == 'E' || cmd_str[3] == 'e')) {
+            cmd = true;
+	}
+    }	
+
+    return this->set(cmd);
+}
+
+uint8_t BinaryActuator::set(bool cmd) {
+
+    _last_cmd = millis();
+    
+    if (cmd ^ _is_active_low) {       //^ == XOR
+        digitalWrite(_pin, HIGH);
+    }
+    else {
+        digitalWrite(_pin, LOW);
+    }
+
+    return status_level;
 }
 
 void BinaryActuator::show_state() {
@@ -68,7 +86,7 @@ int BinaryActuator::cmd(int args) {
    char state[] = "state";
 
    if (this->is_cmd(args, set_cmd)) {
-      return make_int(this->set_cmd((boolean)get_int(car(cddr(args)))));
+      return make_int(this->set((boolean)get_int(car(cddr(args)))));
    }
 
    if (this->is_cmd(args, state)) {

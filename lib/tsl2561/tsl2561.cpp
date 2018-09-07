@@ -56,6 +56,14 @@ uint8_t SensorTsl2561::update() {
   return status_level;
 }
 
+uint8_t SensorTsl2561::set_cmd(const char *cmd) {
+
+   status_code = NO_SET_CMD;
+   status_level = ERROR;
+
+   return status_level;
+}
+
 //------------------------------------------------PRIVATE--------------------------------------------//
 //
 uint8_t SensorTsl2561::get() {

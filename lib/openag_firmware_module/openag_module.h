@@ -15,6 +15,7 @@ static const uint8_t WARN = 1;
 static const uint8_t ERROR = 2;
 
 static const uint8_t CODE_OK = 0;
+static const uint8_t NO_SET_CMD = 1;
 
 class Module {
   public:
@@ -23,7 +24,7 @@ class Module {
     virtual uint8_t begin() = 0;
     virtual uint8_t update() = 0;
     virtual void print_readings_as_csv() = 0;
-    //- void print_readings_as_csv();
+    virtual uint8_t set_cmd(const char *cmd) = 0;
 
     uint8_t status_level;
     String status_msg;

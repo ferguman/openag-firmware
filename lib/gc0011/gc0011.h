@@ -32,6 +32,7 @@ class SensorGc0011 : public Module {
     SensorGc0011(int rx_pin, int tx_pin);
     uint8_t begin();
     uint8_t update();
+    uint8_t set_cmd(const char *cmd);
     int cmd(int args);
     float get_co2();
     float get_temperature();

@@ -20,6 +20,18 @@ boolean Module::is_cmd(int args, char *cmd) {
    }
 } 
 
+/* -
+// Child are expected to override this if they want to support a set_cmd.
+//
+uint8_t Module::set_cmd(const char *cmd) {
+
+   status_code = NO_SET_CMD;
+   status_level = ERROR;
+
+   return status_level;
+}
+*/
+
 int Module::common_cmd(int args) {
 
    char begin[] = "begin";

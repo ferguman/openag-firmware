@@ -20,7 +20,7 @@
 //#include <openag_tone_actuator.h>
 
 // Internal function declarations
-bool str2bool(String str);
+//- bool str2bool(String str);
 bool checkModule(Module &module, String name);
 bool beginModule(Module &module, String name);
 void sendModuleStatus(Module &module, String name);
@@ -92,39 +92,26 @@ const char *mname_array[NMODS] = {
    "mb_light"
 };
 
+// ######################################################################################################
+// You don't need to change anything beneath this line in order to add/remove/change sensors or actuators.
+// ######################################################################################################
+
 uint8_t get_command_length() {
    // commands are started by the string 0, hence the 1 in the equation below.
    return (1 + NMODS - ACTUATOR_OFFSET);
 }
 
-// Put lines for all the FC V2 actuators below. If you modify this function
-// then you must make sure the calling code in src.cpp is updated to send 
-// the correct number of actuator messages in the correct order, furthermore you can
-// no longer use the OpenAg ROS code that communicates with the firmware without
-// modifying it to account for the new sensor and actuator set.
-//
 // The OpenAg FC V2 control loop calls this method in order to send actuator
 // commands.  
 //
 // TBD - add help text for the set_actuator command.
-// TBD - move the argument conversion (e.g. str2bool) to the module. Then all
-//       arguments can be passed as strings in this routine and thus the system can loop
-//       through mod_ptr_array and call the actuators one by one.
 // 
 void set_actuators(String splitMessages[]) {
 
-  humidifier.set_cmd(str2bool(splitMessages[1]));                 // BinaryActuator bool
-  grow_light.set_cmd(str2bool(splitMessages[2]));                 // BinaryActuator bool
-  ac_3.set_cmd(str2bool(splitMessages[3]));                       // BinaryActuator bool
-  air_heat.set_cmd(str2bool(splitMessages[4]));                   // BinaryActuator bool
-  vent_fan.set_cmd(str2bool(splitMessages[5]));                   // BinaryActuator bool
-  circ_fan.set_cmd(str2bool(splitMessages[6]));                   // BinaryActuator bool
-  chamber_light.set_cmd(str2bool(splitMessages[7]));              // BinaryActuator bool
-  mb_light.set_cmd(str2bool(splitMessages[8]));                   // BinaryActuator bool
+    for (int i=0; i<(NMODS - ACTUATOR_OFFSET); i++) {
+        (*(mod_ptr_array[i + ACTUATOR_OFFSET])).set_cmd(splitMessages[i+1].c_str());
+    }
 }
-// ######################################################################################################
-// You don't need to change anything beneath this line in order to add/remove/change sensors or actuators.
-// ######################################################################################################
 
 // The Openag V2 FC calls this function (from src.cpp) in order to check all the 
 // Actuators.
@@ -285,7 +272,9 @@ int openag_modules_show_mod_status(int status_code) {
    return 0;
 }
 
+/*-
 bool str2bool(String str){
   str.toLowerCase();
   return str.startsWith("true");
 }
+*/

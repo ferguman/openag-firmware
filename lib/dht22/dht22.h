@@ -37,6 +37,7 @@ class SensorDht22 : public Module {
 
     uint8_t begin();
     uint8_t update();
+    uint8_t set_cmd(const char *cmd);
     float get_air_temperature();
     float get_air_humidity();
     void print_readings_as_csv();

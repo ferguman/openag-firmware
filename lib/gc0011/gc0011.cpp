@@ -47,6 +47,14 @@ uint8_t SensorGc0011::update() {
   return status_level;
 }
 
+uint8_t SensorGc0011::set_cmd(const char *cmd) {
+
+   status_code = NO_SET_CMD;
+   status_level = ERROR;
+
+   return status_level;
+}
+
 float SensorGc0011::get_co2() {
    return co2_;
 }

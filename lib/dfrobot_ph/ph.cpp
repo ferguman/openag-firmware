@@ -23,6 +23,14 @@ uint8_t SensorPh::update() {
     return status_level; 
 }
 
+uint8_t SensorPh::set_cmd(const char *cmd) {
+
+   status_code = NO_SET_CMD;
+   status_level = ERROR;
+
+   return status_level;
+}
+
 float SensorPh::get_ph() {
     return ph_;
 }

@@ -32,6 +32,14 @@ uint8_t SensorEc::update() {
     return status_level;
 }
 
+uint8_t SensorEc::set_cmd(const char *cmd) {
+
+   status_code = NO_SET_CMD;
+   status_level = ERROR;
+
+   return status_level;
+}
+
 float SensorEc::get_ec() {
     return ec_;
 }

@@ -15,6 +15,7 @@ class SensorPh : public Module {
     SensorPh(int analog_pin);
     uint8_t begin();
     uint8_t update();
+    uint8_t set_cmd(const char *cmd);
     void print_readings_as_csv();
     int cmd(int args);
     float get_ph();
