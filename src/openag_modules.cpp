@@ -3,98 +3,22 @@
 #include <pair.h>
 #include <types.h>
 
-// Put includes for all the system's modules here.
+// You must define an environment variable to tell the pre-compiler which module configuration file to use.
+// One way to do this is to put a build_flags section in your platformio.ini file as per the following lines:
+// build_flags =
+//    -D OA_FC_V1
+// Currently the configuration files are placed in the src/ directory.
 //
-#include <dht22.h>
-#include <tsl2561.h>
-#include <gc0011.h>
-#include <ph.h>
-#include <openag_ds18b20.h>
-#include <ec.h>
-
-// #include <openag_binary_sensor.h>
-#include <openag_binary_actuator.h>
-//#include <openag_pwm_actuator.h>
-//#include <openag_doser_pump.h>
-//#include <openag_pulse_actuator.h>
-//#include <openag_tone_actuator.h>
+#ifdef OA_FC_V1
+#include <configuration_fcv1.h> 
+#else
+#error "You must define a pre-compiler flag. See openag_modules.cpp for details."
+#endif
 
 // Internal function declarations
-//- bool str2bool(String str);
 bool checkModule(Module &module, String name);
 bool beginModule(Module &module, String name);
 void sendModuleStatus(Module &module, String name);
-
-// Put instantiations of all the system's modules here.  
-// Food Computer V1 -> see https://github.com/OpenAgInitiative/gro-hardware/blob/master/ElectronicsSchematicLarge.pdf
-//
-// Sensors
-//
-SensorDht22 dht22(A0);                               // air temperature and humidity
-SensorTsl2561 tsl2561(0x29);                         // tsl2561 has 3 possible i2c address (0x39, 0x29, 0x49)
-                                                     // selectable with jumpers.
-SensorGc0011 co2(12, 11);                            // GC0011 CO2 sensor rx pin=12, tx pin=11
-SensorPh ph(A1);                                     // Analog sensor on pin A1
-Ds18b20 water_temp(5);                               // Water temperature 1-Wire probe on Pin 5.
-SensorEc ec(A2, 2);                                  // Analog ec sensor on A2 with sensor power controlled by pin 2.
-
-//
-// Actuator Instances. Sorted by pin number.
-//
-BinaryActuator humidifier(9, true, 10000);    //AC port 1
-BinaryActuator grow_light(8, true, 10000);    //AC port 2
-BinaryActuator ac_3(7, true, 10000);          //AC port 3
-BinaryActuator air_heat(6, true, 10000);      //AC port 4
-BinaryActuator vent_fan(14, true, 10000);
-BinaryActuator circ_fan(15, true, 10000);
-BinaryActuator chamber_light(53, true, 10000);
-BinaryActuator mb_light(52, true, 10000);
-
-// Put pointers to instantiated modules into the mod_ptr_array.
-// Remember to update NMODS and ACTUATOR_OFFSET to be correct.
-const uint8_t NMODS = 14;
-const uint8_t ACTUATOR_OFFSET = 6;
-
-Module *mod_ptr_array[] = {
-   &dht22,               //0 - put Sensors at the head of the list
-   &tsl2561,             //1
-   &co2,                 //2
-   &ph,                  //3
-   &water_temp,          //4
-   &ec,                  //5
-   &humidifier,          //6 - first Actuator in the list
-   &grow_light,          //7
-   &ac_3,                //8
-   &air_heat,            //9
-   &vent_fan,            //10
-   &circ_fan,            //11
-   &chamber_light,       //12
-   &mb_light             //13
-};
-
-// Put the name of the modules in the mname_array data structure.
-//
-//This array holds the names of all the modules.
-const char *mname_array[NMODS] = {
-   "air_temp_hum",
-   "light_meter",
-   "co2",
-   "ph",
-   "water_temp",
-   "ec",
-   "humidifier",
-   "grow_light",
-   "ac_3",
-   "air_heat",
-   "vent_fan",
-   "circ_fan",
-   "chamber_light",
-   "mb_light"
-};
-
-// ######################################################################################################
-// You don't need to change anything beneath this line in order to add/remove/change sensors or actuators.
-// ######################################################################################################
 
 uint8_t get_command_length() {
    // commands are started by the string 0, hence the 1 in the equation below.
@@ -271,10 +195,3 @@ int openag_modules_show_mod_status(int status_code) {
    Serial.println(F("Error: Unknown module status code."));
    return 0;
 }
-
-/*-
-bool str2bool(String str){
-  str.toLowerCase();
-  return str.startsWith("true");
-}
-*/
