@@ -97,6 +97,11 @@ uint8_t MHZ16::update() {
   return status_level;
 }
 
+void MHZ16::print_readings_as_csv() {
+
+  Serial.print(_sensor.ppm);
+}
+
 int MHZ16::get_air_carbon_dioxide() {
   return _sensor.ppm;
 }
@@ -112,4 +117,12 @@ int MHZ16::cmd(int args) {
    }
 
    return Module::common_cmd(args);
+}
+
+uint8_t MHZ16::set_cmd(const char *cmd) {
+
+   status_code = NO_SET_CMD;
+   status_level = ERROR;
+
+   return status_level;
 }

@@ -26,7 +26,7 @@ BinarySensor shell_open(4, 1);                       // Food Computer shell off 
 BinarySensor window_open(3, 1);                      // Grow chamber window off contact switch - active high
 
 //
-// Actuator Instances. Sorted by pin number.
+// Actuator Instances.
 //
 BinaryActuator humidifier(9, true, 10000);           //AC port 1 - Humidifier
 BinaryActuator grow_light(8, true, 10000);           //AC port 2 - Grow Light

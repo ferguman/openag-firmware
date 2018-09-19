@@ -41,6 +41,10 @@ uint8_t AtlasEc::update() {
   return status_level;
 }
 
+void AtlasEc::print_readings_as_csv() {
+  Serial.print(_water_electrical_conductivity);
+}
+
 float AtlasEc::get_water_electrical_conductivity() {
   return _water_electrical_conductivity;
 }
@@ -133,4 +137,12 @@ int AtlasEc::cmd(int args) {
    }
 
    return Module::common_cmd(args);
+}
+
+uint8_t AtlasEc::set_cmd(const char *cmd) {
+
+   status_code = NO_SET_CMD;
+   status_level = ERROR;
+
+   return status_level;
 }

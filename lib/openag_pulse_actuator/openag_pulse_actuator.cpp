@@ -33,7 +33,13 @@ uint8_t PulseActuator::update() {
   return status_level;
 }
 
-uint8_t PulseActuator::set_cmd(bool cmd) {
+uint8_t PulseActuator::set_cmd(const char *cmd_str) {
+
+  return this->set(Module::str_to_bool(cmd_str));
+}
+
+uint8_t PulseActuator::set(bool cmd) {
+
   uint32_t curr_time = millis();
 
   // Only pulse once every update_ms
@@ -47,6 +53,12 @@ uint8_t PulseActuator::set_cmd(bool cmd) {
   return status_level;
 }
 
+// Actuators don't support this function. 
+void PulseActuator::print_readings_as_csv() {
+
+    Serial.print("ERROR - This module doesn't support printing readings.");
+}
+
 // Take true/false and convert to HIGH/LOW based on is_active_low
 uint8_t PulseActuator::bool2command(bool isOn){
   bool realState = _is_active_low ? !isOn : isOn;
@@ -58,7 +70,7 @@ int PulseActuator::cmd(int args) {
    char set_cmd[] = "set";
 
    if (this->is_cmd(args, set_cmd)) {
-      return make_int(this->set_cmd((boolean)get_int(car(cddr(args)))));
+      return make_int(this->set((boolean)get_int(car(cddr(args)))));
    }
 
    return Module::common_cmd(args);

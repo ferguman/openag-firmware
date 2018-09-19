@@ -31,6 +31,10 @@ uint8_t AtlasPh::update() {
   return status_level;
 }
 
+void AtlasPh::print_readings_as_csv() {
+  Serial.print(_water_potential_hydrogen);
+}
+
 float AtlasPh::get_water_potential_hydrogen() {
   return _water_potential_hydrogen;
 }
@@ -118,4 +122,12 @@ int AtlasPh::cmd(int args) {
    }
 
    return Module::common_cmd(args);
+}
+
+uint8_t AtlasPh::set_cmd(const char *cmd) {
+
+   status_code = NO_SET_CMD;
+   status_level = ERROR;
+
+   return status_level;
 }

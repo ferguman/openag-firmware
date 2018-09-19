@@ -6,15 +6,6 @@
 #include "tsl2561.h"
 
 //----------------------------------------------PUBLIC------------------=----------------------------//
-/*
-SensorTsl2561::SensorTsl2561(String lux_instruction_code, int lux_instruction_id, String par_instruction_code, int par_instruction_id) {
-  lux_instruction_code_ = lux_instruction_code;
-  lux_instruction_id_ = lux_instruction_id;
-  par_instruction_code_ = par_instruction_code;
-  par_instruction_id_ = par_instruction_id;
-  
-}
-*/
 
 // This board/chip uses I2C 7-bit addresses 0x39, 0x29, 0x49, selectable with jumpers
 SensorTsl2561::SensorTsl2561(int i2c_address) {

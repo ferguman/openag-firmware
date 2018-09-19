@@ -12,8 +12,11 @@ class MHZ16 : public Module {
     MHZ16(int i2c_address);
     uint8_t begin();
     uint8_t update();
-    int get_air_carbon_dioxide();
+    void print_readings_as_csv();
+    uint8_t set_cmd(const char *cmd);
     int cmd(int args);
+
+    int get_air_carbon_dioxide();
 
   private:
     NDIR_I2C _sensor;

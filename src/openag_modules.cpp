@@ -9,8 +9,10 @@
 //    -D OA_FC_V1
 // Currently the configuration files are placed in the src/ directory.
 //
-#ifdef OA_FC_V1
+#if defined(OA_FC_V1)
 #include <configuration_fcv1.h> 
+#elif defined(OA_FC_V2)
+#include <configuration_fcv2.h>
 #else
 #error "You must define a pre-compiler flag. See openag_modules.cpp for details."
 #endif

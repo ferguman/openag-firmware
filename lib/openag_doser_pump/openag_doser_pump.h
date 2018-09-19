@@ -13,11 +13,14 @@ class DoserPump : public Module {
     // Public functions
     uint8_t begin();
     uint8_t update();
-    uint8_t set_cmd(float cmd);
+    void print_readings_as_csv();
     int cmd(int args);
+    uint8_t set_cmd(const char *cmd);
+    //- uint8_t set_cmd(float cmd);
 
   private:
 
+    uint8_t set(float rate);
     void show_state();
 
     // Private variables

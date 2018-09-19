@@ -53,3 +53,18 @@ int Module::common_cmd(int args) {
    return 0;
 }
 
+bool Module::str_to_bool(const char *cmd_str){
+
+    bool cmd = false;
+
+    if (strlen(cmd_str) == 4) {
+        if ((cmd_str[0] == 'T' || cmd_str[0] == 't') && 
+	    (cmd_str[1] == 'R' || cmd_str[1] == 'r') &&	    
+	    (cmd_str[2] == 'U' || cmd_str[2] == 'u') &&	    
+	    (cmd_str[3] == 'E' || cmd_str[3] == 'e')) {
+            cmd = true;
+	}
+    }	
+
+    return cmd;
+}

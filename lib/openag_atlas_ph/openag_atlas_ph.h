@@ -17,7 +17,9 @@ class AtlasPh : public Module {
     AtlasPh(int i2c_address);
     uint8_t begin();
     uint8_t update();
+    void print_readings_as_csv();
     int cmd(int args);
+    uint8_t set_cmd(const char *cmd);
     float get_water_potential_hydrogen();
     uint8_t set_midpoint_calibration(double msg);
     uint8_t set_lowpoint_calibration(double msg);

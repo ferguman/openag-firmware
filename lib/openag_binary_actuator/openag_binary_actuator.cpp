@@ -42,6 +42,7 @@ uint8_t BinaryActuator::update() {
 
 uint8_t BinaryActuator::set_cmd(const char *cmd_str) {
 
+    /*
     bool cmd = false;
     if (strlen(cmd_str) == 4) {
         if ((cmd_str[0] == 'T' || cmd_str[0] == 't') && 
@@ -53,6 +54,9 @@ uint8_t BinaryActuator::set_cmd(const char *cmd_str) {
     }	
 
     return this->set(cmd);
+    */
+
+   return this->set(Module::str_to_bool(cmd_str));
 }
 
 uint8_t BinaryActuator::set(bool cmd) {

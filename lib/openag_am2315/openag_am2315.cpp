@@ -39,6 +39,11 @@ uint8_t Am2315::update() {
   return status_level;
 }
 
+void Am2315::print_readings_as_csv() {
+  Serial.print(_air_humidity); Serial.print(',');
+  Serial.print(_air_temperature);
+}
+
 float Am2315::get_air_temperature() {
     return _air_temperature;
 }
@@ -119,4 +124,12 @@ int Am2315::cmd(int args) {
    }
 
    return Module::common_cmd(args);
+}
+
+uint8_t Am2315::set_cmd(const char *cmd) {
+
+   status_code = NO_SET_CMD;
+   status_level = ERROR;
+
+   return status_level;
 }

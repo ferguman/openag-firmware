@@ -24,8 +24,21 @@ uint8_t ToneActuator::update() {
   return status_level;
 }
 
-uint8_t ToneActuator::set_cmd(bool cmd) {
+// Actuators don't support this function. 
+void ToneActuator::print_readings_as_csv() {
+
+    Serial.print("ERROR - This module doesn't support printing readings.");
+}
+
+uint8_t ToneActuator::set_cmd(const char *cmd_str) {
+
+   return set(Module::str_to_bool(cmd_str));
+}
+
+uint8_t ToneActuator::set(bool cmd) {
+
   _last_cmd = millis();
+
   bool actual_command = _is_active_low ? !cmd : cmd;
   if (actual_command) {
     if (_tone_duration > 0){
@@ -45,7 +58,7 @@ int ToneActuator::cmd(int args) {
    char set_cmd[] = "set";
 
    if (this->is_cmd(args, set_cmd)) {
-      return make_int(this->set_cmd((boolean)get_int(car(cddr(args)))));
+      return make_int(this->set((boolean)get_int(car(cddr(args)))));
    }
 
    return Module::common_cmd(args);

@@ -34,9 +34,21 @@ uint8_t PwmActuator::update() {
   return status_level;
 }
 
-uint8_t PwmActuator::set_cmd(float cmd) {
+
+uint8_t PwmActuator::set_cmd(const char *cmd_str) {
+
+  float val = atof(cmd_str);
+  // TBD - put in error checking for the conversion from cmd_str to val.
+  //
+  return this->set(val);
+}
+
+uint8_t PwmActuator::set(float cmd) {
+
   _last_cmd = millis();
+
   float val = cmd;
+
   if (val < 0 || val > 1) {
     status_level = WARN;
     status_code = CODE_INVALID_COMMAND;
@@ -58,12 +70,18 @@ uint8_t PwmActuator::set_cmd(float cmd) {
   return status_level;
 }
 
+// Actuators don't support this function. 
+void PwmActuator::print_readings_as_csv() {
+
+    Serial.print("ERROR - This module doesn't support printing readings.");
+}
+
 int PwmActuator::cmd(int args) {
 
    char set_cmd[] = "set";
 
    if (this->is_cmd(args, set_cmd)) {
-      return make_int(this->set_cmd(get_float(car(cddr(args)))));
+      return make_int(this->set(get_float(car(cddr(args)))));
    }
 
    return Module::common_cmd(args);

@@ -12,9 +12,9 @@ class BinaryActuator : public Module {
     // Public functions
     uint8_t begin();
     uint8_t update();
-    uint8_t set_cmd(const char *cmd);
     void print_readings_as_csv();
     int cmd(int args);
+    uint8_t set_cmd(const char *cmd);
 
   private:
     // Private functions

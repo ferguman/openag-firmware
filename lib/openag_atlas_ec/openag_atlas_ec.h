@@ -20,7 +20,10 @@ class AtlasEc : public Module {
     // Public functions
     uint8_t begin();
     uint8_t update();
+    void print_readings_as_csv();
     int cmd(int args);
+    uint8_t set_cmd(const char *cmd);
+
     float get_water_electrical_conductivity();
     void set_dry_calibration();
     void set_single_calibration(double msg);

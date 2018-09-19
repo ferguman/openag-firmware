@@ -47,8 +47,17 @@ uint8_t DoserPump::update() {
   return status_level;
 }
 
+uint8_t DoserPump::set_cmd(const char *cmd_str) {
+
+  // Convert the command string to a float.
+  // atof will return 0 if it can't convert the input to a valid float.
+  // TBD - Need to test that the next line works.
+  return this->set(atof(cmd_str));
+
+}
+
 // Set the pump driver to pump the rate (ml/h).
-uint8_t DoserPump::set_cmd(float rate) {
+uint8_t DoserPump::set(float rate) {
 
   uint32_t curr_time = millis();
 
@@ -89,6 +98,12 @@ uint8_t DoserPump::bool2command(bool isOn){
   return realValue ? HIGH : LOW;
 }
 
+// Actuators don't support this function. 
+void DoserPump::print_readings_as_csv() {
+
+    Serial.print("ERROR - This module doesn't support printing readings.");
+}
+
 void DoserPump::show_state() {
 
    Serial.print(F("Dosing Period (msec): ")); Serial.println(_dosingPeriod);
@@ -112,7 +127,7 @@ int DoserPump::cmd(int args) {
    char set_timeout[] = "set_to";
 
    if (this->is_cmd(args, set_cmd)) {
-      return make_int(this->set_cmd(get_float(car(cddr(args)))));
+      return make_int(this->set(get_float(car(cddr(args)))));
    }
 
    if (this->is_cmd(args, state_cmd)) {
@@ -124,7 +139,6 @@ int DoserPump::cmd(int args) {
       _shutoff_ms = get_int(car(cddr(args)));
       return make_int(OK);
     }
-
 
    return Module::common_cmd(args);
 }

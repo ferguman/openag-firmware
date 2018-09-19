@@ -24,18 +24,18 @@ class Module {
     virtual uint8_t begin() = 0;
     virtual uint8_t update() = 0;
     virtual void print_readings_as_csv() = 0;
-    virtual uint8_t set_cmd(const char *cmd) = 0;
-
+    virtual uint8_t set_cmd(const char *cmd) = 0;     //Open Ag compatible command processor
+    virtual int cmd(int args) = 0;                    //Interface for more command types in addtion to set_cmd
     uint8_t status_level;
     String status_msg;
     uint8_t status_code;
 
-    virtual int cmd(int args) = 0;
 
 //  private:
     int show_status();
     boolean is_cmd(int args, char *cmd);
     int common_cmd(int args);
+    bool str_to_bool(const char *cmd_str);
 };
 
 #endif
