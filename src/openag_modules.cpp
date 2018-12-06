@@ -4,17 +4,25 @@
 #include <types.h>
 
 // You must define an environment variable to tell the pre-compiler which module configuration file to use.
-// One way to do this is to put a build_flags section in your platformio.ini file as per the following lines:
+// One way to do this is to put a build_flags section in your platformio.ini file as per the 
+// following example:
 // build_flags =
 //    -D OA_FC_V1
 // Currently the configuration files are placed in the src/ directory.
+//
+// If neither OA_FC_V1 or OA_FC_V2 are specified then the system will include a file named
+// custom_configuration.h.  It is assumed that the user creates a file named custom_configuration.h
+// and puts the file in the configuration directory before attempting to compile
+// the system.  As always the user can modify the code below to suit their needs vis-a-vie their
+// intended target system.
 //
 #if defined(OA_FC_V1)
 #include <configuration_fcv1.h> 
 #elif defined(OA_FC_V2)
 #include <configuration_fcv2.h>
 #else
-#error "You must define a pre-compiler flag. See openag_modules.cpp for details."
+#include <custom_configuration.h>
+//- #error "You must define a pre-compiler flag. See openag_modules.cpp for details."
 #endif
 
 // Internal function declarations
