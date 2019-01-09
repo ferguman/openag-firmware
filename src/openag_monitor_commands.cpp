@@ -1,10 +1,12 @@
 #include "Arduino.h"
 #include <pair.h>
 #include <types.h>
-#include <openag_module.h>
+#include <openag_module.h>  // This .h file defines the base class for all modules. See 
+                            // ./lib/openag_firmware_module/openag_module.h for the details.
 
-#include <openag_modules.h>
+#include <openag_modules.h> //This .h file contains the openag specific monitor commands such as beginModules(). 
 
+/* - 
 #include <openag_am2315.h>
 #include <openag_ds18b20.h>
 #include <openag_mhz16.h>
@@ -17,6 +19,7 @@
 #include <openag_doser_pump.h>
 #include <openag_pulse_actuator.h>
 #include <openag_tone_actuator.h>
+*/
 
 #include <src.h>
 

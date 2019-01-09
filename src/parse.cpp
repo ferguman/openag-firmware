@@ -66,15 +66,6 @@ int parse(int token_list) {
 //
 int parse_iter(int list_stack, int cur_list, int token_list) {
 
-/*
-   if (is_char(car(token_list))) {
-      Serial.print("Current token: "); Serial.println(get_char(car(token_list)));
-   }
-   if (is_char(caar(token_list))) {
-      Serial.print("Current token: "); Serial.println(get_char(caar(token_list)));
-   }
-*/
-     
    // No more tokens to parse.
    if (token_list == nil) {
       Serial.println("Error in parse_iter: Unexpected end of input tokens.");

@@ -39,6 +39,7 @@ class Ds18b20 : public Module {
     uint32_t _time_of_last_query;
     bool _waiting_for_conversion;
     const static uint32_t _min_update_interval = 2000;
+    uint8_t addr_cmd();
 
     // Status codes
     static const uint8_t CODE_COULDNT_FIND_ADDRESS = 1;
