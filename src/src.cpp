@@ -58,6 +58,13 @@ void setup() {
 void loop() {
 
    if (fc_loop_on == true) {
+      //Call the update method of each module.  
+      //Note: Actuator modules are typically programmed to
+      //de-actuate when the update method is called and they have not received any commands
+      //in the last n millseconds where n is configurable on a per module basis.  So for
+      //debugging one would normally set fc_loop to false in order to suppress this automatic
+      //de-actuation
+      //
       updateLoop();
    }
 
