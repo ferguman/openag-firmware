@@ -9,10 +9,7 @@
 // automatically within the begin routine.
 //
 Ds18b20::Ds18b20(int pin) : _oneWire(pin) {
-//- Ds18b20::Ds18b20(int pin) {
-  //- _oneWire ow(5);
   _sensors = DallasTemperature(&_oneWire);
-  //- _sensors = DallasTemperature(&ow);
   _sensors.setWaitForConversion(false);
 }
 
@@ -32,27 +29,43 @@ uint8_t Ds18b20::begin() {
 }
 
 uint8_t Ds18b20::update() {
-  if (_waiting_for_conversion) {
-    if (_sensors.isConversionComplete()) {
-      status_level = OK;
-      status_code = CODE_OK;
-      status_msg = "";
-      _waiting_for_conversion = false;
-      _temperature = _sensors.getTempC(_address);
-      _send_temperature = true;
-    }
-    else if (millis() - _time_of_last_query > _min_update_interval) {
+
+   // If no address has been found then look again.
+   // This was added to hack around the condition when the sensor address is not found during the
+   // call to the begin() method.
+   if (status_code == CODE_COULDNT_FIND_ADDRESS) { 
+      if (!_sensors.getAddress(_address, 0)) {
+         status_level = ERROR;
+         status_code = CODE_COULDNT_FIND_ADDRESS;
+         status_msg = "Unable to find address for sensor";
+	 return status_level;
+      }
+   }
+
+   // The address has been found so now take a measurement
+   if (_waiting_for_conversion) {
+      if (_sensors.isConversionComplete()) {
+         status_level = OK;
+         status_code = CODE_OK;
+         status_msg = "";
+         _waiting_for_conversion = false;
+         _temperature = _sensors.getTempC(_address);
+         _send_temperature = true;
+      }
+   else if (millis() - _time_of_last_query > _min_update_interval) {
       status_level = ERROR;
       status_code = CODE_NO_RESPONSE;
       status_msg = "Sensor isn't responding to queries";
-    }
-  }
-  if (millis() - _time_of_last_query > _min_update_interval) {
-    _sensors.requestTemperatures();
-    _waiting_for_conversion = true;
-    _time_of_last_query = millis();
-  }
-  return status_code;
+      }
+   }
+
+   if (millis() - _time_of_last_query > _min_update_interval) {
+      _sensors.requestTemperatures();
+      _waiting_for_conversion = true;
+      _time_of_last_query = millis();
+   }
+
+   return status_code;
 }
 
 uint8_t Ds18b20::set_cmd(const char *cmd) {
@@ -71,6 +84,38 @@ void Ds18b20::print_readings_as_csv() {
    Serial.print(_temperature);
 }
 
+uint8_t Ds18b20::addr_cmd() {
+	
+   Serial.print(F("Address: "));
+
+   for(int i=7; i>=0; i--) {
+      Serial.print("0x");
+
+      if (_address[i] < 16) {
+         Serial.print('0');
+      }
+
+      if (i == 0) {
+         Serial.print(_address[i], HEX);
+      }
+      if (i > 0) {
+         Serial.print(_address[i], HEX);
+         Serial.print(", ");
+      }
+   }
+
+   if (OneWire::crc8(_address, 7) != _address[7]) {
+      Serial.print(F("CRC code is not valid. Device sent CRC code: 0x"));
+      Serial.print(_address[7], HEX);
+      Serial.print(F(". The calcualted crc is: 0x"));
+      Serial.println(OneWire::crc8(_address, 7), HEX);
+   } else {
+      Serial.println(F(""));
+   }
+   
+   return status_code; 
+}
+
 int Ds18b20::cmd(int args) {
 
    char read[] = "read";
@@ -82,7 +127,9 @@ int Ds18b20::cmd(int args) {
    }
 
    if (this->is_cmd(args, addr)) {
-       Serial.println(F("this command is not implemented."));  
+      return make_int(addr_cmd());
+      //- Serial.println(F("this command is not implemented."));  
    }
+
    return Module::common_cmd(args);
 }
