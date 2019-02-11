@@ -216,6 +216,8 @@ void resetMessage() {
 }
 
 int split(String messages, String* splitMessages,  char delimiter){
+  //TODO - refactor to use char arrays to hold each message instead of 
+  //       Strings.
 
   int indexOfComma = 0;
   int chunk_count = 0;
@@ -232,8 +234,9 @@ int split(String messages, String* splitMessages,  char delimiter){
     }
 
     if(nextIndex == -1){
-      // We are at the end of the message so "take" the rest of it.
-      nextMessage = messages.substring(indexOfComma+1);
+      // We are at the end of the message so "take" the rest of it except for the \n at the end of the string.
+      //- nextMessage = messages.substring(indexOfComma+1);
+      nextMessage = messages.substring(indexOfComma+1, messages.length()-1);
     }else{
       // "take" the next command.
       nextMessage = messages.substring(indexOfComma+1, nextIndex);
