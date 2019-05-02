@@ -22,7 +22,6 @@
 #include <configuration_fcv2.h>
 #else
 #include <custom_configuration.h>
-//- #error "You must define a pre-compiler flag. See openag_modules.cpp for details."
 #endif
 
 // Internal function declarations
