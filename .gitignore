@@ -1,4 +1,4 @@
 .pio*
 *.swp
 configuration/*.*
-!configurtion/.gitkeep
+!configuration/.gitkeep
