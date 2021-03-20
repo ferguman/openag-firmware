@@ -63,7 +63,8 @@ int i2c_read(int args) {
    char read_data[30];
    int buffer_index = 0;
 
-   Wire.requestFrom(get_int(car(args)), 20, 1);
+   //- Wire.requestFrom(get_int(car(args)), 20, 1);
+   Wire.requestFrom(get_int(car(args)), get_int(cadr(args)), get_int(caddr(args)));
 
    //Read the Wire buffer
    if (read_chars(read_data, buffer_index)) {
@@ -124,7 +125,7 @@ int i2c_send(int args) {
 //
 int i2c_begin(int args) {
 
-   //Serial.println("Calling Wire.begin()");
+   Serial.println("Calling Wire.begin()");
    
    Wire.begin();
 
@@ -136,8 +137,8 @@ int i2c_begin(int args) {
 //
 int i2c_begin_trans(int args) {
 
-   //Serial.print("Calling Wire.beginTransmission with address value ");
-   //Serial.println(get_int(car(args)));
+   Serial.print("Calling Wire.beginTransmission with address value ");
+   Serial.println(get_int(car(args)));
 
    Wire.beginTransmission(get_int(car(args)));
 
@@ -148,10 +149,10 @@ int i2c_begin_trans(int args) {
 int i2c_write(int args) {
 
    if (is_int(car(args))) {
-      //Serial.print("Calling Wire.write with value "); Serial.println(get_int(car(args)));
+      Serial.print("Calling Wire.write with value "); Serial.println(get_int(car(args)));
       Wire.write(get_int(car(args)));
    } else {
-      //Serial.print("Calling Wire.write with value: "); Serial.println(get_str(cdar(args)));
+      Serial.print("Calling Wire.write with value: "); Serial.println(get_str(cdar(args)));
       Wire.print(get_str(cdar(args)));
    }
  
@@ -162,7 +163,7 @@ int i2c_write(int args) {
 //
 int i2c_end_trans(int args) {
 
-   //Serial.println("Invoking Wire.endTransmission()");
+   Serial.println("Invoking Wire.endTransmission()");
 
    Wire.endTransmission();
    
@@ -177,9 +178,9 @@ int i2c_request_from(int args) {
    uint8_t addr = (uint8_t) get_int(car(args));
    uint8_t count = (uint8_t) get_int(cadr(args));
 
-   //Serial.println("Calling Wire.requestFrom()");
-   //Serial.print("addr: "); Serial.println(addr);
-   //Serial.print("count: "); Serial.println(count);
+   Serial.println("Calling Wire.requestFrom()");
+   Serial.print("addr: "); Serial.println(addr);
+   Serial.print("count: "); Serial.println(count);
 
    return Wire.requestFrom(addr, count);
 

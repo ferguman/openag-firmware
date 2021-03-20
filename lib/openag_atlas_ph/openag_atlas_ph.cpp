@@ -26,6 +26,7 @@ uint8_t AtlasPh::update() {
     }
   }
   else if (millis() - _time_of_last_query > _min_update_interval) {
+    // Send read command to the probe, set waiting for response to true and set time of last query to now. 
     send_query();
   }
   return status_level;
